@@ -1,6 +1,6 @@
 package frc.robot.commands;
 
-import frc.robot.Constants.AutoConstants;
+import frc.robot.Constants.DriveAutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.*;
 
@@ -24,8 +24,8 @@ public class AutoTrajectory extends Command{
         // Create config for trajectory
         TrajectoryConfig config =
             new TrajectoryConfig(
-                    AutoConstants.kMaxSpeedMetersPerSecond,
-                    AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+                    DriveAutoConstants.kMaxSpeedMetersPerSecond,
+                    DriveAutoConstants.kMaxAccelerationMetersPerSecondSquared)
                 // Add kinematics to ensure max speed is actually obeyed
                 .setKinematics(DriveConstants.kDriveKinematics);
     
@@ -39,7 +39,7 @@ public class AutoTrajectory extends Command{
     
         var thetaController =
             new ProfiledPIDController(
-                AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
+                DriveAutoConstants.kPThetaController, 0, 0, DriveAutoConstants.kThetaControllerConstraints);
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
     
         SwerveControllerCommand swerveControllerCommand =
@@ -49,8 +49,8 @@ public class AutoTrajectory extends Command{
                 DriveConstants.kDriveKinematics,
     
                 // Position controllers
-                new PIDController(AutoConstants.kPXController, 0, 0),
-                new PIDController(AutoConstants.kPYController, 0, 0),
+                new PIDController(DriveAutoConstants.kPXController, 0, 0),
+                new PIDController(DriveAutoConstants.kPYController, 0, 0),
                 thetaController,
                 robotDrive::setModuleStates,
                 robotDrive);
