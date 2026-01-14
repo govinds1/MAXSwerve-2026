@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.DriveSubsystem;
 
 public final class Autos {
+    // TODO: USING AUTOBUILDER! Any simple/non-path following auto commands can be added here, and you can still use AutoBuilder.
+
     /** Example static factory for an autonomous command. */
     public static Command exampleAuto() {
     return Commands.none();

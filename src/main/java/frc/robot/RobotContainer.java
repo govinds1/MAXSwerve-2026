@@ -4,12 +4,17 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.XboxController;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.events.EventTrigger;
+
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.Autos;
+import frc.robot.controllers.DriverController;
 import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -22,7 +27,9 @@ public class RobotContainer {
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
 
   // The driver's controller
-  private final XboxController m_driverController = new XboxController(OperatorConstants.kDriverControllerPort);
+  private final DriverController m_driverController = new DriverController(OperatorConstants.kDriverControllerPort);
+
+  private final SendableChooser<Command> autoChooser;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -44,6 +51,21 @@ public class RobotContainer {
                 true),
             m_robotDrive));
     */
+
+    // Register Named Commands
+    // TODO: Register shoot, intake, intake and move, and climb commands
+    //NamedCommands.registerCommand("autoBalance", swerve.autoBalanceCommand());
+
+    // Register Event Triggers
+    new EventTrigger("intake").whileTrue(Commands.parallel(Commands.print("running intake")/*, TODO: Add intake command */));
+
+    // Build an auto chooser. This will use Commands.none() as the default option.
+    autoChooser = AutoBuilder.buildAutoChooser();
+
+    // Another option that allows you to specify the default auto by its name
+    // autoChooser = AutoBuilder.buildAutoChooser("My Default Auto");
+
+    SmartDashboard.putData("Auto Chooser", autoChooser);
   }
 
   // GETTERS //
@@ -52,7 +74,7 @@ public class RobotContainer {
     return m_robotDrive;
   }
 
-  XboxController getDriverController() {
+  DriverController getDriverController() {
     return m_driverController;
   }
 
@@ -63,7 +85,10 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // Grab selected auto from SmartDashboard drop down menu
-    String selectedAutoName = SmartDashboard.getString("Auto Selector", Autos.autoNames[0]);
-    return Autos.getSelectedAuto(selectedAutoName, m_robotDrive);
+    //String selectedAutoName = SmartDashboard.getString("Auto Selector", Autos.autoNames[0]);
+    //return Autos.getSelectedAuto(selectedAutoName, m_robotDrive);
+
+    // Grab selected auto from SmartDashboard chooser.
+    return autoChooser.getSelected();
   }
 }

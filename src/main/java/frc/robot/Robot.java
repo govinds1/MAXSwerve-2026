@@ -21,10 +21,6 @@ import frc.robot.simulation.Field;
  * project.
  */
 public class Robot extends TimedRobot {
-  // Controller
-  private final DriverController m_driverController = new DriverController(0);
-  //private final OperatorController m_operatorController = new OperatorController(1);
-
   // Robot Container.
   private RobotContainer m_robotContainer;
   private Command m_autonomousCommand;
@@ -117,9 +113,9 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     m_robotContainer.getDriveSubsystem().drive(
-        -MathUtil.applyDeadband(m_driverController.getLeftY(), 0.05),
-        -MathUtil.applyDeadband(m_driverController.getLeftX(), 0.05),
-        -MathUtil.applyDeadband(m_driverController.getRightX(), 0.05),
+        -MathUtil.applyDeadband(m_robotContainer.getDriverController().getLeftY(), 0.05),
+        -MathUtil.applyDeadband(m_robotContainer.getDriverController().getLeftX(), 0.05),
+        -MathUtil.applyDeadband(m_robotContainer.getDriverController().getRightX(), 0.05),
         true);
   }
 

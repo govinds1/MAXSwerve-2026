@@ -49,14 +49,14 @@ public class AutoTrajectory extends Command{
                 DriveConstants.kDriveKinematics,
     
                 // Position controllers
-                new PIDController(DriveAutoConstants.kPXController, 0, 0),
-                new PIDController(DriveAutoConstants.kPYController, 0, 0),
+                new PIDController(DriveAutoConstants.kPXYController, 0, 0),
+                new PIDController(DriveAutoConstants.kPXYController, 0, 0),
                 thetaController,
                 robotDrive::setModuleStates,
                 robotDrive);
     
         // Reset odometry to the starting pose of the trajectory.
-        robotDrive.resetOdometry(leaveTrajectory.getInitialPose());
+        robotDrive.resetPose(leaveTrajectory.getInitialPose());
     
         // Run path following command, then stop at the end.
         return swerveControllerCommand.andThen(() -> robotDrive.drive(0, 0, 0, false));
