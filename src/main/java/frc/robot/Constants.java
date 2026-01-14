@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -103,25 +104,6 @@ public final class Constants {
     public static final double kFreeSpeedRpm = 5676;
   }
 
-  public static final class TurretConstants {
-    // Spark Flex CAN ID
-    public static final int kTurretMotorCanId = 21; // TODO: Set ID.
-
-    // Constants required for turret calculations.
-    public static final double kEncoderUnitsPerRevolution = 1000; // TODO: Test once mechanism is built.
-    public static final double kEncoderUnitsPerRadian = kEncoderUnitsPerRevolution / (2 * Math.PI);
-    public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
-    public static final double kMaxAngularAccelerationRadiansPerSecondSquared = 2 * Math.PI; // TODO: Does this make sense?
-    // Constraint for the motion profiled robot angle controller
-    public static final TrapezoidProfile.Constraints kControllerConstraints = new TrapezoidProfile.Constraints(
-      kMaxAngularSpeedRadiansPerSecond, kMaxAngularAccelerationRadiansPerSecondSquared);
-
-    // PID Values. TODO: Tune.
-    public static final double kP = 1;
-    public static final double kI = 0;
-    public static final double kD = 0;
-  }
-
   public static final class LimelightConstants {
     // Camera's pose in robot space.
     public static final double kForwardOffsetMeters = 0.5;
@@ -137,13 +119,10 @@ public final class Constants {
       kTrenchRightClose, kTrenchRightFar, kTrenchLeftClose, kTrenchLeftFar,
       kOutpost, kTower, kHubRight, kHubFar, kHubLeft, kHubClose
     }
-    public static enum Alliance {
-      kBlue, kRed
-    }
     public static class Tag {
-      TagLocation m_location;
-      Alliance m_alliance;
-      int m_id;
+      public TagLocation m_location;
+      public Alliance m_alliance;
+      public int m_id;
       Tag(TagLocation location, Alliance alliance, int id) {
         m_location = location;
         m_alliance = alliance;
@@ -151,38 +130,38 @@ public final class Constants {
       }
     }
     public static final List<Tag> tags = List.of(
-      new Tag(TagLocation.kTrenchRightFar, Alliance.kRed, 1),
-      new Tag(TagLocation.kHubRight, Alliance.kRed, 2),
-      new Tag(TagLocation.kHubFar, Alliance.kRed, 3),
-      new Tag(TagLocation.kHubFar, Alliance.kRed, 4),
-      new Tag(TagLocation.kHubLeft, Alliance.kRed, 5),
-      new Tag(TagLocation.kTrenchLeftFar, Alliance.kRed, 6),
-      new Tag(TagLocation.kTrenchLeftClose, Alliance.kRed, 7),
-      new Tag(TagLocation.kHubLeft, Alliance.kRed, 8),
-      new Tag(TagLocation.kHubClose, Alliance.kRed, 9),
-      new Tag(TagLocation.kHubClose, Alliance.kRed, 10),
-      new Tag(TagLocation.kHubRight, Alliance.kRed, 11),
-      new Tag(TagLocation.kTrenchRightClose, Alliance.kRed, 12),
-      new Tag(TagLocation.kOutpost, Alliance.kRed, 13),
-      new Tag(TagLocation.kOutpost, Alliance.kRed, 14),
-      new Tag(TagLocation.kTower, Alliance.kRed, 15),
-      new Tag(TagLocation.kTower, Alliance.kBlue, 16),
-      new Tag(TagLocation.kTrenchRightFar, Alliance.kBlue, 17),
-      new Tag(TagLocation.kHubRight, Alliance.kBlue, 18),
-      new Tag(TagLocation.kHubFar, Alliance.kBlue, 19),
-      new Tag(TagLocation.kHubFar, Alliance.kBlue, 20),
-      new Tag(TagLocation.kHubLeft, Alliance.kBlue, 21),
-      new Tag(TagLocation.kTrenchLeftFar, Alliance.kBlue, 22),
-      new Tag(TagLocation.kTrenchLeftClose, Alliance.kBlue, 23),
-      new Tag(TagLocation.kHubLeft, Alliance.kBlue, 24),
-      new Tag(TagLocation.kHubClose, Alliance.kBlue, 25),
-      new Tag(TagLocation.kHubClose, Alliance.kBlue, 26),
-      new Tag(TagLocation.kHubRight, Alliance.kBlue, 27),
-      new Tag(TagLocation.kTrenchRightClose, Alliance.kBlue, 28),
-      new Tag(TagLocation.kOutpost, Alliance.kBlue, 29),
-      new Tag(TagLocation.kOutpost, Alliance.kBlue, 30),
-      new Tag(TagLocation.kTower, Alliance.kBlue, 31),
-      new Tag(TagLocation.kTower, Alliance.kBlue, 32)
+      new Tag(TagLocation.kTrenchRightFar, Alliance.Red, 1),
+      new Tag(TagLocation.kHubRight, Alliance.Red, 2),
+      new Tag(TagLocation.kHubFar, Alliance.Red, 3),
+      new Tag(TagLocation.kHubFar, Alliance.Red, 4),
+      new Tag(TagLocation.kHubLeft, Alliance.Red, 5),
+      new Tag(TagLocation.kTrenchLeftFar, Alliance.Red, 6),
+      new Tag(TagLocation.kTrenchLeftClose, Alliance.Red, 7),
+      new Tag(TagLocation.kHubLeft, Alliance.Red, 8),
+      new Tag(TagLocation.kHubClose, Alliance.Red, 9),
+      new Tag(TagLocation.kHubClose, Alliance.Red, 10),
+      new Tag(TagLocation.kHubRight, Alliance.Red, 11),
+      new Tag(TagLocation.kTrenchRightClose, Alliance.Red, 12),
+      new Tag(TagLocation.kOutpost, Alliance.Red, 13),
+      new Tag(TagLocation.kOutpost, Alliance.Red, 14),
+      new Tag(TagLocation.kTower, Alliance.Red, 15),
+      new Tag(TagLocation.kTower, Alliance.Blue, 16),
+      new Tag(TagLocation.kTrenchRightFar, Alliance.Blue, 17),
+      new Tag(TagLocation.kHubRight, Alliance.Blue, 18),
+      new Tag(TagLocation.kHubFar, Alliance.Blue, 19),
+      new Tag(TagLocation.kHubFar, Alliance.Blue, 20),
+      new Tag(TagLocation.kHubLeft, Alliance.Blue, 21),
+      new Tag(TagLocation.kTrenchLeftFar, Alliance.Blue, 22),
+      new Tag(TagLocation.kTrenchLeftClose, Alliance.Blue, 23),
+      new Tag(TagLocation.kHubLeft, Alliance.Blue, 24),
+      new Tag(TagLocation.kHubClose, Alliance.Blue, 25),
+      new Tag(TagLocation.kHubClose, Alliance.Blue, 26),
+      new Tag(TagLocation.kHubRight, Alliance.Blue, 27),
+      new Tag(TagLocation.kTrenchRightClose, Alliance.Blue, 28),
+      new Tag(TagLocation.kOutpost, Alliance.Blue, 29),
+      new Tag(TagLocation.kOutpost, Alliance.Blue, 30),
+      new Tag(TagLocation.kTower, Alliance.Blue, 31),
+      new Tag(TagLocation.kTower, Alliance.Blue, 32)
     );
   }
 }
