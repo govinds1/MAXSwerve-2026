@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.Autos;
-import frc.robot.controllers.DriverController;
 import frc.robot.simulation.Field;
 
 /**
@@ -63,9 +62,6 @@ public class Robot extends TimedRobot {
       CommandScheduler.getInstance().run();
     }
 
-    // TODO: Do we need this?
-    m_robotContainer.getDriveSubsystem().periodic();
-
     // Update Robot Simulation
     updateSim();
   }
@@ -112,11 +108,22 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    m_robotContainer.getDriveSubsystem().drive(
-        -MathUtil.applyDeadband(m_robotContainer.getDriverController().getLeftY(), 0.05),
-        -MathUtil.applyDeadband(m_robotContainer.getDriverController().getLeftX(), 0.05),
-        -MathUtil.applyDeadband(m_robotContainer.getDriverController().getRightX(), 0.05),
-        true);
+    // TODO: Add toggle/hold button for robot relative driving?
+
+    // Get driver controller inputs.
+    double forward = -m_robotContainer.getDriverController().getLeftY(); // Pushing forward on stick Y axis is negative, so invert to get forward speed.
+    double left = -m_robotContainer.getDriverController().getLeftX();    // Pushing right on stick X axis is positive, so invert to get left speed.
+    double rotCCW = -m_robotContainer.getDriverController().getRightX();  // Pushing right on stick X axis is positive, so invert to get CCW speed.
+    // Apply deadbands.
+    forward = MathUtil.applyDeadband(forward, 0.05);
+    left = MathUtil.applyDeadband(left, 0.05);
+    rotCCW = MathUtil.applyDeadband(rotCCW, 0.05);
+    // Square inputs.
+    forward = Helpers.signedSquare(forward);
+    left = Helpers.signedSquare(left);
+    rotCCW = Helpers.signedSquare(rotCCW);
+    // Drive robot manually.
+    m_robotContainer.getDriveSubsystem().drive(forward, left, rotCCW, true);
   }
 
   @Override

@@ -22,9 +22,9 @@ public class DriverController extends GenericHID {
   public double getRightX(){
   return getRawAxis(4);
   }
-  // public boolean getWantsSpeedMode() {
-  //   return this.getFilteredAxis(2) > k_triggerActivationThreshold;
-  // }
+  public boolean getWantsHalfSpeedMode() {
+     return getRawAxis(2) > 0.5;
+  }
   
   public boolean getWantsGyroReset(){
     return this.getRawButton(7);  //this should be the start button

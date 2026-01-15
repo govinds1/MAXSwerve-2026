@@ -138,9 +138,9 @@ public class DriveSubsystem extends SubsystemBase {
   /**
    * Method to drive the robot using joystick info.
    *
-   * @param xSpeed        Speed of the robot in the x direction (forward).
-   * @param ySpeed        Speed of the robot in the y direction (sideways).
-   * @param rot           Angular rate of the robot.
+   * @param xSpeed        Speed of the robot in the x direction (forward +).
+   * @param ySpeed        Speed of the robot in the y direction (left +).
+   * @param rot           Angular rate of the robot (ccw +).
    * @param fieldRelative Whether the provided x and y speeds are relative to the
    *                      field.
    */

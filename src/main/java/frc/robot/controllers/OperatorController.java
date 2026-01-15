@@ -8,9 +8,6 @@ public class OperatorController extends GenericHID {
     super(port);
   }
 
-  // Axis
-  //private final double k_triggerActivationThreshold = 0.5;
-
   // Intake
   // TODO: Add Intake button getters.
 

@@ -53,8 +53,16 @@ public class VisionTargeting extends SubsystemBase {
             m_currentAlliance = currentAlliance.get();
         }
     }
+
+    @Override
     public void periodic() {
-        
+        // THIS FUNCTION WILL BE CALLED WHEN DISABLED AND ENABLED
+
+        // Can we see the current desired location?
+        if (canSee(m_seekingLocation))
+        {
+            // TODO: Put to smart dashboard - turn on some indicator for driver.
+        }
     }
 
     public Set<Tag> getTagsForLocation(TagLocation location)

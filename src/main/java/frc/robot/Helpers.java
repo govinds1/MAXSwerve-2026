@@ -20,4 +20,9 @@ public class Helpers {
   public static int clamp(int val, int min, int max) {
     return Math.max(min, Math.min(max, val));
   }
+
+  public static double signedSquare(double input) {
+    // Multiply input by absolute value of itself.
+    return input * Math.abs(input);
+  }
 }
