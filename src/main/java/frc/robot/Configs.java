@@ -6,6 +6,7 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import frc.robot.Constants.ModuleConstants;
+import frc.robot.Constants.ShooterConstants;
 
 public final class Configs {
     public static final class MAXSwerveModule {
@@ -29,7 +30,7 @@ public final class Configs {
             drivingConfig.closedLoop
                     .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
                     // These are example gains you may need to them for your own robot!
-                    .pid(0.04, 0, 0)
+                    .pid(ModuleConstants.kDrivingPController, 0, 0)
                     .outputRange(-1, 1)
                     .feedForward.kV(drivingVelocityFeedForward);
 
@@ -49,7 +50,7 @@ public final class Configs {
             turningConfig.closedLoop
                     .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
                     // These are example gains you may need to them for your own robot!
-                    .pid(1, 0, 0)
+                    .pid(ModuleConstants.kTurningPController, 0, 0)
                     .outputRange(-1, 1)
                     // Enable PID wrap around for the turning motor. This will allow the PID
                     // controller to go through 0 to get to the setpoint i.e. going from 350 degrees
@@ -57,6 +58,29 @@ public final class Configs {
                     // longer route.
                     .positionWrappingEnabled(true)
                     .positionWrappingInputRange(0, turningFactor);
+        }
+    }
+
+    public static final class Shooter {
+        public static final SparkFlexConfig motorConfig = new SparkFlexConfig();
+
+        static {
+                // Use module constants to calculate conversion factors and feed forward gain.
+                double flywheelFactor = ShooterConstants.kFlyWheelDiameterMeters * Math.PI
+                        / ShooterConstants.kMotorReduction;
+                double nominalVoltage = 12.0;
+                double shootingVelocityFeedForward = nominalVoltage / ShooterConstants.kFlyWheelFreeSpeedRps;
+                motorConfig
+                        .idleMode(IdleMode.kCoast)
+                        .smartCurrentLimit(50);
+                motorConfig.encoder
+                        .positionConversionFactor(flywheelFactor) // meters
+                        .velocityConversionFactor(flywheelFactor / 60.0); // meters per second
+                motorConfig.closedLoop
+                        .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+                        .pid(ShooterConstants.kPController, 0, 0)
+                        .outputRange(-1, 1)
+                        .feedForward.kV(shootingVelocityFeedForward);
         }
     }
 }

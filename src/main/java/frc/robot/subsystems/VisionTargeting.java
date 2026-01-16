@@ -78,6 +78,14 @@ public class VisionTargeting extends SubsystemBase {
         return tagsAtLocation;
     }
 
+    public Set<Tag> getHubShootingTags()
+    {
+        Set<Tag> tags = getTagsForLocation(TagLocation.kHubClose);
+        tags.addAll(getTagsForLocation(TagLocation.kHubLeft));
+        tags.addAll(getTagsForLocation(TagLocation.kHubRight));
+        return tags;
+    }
+
     public boolean canSee(TagLocation location)
     {
         // TODO: 
@@ -92,6 +100,7 @@ public class VisionTargeting extends SubsystemBase {
         // TODO:
         // Get 1 or 2 Hub Tags that are visible, if applicable. With visible tags, calculate pose of CENTER of Hub.
         // Given an ideal shooting RPM and ideal (minimal) movement time, calculate a pose to move the robot to in order to aim at hub.
+        // TODO: Use drive odometry to figure out where Hub could be? Isolate to a single side of the Hub and find those Tags, also can turn the right direction if robot is not facing Hub.
         ShootingInfo shot = new ShootingInfo();
         shot.pose = Pose2d.kZero;
         shot.shootingRPM = 0;

@@ -84,6 +84,32 @@ public final class Constants {
     public static final double kDrivingMotorReduction = (45.0 * 22) / (kDrivingMotorPinionTeeth * 15);
     public static final double kDriveWheelFreeSpeedRps = (kDrivingMotorFreeSpeedRps * kWheelCircumferenceMeters)
         / kDrivingMotorReduction;
+
+    // PID Values
+    public static final double kDrivingPController = 0.04;
+    public static final double kTurningPController = 1;
+  }
+
+  public static final class ShooterConstants {
+    public static final int kShooterMotorCanId = 21;
+    public static final double kShooterMaxRPM = 600; // TODO:
+    public static final double kPController = 5;
+    public static final double kBallRadiusMeters = 3 * 0.0254;
+    public static final double kLaunchAngleDegrees = 60; // TODO:
+    public static final double kLaunchAngleRadians = Math.toRadians(kLaunchAngleDegrees);
+    public static final double kLaunchHeightMeters = 22 * 0.0254 + kBallRadiusMeters;
+    public static final double kHubHeightMeters = 72 * 0.0254;
+    public static final double kShotVerticalDistance = kHubHeightMeters - kLaunchHeightMeters;
+    public static final double kMaxAimTime = 5.0;
+
+    // Calculations required for driving motor conversion factors and feed forward
+    public static final double kMotorFreeSpeedRps = NeoMotorConstants.kFreeSpeedRpm / 60;
+    public static final double kFlyWheelDiameterMeters = 0.0762; // TODO:
+    public static final double kFlyWheelCircumferenceMeters = kFlyWheelDiameterMeters * Math.PI;
+    // TODO: Figure out shooting motor reduction
+    public static final double kMotorReduction = (45.0 * 22) / (10 * 15);
+    public static final double kFlyWheelFreeSpeedRps = (kMotorFreeSpeedRps * kFlyWheelCircumferenceMeters)
+        / kMotorReduction;
   }
 
   public static final class OperatorConstants {
