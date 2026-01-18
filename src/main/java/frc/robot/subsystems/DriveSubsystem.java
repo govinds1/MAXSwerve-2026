@@ -9,11 +9,15 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.controller.HolonomicDriveController;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
@@ -21,6 +25,7 @@ import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.Constants.DriveAutoConstants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.LimelightHelpers;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class DriveSubsystem extends SubsystemBase {
@@ -49,7 +54,7 @@ public class DriveSubsystem extends SubsystemBase {
   private final ADIS16470_IMU m_gyro = new ADIS16470_IMU();
 
   // Odometry class for tracking robot pose
-  SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
+  SwerveDrivePoseEstimator m_poseEstimator = new SwerveDrivePoseEstimator(
       DriveConstants.kDriveKinematics,
       Rotation2d.fromDegrees(m_gyro.getAngle(IMUAxis.kZ)),
       new SwerveModulePosition[] {
@@ -57,7 +62,19 @@ public class DriveSubsystem extends SubsystemBase {
           m_frontRight.getPosition(),
           m_rearLeft.getPosition(),
           m_rearRight.getPosition()
-      });
+      },
+      new Pose2d()
+    );
+
+    // PID Controllers
+    public PIDController m_xController = new PIDController(DriveAutoConstants.kPXYController, 0, 0);
+    public PIDController m_yController = new PIDController(DriveAutoConstants.kPXYController, 0, 0);
+    public ProfiledPIDController m_thetaController = new ProfiledPIDController(
+      DriveAutoConstants.kPThetaController,
+      0, 0,
+      DriveAutoConstants.kThetaControllerConstraints
+    );
+    public HolonomicDriveController m_robotDriveController;
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
@@ -94,12 +111,24 @@ public class DriveSubsystem extends SubsystemBase {
             },
             this // Reference to this subsystem to set requirements
     );
+
+    m_thetaController.enableContinuousInput(0, 2 * Math.PI);
+
+    m_robotDriveController = new HolonomicDriveController(
+        m_xController,
+        m_yController,
+        m_thetaController
+    );
+    // Set controller tolerance.
+    m_robotDriveController.setTolerance(DriveAutoConstants.kRobotControllerTolerance);
   }
+
+  // TODO: Need init? Probably need to set gyro based off alliance start. If red, need to add 180 degrees to gryo at all times.
 
   @Override
   public void periodic() {
     // Update the odometry in the periodic block
-    m_odometry.update(
+    m_poseEstimator.update(
         Rotation2d.fromDegrees(m_gyro.getAngle(IMUAxis.kZ)),
         new SwerveModulePosition[] {
             m_frontLeft.getPosition(),
@@ -115,7 +144,7 @@ public class DriveSubsystem extends SubsystemBase {
    * @return The pose.
    */
   public Pose2d getPose() {
-    return m_odometry.getPoseMeters();
+    return m_poseEstimator.getEstimatedPosition();
   }
 
   /**
@@ -124,7 +153,7 @@ public class DriveSubsystem extends SubsystemBase {
    * @param pose The pose to which to set the odometry.
    */
   public void resetPose(Pose2d pose) {
-    m_odometry.resetPosition(
+    m_poseEstimator.resetPosition(
         Rotation2d.fromDegrees(m_gyro.getAngle(IMUAxis.kZ)),
         new SwerveModulePosition[] {
             m_frontLeft.getPosition(),
@@ -133,6 +162,37 @@ public class DriveSubsystem extends SubsystemBase {
             m_rearRight.getPosition()
         },
         pose);
+  }
+
+  /**
+   * Localize pose with AprilTags and Limelight's MegaTag2 localizer.
+   *
+   * @returns true if we updated pose successfully.
+   */
+  public boolean localizePose() {
+    LimelightHelpers.SetRobotOrientation("limelight", m_poseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
+    LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
+    
+    // if our angular velocity is greater than 360 degrees per second, ignore vision updates
+    boolean doRejectUpdate = true;
+    if(Math.abs(getTurnRate()) > 360)
+    {
+      doRejectUpdate = true;
+    }
+    if(mt2.tagCount == 0)
+    {
+      doRejectUpdate = true;
+    }
+    if(!doRejectUpdate)
+    {
+      m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
+      // TODO: Ignore mt2.pose if it's too far from current pose? 
+      m_poseEstimator.addVisionMeasurement(
+          mt2.pose,
+          mt2.timestampSeconds);
+    }
+
+    return !doRejectUpdate;
   }
 
   /**
@@ -230,6 +290,7 @@ public class DriveSubsystem extends SubsystemBase {
    * @return the robot's heading as a Rotation2d
    */
   public Rotation2d getHeadingRotation() {
+    // TODO: Do we need to normalize this angle to 0 to 360 or -180 to 180?;
     return Rotation2d.fromDegrees(m_gyro.getAngle(IMUAxis.kZ));
   }
 

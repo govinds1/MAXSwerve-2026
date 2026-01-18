@@ -3,12 +3,12 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.5732667617689007,
+        "x": 3.573,
         "y": 5.969329529243937
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.484144239477287,
+        "x": 3.4838774777083863,
         "y": 5.421840352062732
       },
       "isLocked": false,
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -30.735487701920142
+    "rotation": -36.60707481260748
   },
   "reversed": false,
   "folder": "LShootTwiceAndClimb",

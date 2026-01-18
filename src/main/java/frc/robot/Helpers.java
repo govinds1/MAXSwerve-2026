@@ -1,5 +1,7 @@
 package frc.robot;
 
+import edu.wpi.first.math.util.Units;
+
 public class Helpers {
   public static double modRotations(double input) {
     input %= 1.0;
@@ -15,6 +17,10 @@ public class Helpers {
       input += 360.0;
     }
     return input;
+  }
+
+  public static double modRadians(double input) {
+    return Units.degreesToRadians(modDegrees(Units.radiansToDegrees(input)));
   }
 
   public static int clamp(int val, int min, int max) {

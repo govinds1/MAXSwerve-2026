@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.5126382947434578,
-        "y": 4.735843418206101
+        "x": 1.5126400513480003,
+        "y": 4.735830318952786
       },
       "isLocked": false,
       "linkedName": "LShoot"
@@ -48,7 +48,7 @@
   "folder": "LShootTwiceAndClimb",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -30.735487701920142
+    "rotation": -36.60707481260748
   },
   "useDefaultConstraints": true
 }

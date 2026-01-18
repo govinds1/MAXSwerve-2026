@@ -7,7 +7,6 @@ package frc.robot.subsystems;
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
-import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkBase.ControlType;
@@ -24,7 +23,7 @@ public class Shooter extends SubsystemBase{
 
   private final SparkClosedLoopController m_closedLoopController;
 
-  private double m_desiredRPM = 0;
+  //private double m_desiredRPM = 0;
 
   /**
    * Constructs a MAXSwerveModule and configures the driving and turning motor,
@@ -52,7 +51,7 @@ public class Shooter extends SubsystemBase{
    * @param desiredRPM RPM to set as motor velocity setpoint.
    */
   public void run(double desiredRPM) {
-    m_desiredRPM = desiredRPM;
+    //m_desiredRPM = desiredRPM;
     m_closedLoopController.setSetpoint(desiredRPM, ControlType.kVelocity);
   }
 

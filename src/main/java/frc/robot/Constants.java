@@ -8,6 +8,8 @@ import java.util.List;
 
 import com.pathplanner.lib.config.RobotConfig;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -35,10 +37,10 @@ public final class Constants {
 
     // TODO: Modify chassis config lengths.
     // Chassis configuration
-    public static final double kTrackWidth = Units.inchesToMeters(26.5);
-    // Distance between centers of right and left wheels on robot
-    public static final double kWheelBase = Units.inchesToMeters(26.5);
-    // Distance between front and back wheels on robot
+    public static final double kTrackWidth = Units.inchesToMeters(26.5); // Distance between centers of right and left wheels on robot
+    public static final double kWheelBase = Units.inchesToMeters(26.5); // Distance between front and back wheels on robot
+    public static final double kBumperWidth = Units.inchesToMeters(3); // Width of a single bumper.
+    public static final double kFullWidth = Units.inchesToMeters(27) + (kBumperWidth * 2.0); // Width from bumper to bumper
     public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
         new Translation2d(kWheelBase / 2, kTrackWidth / 2),
         new Translation2d(kWheelBase / 2, -kTrackWidth / 2),
@@ -94,11 +96,11 @@ public final class Constants {
     public static final int kShooterMotorCanId = 21;
     public static final double kShooterMaxRPM = 600; // TODO:
     public static final double kPController = 5;
-    public static final double kBallRadiusMeters = 3 * 0.0254;
+    public static final double kBallRadiusMeters = Units.inchesToMeters(3);
     public static final double kLaunchAngleDegrees = 60; // TODO:
     public static final double kLaunchAngleRadians = Math.toRadians(kLaunchAngleDegrees);
-    public static final double kLaunchHeightMeters = 22 * 0.0254 + kBallRadiusMeters;
-    public static final double kHubHeightMeters = 72 * 0.0254;
+    public static final double kLaunchHeightMeters = Units.inchesToMeters(22) + kBallRadiusMeters;
+    public static final double kHubHeightMeters = Units.inchesToMeters(72);
     public static final double kShotVerticalDistance = kHubHeightMeters - kLaunchHeightMeters;
     public static final double kMaxAimTime = 5.0;
 
@@ -125,6 +127,7 @@ public final class Constants {
 
     public static final double kPXYController = 5;
     public static final double kPThetaController = 5;
+    public static final Pose2d kRobotControllerTolerance = new Pose2d(0.1, 0.1, new Rotation2d(Units.degreesToRadians(1)));
 
     // Constraint for the motion profiled robot angle controller
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
@@ -194,5 +197,41 @@ public final class Constants {
       new Tag(TagLocation.kTower, Alliance.Blue, 31),
       new Tag(TagLocation.kTower, Alliance.Blue, 32)
     );
+  }
+
+  public static final class FieldConstants {
+    // Locations of field landmarks relative to origin (BOTTOM LEFT CORNER OF FIELD)
+    // Origin is marked by PathPlanner as the bottom of the blue alliance wall.
+    // https://www.chiefdelphi.com/t/pathplanner-2024-beta/442364/370
+    // X is forward axis, positive means FURTHER from the BLUE driver station (all landmarks will be positive)
+    // Y is left axis, positive means towards the left side of the field when looking from our driver station. (all landmarks will be positive)
+    // All units are in meters. Conversion factor from inches to meters is 0.0254.
+
+    // Important Field locations
+    private static final Translation2d kCenterOfField = new Translation2d(Units.inchesToMeters(325.06), Units.inchesToMeters(158.32));
+    //private static final double kCenterXMeters = kCenterOfField.getX();
+    private static final double kCenterYMeters = kCenterOfField.getY();
+    public static final Translation2d kBlueHub = new Translation2d(Units.inchesToMeters(181.56), kCenterYMeters);
+    public static final Translation2d kBlueDepot = new Translation2d(Units.inchesToMeters(13.50), kCenterYMeters + (Units.inchesToMeters(75.93)));
+    public static final Translation2d kBlueOutpost = new Translation2d(0, Units.inchesToMeters(26.22));
+    public static final Translation2d kBlueTower = new Translation2d(Units.inchesToMeters(41.56), kCenterYMeters - (Units.inchesToMeters(11.38)));
+    public static final Translation2d kBlueLeftTrench = new Translation2d(kBlueHub.getX(), Units.inchesToMeters(316.62 - 25.62));
+    public static final Translation2d kBlueRightTrench = new Translation2d(kBlueHub.getX(), Units.inchesToMeters(25.62));
+    public static final Translation2d kRedHub = kBlueHub.rotateAround(kCenterOfField, new Rotation2d(Math.PI));
+    public static final Translation2d kRedDepot = kBlueDepot.rotateAround(kCenterOfField, new Rotation2d(Math.PI));
+    public static final Translation2d kRedOutpost = kBlueOutpost.rotateAround(kCenterOfField, new Rotation2d(Math.PI));
+    public static final Translation2d kRedTower = kBlueTower.rotateAround(kCenterOfField, new Rotation2d(Math.PI));
+    public static final Translation2d kRedLeftTrench = kBlueLeftTrench.rotateAround(kCenterOfField, new Rotation2d(Math.PI));
+    public static final Translation2d kRedRightTrench = kBlueRightTrench.rotateAround(kCenterOfField, new Rotation2d(Math.PI));
+
+    // Robot starting poses, marking the center of the robot.
+    private static final double kRobotPoseXAtBlueStartLine = Units.inchesToMeters(156.61 - (DriveConstants.kFullWidth / 2.0));
+    private static final Rotation2d kRobotRotAtStartLine = new Rotation2d(Math.PI);
+    public static final Pose2d kBlueLeftStart = new Pose2d(kRobotPoseXAtBlueStartLine, kCenterYMeters + Units.inchesToMeters(75.93), kRobotRotAtStartLine);
+    public static final Pose2d kBlueMiddleStart = new Pose2d(kRobotPoseXAtBlueStartLine, kCenterYMeters, kRobotRotAtStartLine);
+    public static final Pose2d kBlueRightStart = new Pose2d(kRobotPoseXAtBlueStartLine, kCenterYMeters - Units.inchesToMeters(96.5) - (DriveConstants.kFullWidth / 2.0), kRobotRotAtStartLine);
+    public static final Pose2d kRedLeftStart = kBlueLeftStart.rotateAround(kCenterOfField, new Rotation2d(Math.PI));
+    public static final Pose2d kRedMiddleStart = kBlueMiddleStart.rotateAround(kCenterOfField, new Rotation2d(Math.PI));
+    public static final Pose2d kRedRightStart = kBlueRightStart.rotateAround(kCenterOfField, new Rotation2d(Math.PI));
   }
 }
