@@ -103,13 +103,15 @@ public final class Constants {
     public static final double kHubHeightMeters = Units.inchesToMeters(72);
     public static final double kShotVerticalDistance = kHubHeightMeters - kLaunchHeightMeters;
     public static final double kMaxAimTime = 5.0;
+    public static final double kMaxShootTime = 5.0;
 
     // Calculations required for driving motor conversion factors and feed forward
     public static final double kMotorFreeSpeedRps = NeoMotorConstants.kFreeSpeedRpm / 60;
     public static final double kFlyWheelDiameterMeters = 0.0762; // TODO:
     public static final double kFlyWheelCircumferenceMeters = kFlyWheelDiameterMeters * Math.PI;
-    // TODO: Figure out shooting motor reduction
+    // TODO: Figure out shooting motor reduction.
     public static final double kMotorReduction = (45.0 * 22) / (10 * 15);
+    public static final double kMotorEncoderToRevolutions = kMotorReduction; // TODO: is this the correct factor to get to Revolutions from encoder rotations?
     public static final double kFlyWheelFreeSpeedRps = (kMotorFreeSpeedRps * kFlyWheelCircumferenceMeters)
         / kMotorReduction;
   }

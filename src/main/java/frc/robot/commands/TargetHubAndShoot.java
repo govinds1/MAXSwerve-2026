@@ -23,12 +23,13 @@ public class TargetHubAndShoot extends Command {
     private VisionTargeting m_vision;
     private Shooter m_shooter;
     
-    private double m_startTime;
+    private boolean m_isFinished;
+    private double m_shootStartTime;
 
-    private enum State {
-        kFindHub, kAimAtHub, kShoot
+    private enum TargetHubAndShootState {
+        kFindHub, kAimAtHub, kShootStart, kShootWait, kEnd
     } 
-    private State m_state;
+    private TargetHubAndShootState m_state;
     private ShootingInfo m_shot;
     private Alliance m_alliance;
 
@@ -43,8 +44,8 @@ public TargetHubAndShoot(DriveSubsystem subsystem, VisionTargeting vision, Shoot
 // Called when the command is initially scheduled.
 @Override
 public void initialize() {
-    m_startTime = Timer.getFPGATimestamp();
-    m_state = State.kFindHub;
+    m_isFinished = false;
+    m_state = TargetHubAndShootState.kFindHub;
     var a = DriverStation.getAlliance();
     if (a.isPresent()) {
         m_alliance = a.get();
@@ -67,7 +68,7 @@ public void execute() {
             if (m_shot != null)
             {
                 // A shot is available, so move to aiming state.
-                m_state = State.kAimAtHub;
+                m_state = TargetHubAndShootState.kAimAtHub;
                 return;
             }
             // No shot is available, so try to find Hub.
@@ -81,6 +82,20 @@ public void execute() {
                 double hyp = hubLocation.getDistance(currentPose.getTranslation());
                 double ydist = hubLocation.getY() - currentPose.getY();
                 Rotation2d theta = new Rotation2d(Math.asin(ydist/hyp));
+
+                // Use PID for closed loop control.
+                Rotation2d desiredHeading = new Rotation2d(Helpers.modRadians(theta.getRadians()));
+                ChassisSpeeds robotSpeeds = m_drive.m_robotDriveController.calculate(
+                    currentPose,
+                    new Pose2d(currentPose.getTranslation(), desiredHeading),
+                    0,
+                    desiredHeading
+                );
+                m_drive.driveRobotRelative(robotSpeeds);
+
+                
+                /*
+                // Open loop control.
                 Rotation2d currentHeading = m_drive.getHeadingRotation();
                 // Theta range will be -90 (directly left of hub) to 90 (directly right of hub).
                 // If currentHeading is within 180 degrees CCW of theta, turn right. Otherwise, turn left.
@@ -93,16 +108,7 @@ public void execute() {
                     // Turn left.
                     m_drive.drive(0, 0, 0.2, false);
                 }
-                
-                // TODO: Or use PID?
-                Rotation2d desiredHeading = new Rotation2d(Helpers.modRadians(theta.getRadians()));
-                ChassisSpeeds robotSpeeds = m_drive.m_robotDriveController.calculate(
-                    currentPose,
-                    new Pose2d(currentPose.getTranslation(), desiredHeading),
-                    0,
-                    desiredHeading
-                );
-                m_drive.driveRobotRelative(robotSpeeds);
+                */
             }
             break;
         case kAimAtHub:
@@ -110,17 +116,46 @@ public void execute() {
                 // Optionally, if variable RPM doesn't work, then we need a good distance range where we know X RPM will score.
                 // Once within that distance range, shoot at X RPM.
             // Get updated shot info.
-            m_shot = m_vision.getHubAimInfo();
             if (m_shot == null) {
-                // TODO: Maybe if this happens, we try again next iteration? Or we just skip this state and try to shoot.
-                m_state = State.kFindHub;
-                return;
+                // Try to aim again.
+                m_shot = m_vision.getHubAimInfo();
+                if (m_shot == null) {
+                    // TODO: Should we just abandon ship and move to shoot?
+                    m_state = TargetHubAndShootState.kFindHub;
+                    return;
+                }
             }
 
-            
+            Pose2d currentPose = m_drive.getPose();
+            ChassisSpeeds robotSpeeds = m_drive.m_robotDriveController.calculate(
+                currentPose,
+                m_shot.pose,
+                0,
+                m_shot.pose.getRotation()
+            );
+            m_drive.driveRobotRelative(robotSpeeds);
+
+            // After calling calculate
+            if (m_drive.m_robotDriveController.atReference()) {
+                m_state = TargetHubAndShootState.kShootStart;
+            }
             break;
-        case kShoot:
+        case kShootStart:
             // 3. Once aimed at Hub center, spin at RPM to shoot based off distance to center.
+            m_shooter.run(m_shot.shootingRPM);
+            m_shootStartTime = Timer.getFPGATimestamp();
+            m_state = TargetHubAndShootState.kShootWait;
+            break;
+        case kShootWait:
+            // 4. Wait for some time to finish shooting. 
+            // TODO: If we have a sensor in the hopper, then use it to know when we have no more balls
+            if (Timer.getFPGATimestamp() - m_shootStartTime > ShooterConstants.kMaxShootTime) {
+                m_state = TargetHubAndShootState.kEnd;
+            }
+            break;
+        case kEnd:
+            // 5. Done!
+            m_isFinished = true;
             break;
     }
 
@@ -137,7 +172,7 @@ public void end(boolean interrupted) {
 // Returns true when the command should end.
 @Override
 public boolean isFinished() {
-    return (Timer.getFPGATimestamp() - m_startTime) > ShooterConstants.kMaxAimTime;
+    return m_isFinished;
 }
 
 @Override

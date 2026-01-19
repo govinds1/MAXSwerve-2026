@@ -74,8 +74,8 @@ public final class Configs {
                         .idleMode(IdleMode.kCoast)
                         .smartCurrentLimit(50);
                 motorConfig.encoder
-                        .positionConversionFactor(flywheelFactor) // meters
-                        .velocityConversionFactor(flywheelFactor / 60.0); // meters per second
+                        .positionConversionFactor(ShooterConstants.kMotorReduction) // revolutions
+                        .velocityConversionFactor(ShooterConstants.kMotorReduction); // RPM
                 motorConfig.closedLoop
                         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
                         .pid(ShooterConstants.kPController, 0, 0)

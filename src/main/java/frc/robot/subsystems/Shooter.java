@@ -56,6 +56,16 @@ public class Shooter extends SubsystemBase{
   }
 
   /**
+   * Run flywheel on open loop control.
+   * 
+   * @param desiredRPM RPM to set as motor velocity setpoint.
+   */
+  public void runOpenLoop(double power) {
+    //m_desiredRPM = desiredRPM;
+    m_motor.set(power);
+  }
+
+  /**
    * Stop flywheel.
    */
   public void stop() {
