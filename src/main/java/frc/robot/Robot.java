@@ -42,6 +42,8 @@ public class Robot extends TimedRobot {
 
     // Set up the Field2d object for simulation
     SmartDashboard.putData("Field", m_field);
+
+    m_robotContainer.init();
   }
 
   /**
