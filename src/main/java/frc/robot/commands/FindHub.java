@@ -66,6 +66,8 @@ public void execute() {
         // Rotate a chosen direction.
         m_drive.drive(0, 0, -0.2, true);
     } else {
+        // TODO: Move to a closer spot while rotating, if necessary.
+
         Pose2d currentPose = m_drive.getPose();
         Translation2d hubLocation = (m_alliance == Alliance.Blue) ? FieldConstants.kBlueHub : FieldConstants.kRedHub;
         // TODO: If we're in the neutral zone, exit command? Can't shoot because of net.
