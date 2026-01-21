@@ -66,8 +66,8 @@ public final class Configs {
 
         static {
                 // Use module constants to calculate conversion factors and feed forward gain.
-                double flywheelFactor = ShooterConstants.kFlyWheelDiameterMeters * Math.PI
-                        / ShooterConstants.kMotorReduction;
+                /* double flywheelFactor = ShooterConstants.kFlyWheelDiameterMeters * Math.PI
+                        / ShooterConstants.kMotorReduction; */
                 double nominalVoltage = 12.0;
                 double shootingVelocityFeedForward = nominalVoltage / ShooterConstants.kFlyWheelFreeSpeedRps;
                 motorConfig

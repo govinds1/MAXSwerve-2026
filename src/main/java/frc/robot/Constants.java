@@ -102,7 +102,6 @@ public final class Constants {
     public static final double kLaunchHeightMeters = Units.inchesToMeters(22) + kBallRadiusMeters;
     public static final double kHubHeightMeters = Units.inchesToMeters(72);
     public static final double kShotVerticalDistance = kHubHeightMeters - kLaunchHeightMeters;
-    public static final double kMaxAimTime = 5.0;
     public static final double kMaxShootTime = 5.0;
 
     // Calculations required for driving motor conversion factors and feed forward
@@ -134,6 +133,9 @@ public final class Constants {
     // Constraint for the motion profiled robot angle controller
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
         kMaxAngularSpeedRadiansPerSecond, kMaxAngularAccelerationRadiansPerSecondSquared);
+    
+    public static final double kFindHubMaxTime = 4.0;
+    public static final double kAimAtHubMaxTime = 5.0;
   }
 
   public static final class NeoMotorConstants {
