@@ -85,14 +85,14 @@ public class DriveSubsystem extends SubsystemBase {
     // From PathPlanner Example:
     // Load RobotConfig.
     try{
-      DriveConstants.config = RobotConfig.fromGUISettings();
+      //DriveConstants.config = RobotConfig.fromGUISettings();
     } catch (Exception e) {
       // Handle exception as needed
-      e.printStackTrace();
+      //e.printStackTrace();
     }
 
     // Configure AutoBuilder last
-    AutoBuilder.configure(
+    /*AutoBuilder.configure(
             this::getPose, // Robot pose supplier
             this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
             this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
@@ -114,7 +114,7 @@ public class DriveSubsystem extends SubsystemBase {
               return false;
             },
             this // Reference to this subsystem to set requirements
-    );
+    );*/
 
     m_thetaController.enableContinuousInput(0, 2 * Math.PI);
 
@@ -142,7 +142,7 @@ public class DriveSubsystem extends SubsystemBase {
             m_rearRight.getPosition()
         });
     // Update Pose with Limelight if possible.
-    localizePose();
+    //localizePose();
   }
 
   /**

@@ -41,8 +41,8 @@ public class ShooterSubsystem extends SubsystemBase{
     // Apply the respective configurations to the SPARKS. Reset parameters before
     // applying the configuration to bring the SPARK to a known good state. Persist
     // the settings to the SPARK to avoid losing them on a power cycle.
-    m_motor.configure(Configs.Shooter.motorConfig, ResetMode.kResetSafeParameters,
-        PersistMode.kPersistParameters);
+    //m_motor.configure(Configs.Shooter.motorConfig, ResetMode.kResetSafeParameters,
+    //    PersistMode.kPersistParameters);
   }
 
   /**

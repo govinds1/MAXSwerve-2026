@@ -2,7 +2,7 @@ package frc.robot;
 
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.config.AbsoluteEncoderConfig;
-import com.revrobotics.spark.config.SparkFlexConfig;
+import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import frc.robot.Constants.ModuleConstants;
@@ -10,8 +10,8 @@ import frc.robot.Constants.ShooterConstants;
 
 public final class Configs {
     public static final class MAXSwerveModule {
-        public static final SparkFlexConfig drivingConfig = new SparkFlexConfig();
-        public static final SparkFlexConfig turningConfig = new SparkFlexConfig();
+        public static final SparkMaxConfig drivingConfig = new SparkMaxConfig();
+        public static final SparkMaxConfig turningConfig = new SparkMaxConfig();
 
         static {
             // Use module constants to calculate conversion factors and feed forward gain.
@@ -61,13 +61,14 @@ public final class Configs {
         }
     }
 
+    /*
     public static final class Shooter {
         public static final SparkFlexConfig motorConfig = new SparkFlexConfig();
 
         static {
                 // Use module constants to calculate conversion factors and feed forward gain.
-                /* double flywheelFactor = ShooterConstants.kFlyWheelDiameterMeters * Math.PI
-                        / ShooterConstants.kMotorReduction; */
+                // double flywheelFactor = ShooterConstants.kFlyWheelDiameterMeters * Math.PI
+                //        / ShooterConstants.kMotorReduction; 
                 double nominalVoltage = 12.0;
                 double shootingVelocityFeedForward = nominalVoltage / ShooterConstants.kFlyWheelFreeSpeedRps;
                 motorConfig
@@ -82,5 +83,5 @@ public final class Configs {
                         .outputRange(-1, 1)
                         .feedForward.kV(shootingVelocityFeedForward);
         }
-    }
+    }*/
 }
