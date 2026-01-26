@@ -26,7 +26,7 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   // For Simulation
-  private final Field m_field = Field.getInstance();
+  //private final Field m_field = Field.getInstance();
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -37,12 +37,12 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.
     m_robotContainer = new RobotContainer();
 
-    CameraServer.startAutomaticCapture();   //This image is upside down.  Using the Thread with rotated Image to adjust
+    //CameraServer.startAutomaticCapture();   //This image is upside down.  Using the Thread with rotated Image to adjust
 
     SmartDashboard.putStringArray("Auto List", Autos.autoNames);
 
     // Set up the Field2d object for simulation
-    SmartDashboard.putData("Field", m_field);
+    //SmartDashboard.putData("Field", m_field);
 
     m_robotContainer.init();
   }
@@ -66,7 +66,7 @@ public class Robot extends TimedRobot {
     }
 
     // Update Robot Simulation
-    updateSim();
+    //updateSim();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -76,13 +76,15 @@ public class Robot extends TimedRobot {
 
     // When disabled, seed the Limelight's internal IMU with the external gyro input. 
     // Setting IMU mode of 1 enables seeding.
-    LimelightHelpers.SetIMUMode("limelight", 1); // Seed internal IMU
+    // TODO:
+    //LimelightHelpers.SetIMUMode("limelight", 1); // Seed internal IMU
   }
 
   @Override
   public void disabledPeriodic() {
+    // TODO:
     // Seed Limelight with external gyro's heading.
-    LimelightHelpers.SetRobotOrientation("limelight", m_robotContainer.getDriveSubsystem().getHeadingDegrees(), 0, 0, 0, 0, 0);
+    //LimelightHelpers.SetRobotOrientation("limelight", m_robotContainer.getDriveSubsystem().getHeadingDegrees(), 0, 0, 0, 0, 0);
   }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
@@ -96,7 +98,8 @@ public class Robot extends TimedRobot {
       CommandScheduler.getInstance().schedule(m_autonomousCommand);
     }
 
-    LimelightHelpers.SetIMUMode("limelight", 4); // Use internal IMU + external IMU
+    // TODO:
+    //LimelightHelpers.SetIMUMode("limelight", 4); // Use internal IMU + external IMU
   }
 
   /** This function is called periodically during autonomous. */
@@ -116,8 +119,8 @@ public class Robot extends TimedRobot {
     // TODO:
     // If we climbed in auto, drop the climber.
 
-    // Ensure Limelight IMU is 
-    LimelightHelpers.SetIMUMode("limelight", 4); // Use internal IMU + external IMU
+    // TODO:
+    //LimelightHelpers.SetIMUMode("limelight", 4); // Use internal IMU + external IMU
   }
 
   /** This function is called periodically during operator control. */
@@ -127,21 +130,25 @@ public class Robot extends TimedRobot {
 
 
 
+    /*
     TeleopTargetAndShoot command = new TeleopTargetAndShoot(
       m_robotContainer.getDriveSubsystem(),
-      m_robotContainer.getVisionSubsystem(),
+      null, // m_robotContainer.getVisionSubsystem(), // TODO: Update when enabling vision.
       null, // m_robotContainer.getShooterSubsystem(), // TODO: Update when enabling shooter.
       m_robotContainer.getDriverController()
     );
+    */
     // TODO: Get driver button to see if we want to target hub.
     boolean driveAndTarget = false;
     if (driveAndTarget) {
       // TODO: Run DriveTargetAndShoot command
-      CommandScheduler.getInstance().schedule(command);
+      //CommandScheduler.getInstance().schedule(command);
     } else {
+      /*
       if (command.isScheduled()) {
         CommandScheduler.getInstance().cancel(command);
       }
+      */
       m_robotContainer.getDriveSubsystem().driveWithJoystick(m_robotContainer.getDriverController(), new ChassisSpeeds());
     }
   }
@@ -157,8 +164,10 @@ public class Robot extends TimedRobot {
   public void testPeriodic() {
   }
 
+  /* TODO:\
   private void updateSim() {
     // Update the odometry in the sim.
     m_field.setRobotPose(m_robotContainer.getDriveSubsystem().getPose());
   }
+  */
 }

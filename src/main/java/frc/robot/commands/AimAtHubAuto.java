@@ -10,7 +10,7 @@ import frc.robot.subsystems.VisionTargeting;
 import frc.robot.subsystems.VisionTargeting.ShootingInfo;
 
 // Simply utility command for Autos to drive robot in a straight line without worrying about trajectory control
-public class AimAtHub extends Command {
+public class AimAtHubAuto extends Command {
 
     private DriveSubsystem m_drive;
     private VisionTargeting m_vision;
@@ -22,7 +22,7 @@ public class AimAtHub extends Command {
 
 
 // This command assumes full control of the chassis. It will get the robot into a proper pose to shoot and end ASAP.
-public AimAtHub(DriveSubsystem drive, VisionTargeting vision) {
+public AimAtHubAuto(DriveSubsystem drive, VisionTargeting vision) {
     m_drive = drive;
     m_vision = vision;
     addRequirements(m_drive, m_vision);
@@ -41,6 +41,9 @@ public void initialize() {
 public void execute() {
     // Get to a close enough distance to score (minimal move time) while rotating to aim at the Hub center.
     
+    // TODO: Replace getHubAimInfo usage with getSpeedsToTag
+    ChassisSpeeds aimControl = m_vision.getSpeedsToTag(null);
+
     // Get updated shot info.
     if (m_shot == null) {
         m_shot = m_vision.getHubAimInfo(new ChassisSpeeds());

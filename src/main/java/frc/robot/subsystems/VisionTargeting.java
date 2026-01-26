@@ -103,7 +103,7 @@ public class VisionTargeting extends SubsystemBase {
     {
         if (!canSee(location)) {
             // TODO: Set some indicator in dashboard that we can't see the tag.
-            return new ChassisSpeeds();
+            return null;
         }
         // TODO: Set the proper pipeline to target this location
         
@@ -111,12 +111,12 @@ public class VisionTargeting extends SubsystemBase {
         var tagsInView = LimelightHelpers.getRawFiducials("");
         if (tagsInView.length == 0) {
             // TODO: Set some indicator in dashboard that we can't see the tag.
-            return new ChassisSpeeds();
+            return null;
         } else if (tagsInView.length >= 2) {
             // TODO: Set some indicator in dashboard that we see too many tags.
             // This means the pipeline is configured incorrectly!
             DriverStation.reportWarning("Pipeline configured incorrectly! Ensure IDs are filtered and grouped.", null);
-            return new ChassisSpeeds();
+            return null;
         }
         RawFiducial tag = tagsInView[0];
 

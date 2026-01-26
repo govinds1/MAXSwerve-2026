@@ -24,8 +24,8 @@ public class TeleopTargetAndShoot extends ParallelCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     AimAtHubWhileDriving aimCommand = new AimAtHubWhileDriving(drive, vision, controller);
     Command shootWhenAtHub = new SequentialCommandGroup(
+      // TODO: Add command that runs shooter while we're aimed. Replace idle command.
       Commands.idle().onlyWhile(aimCommand::isAimed)
-      // TODO: Add command that runs shooter till empty.
     );
     addCommands(
       new AimAtHubWhileDriving(drive, vision, controller),

@@ -115,6 +115,10 @@ public final class Constants {
         / kMotorReduction;
   }
 
+  public static final class IntakeCOnstants {
+    public static final int kIntakeMotorCanId = 31;
+  }
+
   public static final class OperatorConstants {
     public static final int kDriverControllerPort = 0;
     public static final double kDriveDeadband = 0.05;

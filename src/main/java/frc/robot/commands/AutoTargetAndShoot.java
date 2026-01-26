@@ -19,7 +19,7 @@ public class AutoTargetAndShoot extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new FindHub(drive, vision),
-      new AimAtHub(drive, vision),
+      new AimAtHubAuto(drive, vision),
       new ShootAtHub(shooter, vision)
     );
   }

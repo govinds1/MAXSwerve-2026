@@ -25,7 +25,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 public class RobotContainer {
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
-  private final VisionTargeting m_vision = new VisionTargeting();
+  //private final VisionTargeting m_vision = new VisionTargeting();
   //private final Shooter m_shooter = new Shooter(); // TODO: Uncomment when shooter is ready.
 
   // The driver's controller
@@ -76,9 +76,9 @@ public class RobotContainer {
     return m_robotDrive;
   }
 
-  VisionTargeting getVisionSubsystem() {
+  /*VisionTargeting getVisionSubsystem() {
     return m_vision;
-  }
+  }*/
 
   /* // TODO: Uncomment when shooter is ready.
   Shooter getShooterSubsystem() {
@@ -96,7 +96,7 @@ public class RobotContainer {
    */
   public void init() {
     // Initialize Limelight.
-    m_vision.init();
+    //m_vision.init();
   }
 
   /**
