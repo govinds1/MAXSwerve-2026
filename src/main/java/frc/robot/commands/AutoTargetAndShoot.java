@@ -6,15 +6,15 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.VisionTargeting;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class TargetHubAndShoot extends SequentialCommandGroup {
+public class AutoTargetAndShoot extends SequentialCommandGroup {
   /** Creates a new TargetHubAndShoot. */
-  public TargetHubAndShoot(DriveSubsystem drive, VisionTargeting vision, Shooter shooter) {
+  public AutoTargetAndShoot(DriveSubsystem drive, VisionTargeting vision, ShooterSubsystem shooter) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(

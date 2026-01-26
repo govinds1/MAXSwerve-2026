@@ -5,12 +5,13 @@
 package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.Autos;
+import frc.robot.commands.TeleopTargetAndShoot;
 import frc.robot.simulation.Field;
 
 /**
@@ -72,10 +73,17 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     // TODO: Stop other subsystems?
+
+    // When disabled, seed the Limelight's internal IMU with the external gyro input. 
+    // Setting IMU mode of 1 enables seeding.
+    LimelightHelpers.SetIMUMode("limelight", 1); // Seed internal IMU
   }
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    // Seed Limelight with external gyro's heading.
+    LimelightHelpers.SetRobotOrientation("limelight", m_robotContainer.getDriveSubsystem().getHeadingDegrees(), 0, 0, 0, 0, 0);
+  }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
@@ -87,6 +95,8 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       CommandScheduler.getInstance().schedule(m_autonomousCommand);
     }
+
+    LimelightHelpers.SetIMUMode("limelight", 4); // Use internal IMU + external IMU
   }
 
   /** This function is called periodically during autonomous. */
@@ -105,6 +115,9 @@ public class Robot extends TimedRobot {
 
     // TODO:
     // If we climbed in auto, drop the climber.
+
+    // Ensure Limelight IMU is 
+    LimelightHelpers.SetIMUMode("limelight", 4); // Use internal IMU + external IMU
   }
 
   /** This function is called periodically during operator control. */
@@ -112,20 +125,25 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     // TODO: Add toggle/hold button for robot relative driving?
 
-    // Get driver controller inputs.
-    double forward = -m_robotContainer.getDriverController().getLeftY(); // Pushing forward on stick Y axis is negative, so invert to get forward speed.
-    double left = -m_robotContainer.getDriverController().getLeftX();    // Pushing right on stick X axis is positive, so invert to get left speed.
-    double rotCCW = -m_robotContainer.getDriverController().getRightX();  // Pushing right on stick X axis is positive, so invert to get CCW speed.
-    // Apply deadbands.
-    forward = MathUtil.applyDeadband(forward, 0.05);
-    left = MathUtil.applyDeadband(left, 0.05);
-    rotCCW = MathUtil.applyDeadband(rotCCW, 0.05);
-    // Square inputs.
-    forward = Helpers.signedSquare(forward);
-    left = Helpers.signedSquare(left);
-    rotCCW = Helpers.signedSquare(rotCCW);
-    // Drive robot manually.
-    m_robotContainer.getDriveSubsystem().drive(forward, left, rotCCW, true);
+
+
+    TeleopTargetAndShoot command = new TeleopTargetAndShoot(
+      m_robotContainer.getDriveSubsystem(),
+      m_robotContainer.getVisionSubsystem(),
+      null, // m_robotContainer.getShooterSubsystem(), // TODO: Update when enabling shooter.
+      m_robotContainer.getDriverController()
+    );
+    // TODO: Get driver button to see if we want to target hub.
+    boolean driveAndTarget = false;
+    if (driveAndTarget) {
+      // TODO: Run DriveTargetAndShoot command
+      CommandScheduler.getInstance().schedule(command);
+    } else {
+      if (command.isScheduled()) {
+        CommandScheduler.getInstance().cancel(command);
+      }
+      m_robotContainer.getDriveSubsystem().driveWithJoystick(m_robotContainer.getDriverController(), new ChassisSpeeds());
+    }
   }
 
   @Override

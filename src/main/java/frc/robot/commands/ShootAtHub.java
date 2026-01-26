@@ -1,15 +1,16 @@
 package frc.robot.commands;
 
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.VisionTargeting;
 import frc.robot.subsystems.VisionTargeting.ShootingInfo;
 
 // Simply utility command for Autos to drive robot in a straight line without worrying about trajectory control
 public class ShootAtHub extends Command {
-    private Shooter m_shooter;
+    private ShooterSubsystem m_shooter;
     private VisionTargeting m_vision;
 
     private ShootingInfo m_shot;
@@ -18,7 +19,7 @@ public class ShootAtHub extends Command {
     private boolean m_isFinished;
 
 
-public ShootAtHub(Shooter shooter, VisionTargeting vision) {
+public ShootAtHub(ShooterSubsystem shooter, VisionTargeting vision) {
     m_shooter = shooter;
     m_vision = vision;
     addRequirements(m_shooter, m_vision);
@@ -37,7 +38,7 @@ public void initialize() {
 public void execute() {
     // Get updated shot info.
     if (m_shot == null) {
-        m_shot = m_vision.getHubAimInfo();
+        m_shot = m_vision.getHubAimInfo(new ChassisSpeeds());
         if (m_shot == null) {
             // Abandon ship! No shot exists.
             m_isFinished = true;

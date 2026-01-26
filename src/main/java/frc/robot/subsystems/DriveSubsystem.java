@@ -9,6 +9,7 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
@@ -23,8 +24,11 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants.DriveAutoConstants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Helpers;
+import frc.robot.controllers.DriverController;
 import frc.robot.LimelightHelpers;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -128,7 +132,8 @@ public class DriveSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // Update the odometry in the periodic block
-    m_poseEstimator.update(
+    m_poseEstimator.updateWithTime(
+        Timer.getFPGATimestamp(),
         Rotation2d.fromDegrees(m_gyro.getAngle(IMUAxis.kZ)),
         new SwerveModulePosition[] {
             m_frontLeft.getPosition(),
@@ -136,6 +141,8 @@ public class DriveSubsystem extends SubsystemBase {
             m_rearLeft.getPosition(),
             m_rearRight.getPosition()
         });
+    // Update Pose with Limelight if possible.
+    localizePose();
   }
 
   /**
@@ -165,7 +172,7 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   /**
-   * Localize pose with AprilTags and Limelight's MegaTag2 localizer.
+   * Localize pose with AprilTags and Limelight's MegaTag2 localizer. Call this function whenver an AprilTag is found.
    *
    * @returns true if we updated pose successfully.
    */
@@ -196,6 +203,42 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   /**
+   * Method to drive the robot given joystick.
+   *
+   * @param controller    Controller object to grab teleop driver's desired inputs.
+   * @param fieldRelative Whether the provided x and y speeds are relative to the
+   *                      field.
+   */
+  public void driveWithJoystick(DriverController controller) {
+    driveWithJoystick(controller, new ChassisSpeeds());
+  }
+
+  /**
+   * Method to drive the robot given joystick.
+   *
+   * @param controller    Controller object to grab teleop driver's desired inputs.
+   * @param fieldRelative Whether the provided x and y speeds are relative to the
+   *                      field.
+   * @param offset        ChassisSpeeds offset velocity to apply.
+   */
+  public void driveWithJoystick(DriverController controller, ChassisSpeeds offset) {
+    // Get driver controller inputs.
+    double forward = -controller.getLeftY(); // Pushing forward on stick Y axis is negative, so invert to get forward speed.
+    double left = -controller.getLeftX();    // Pushing right on stick X axis is positive, so invert to get left speed.
+    double rotCCW = -controller.getRightX();  // Pushing right on stick X axis is positive, so invert to get CCW speed.
+    // Apply deadbands.
+    forward = MathUtil.applyDeadband(forward, 0.05);
+    left = MathUtil.applyDeadband(left, 0.05);
+    rotCCW = MathUtil.applyDeadband(rotCCW, 0.05);
+    // Square inputs.
+    forward = Helpers.signedSquare(forward);
+    left = Helpers.signedSquare(left);
+    rotCCW = Helpers.signedSquare(rotCCW);
+    // Drive robot manually.
+    drive(forward, left, rotCCW, true, offset);
+  }
+
+  /**
    * Method to drive the robot using joystick info.
    *
    * @param xSpeed        Speed of the robot in the x direction (forward +).
@@ -205,6 +248,39 @@ public class DriveSubsystem extends SubsystemBase {
    *                      field.
    */
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
+    drive(xSpeed, ySpeed, rot, fieldRelative, new ChassisSpeeds());
+  }
+
+  /**
+   * Method to drive the robot using joystick info.
+   *
+   * @param xSpeed        Speed of the robot in the x direction (forward +).
+   * @param ySpeed        Speed of the robot in the y direction (left +).
+   * @param rot           Angular rate of the robot (ccw +).
+   * @param fieldRelative Whether the provided x and y speeds are relative to the
+   *                      field.
+   * @param offset        ChassisSpeeds offset velocity to apply.
+   */
+  public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative, ChassisSpeeds offset) {
+    // Convert the commanded speeds into the correct units for the drivetrain
+    double xSpeedDelivered = (xSpeed * DriveConstants.kMaxSpeedMetersPerSecond) + offset.vxMetersPerSecond;
+    double ySpeedDelivered = (ySpeed * DriveConstants.kMaxSpeedMetersPerSecond) + offset.vyMetersPerSecond;
+    double rotDelivered = (rot * DriveConstants.kMaxAngularSpeedRadiansPerSecond) + offset.omegaRadiansPerSecond;
+
+    // Calculate robot relative ChassisSpeeds
+    ChassisSpeeds newSpeeds;
+    if (fieldRelative) {
+      newSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered, getHeadingRotation());
+    } else {
+      newSpeeds = new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered);
+    }
+
+    // Drive robot to new ChassisSpeeds
+    driveRobotRelative(newSpeeds);
+  }
+
+  //TODO: 
+  public ChassisSpeeds getChassisSpeedsForDriveInput(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
     // Convert the commanded speeds into the correct units for the drivetrain
     double xSpeedDelivered = xSpeed * DriveConstants.kMaxSpeedMetersPerSecond;
     double ySpeedDelivered = ySpeed * DriveConstants.kMaxSpeedMetersPerSecond;
@@ -217,9 +293,7 @@ public class DriveSubsystem extends SubsystemBase {
     } else {
       newSpeeds = new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered);
     }
-
-    // Drive robot to new ChassisSpeeds
-    driveRobotRelative(newSpeeds);
+    return newSpeeds;
   }
 
   /**

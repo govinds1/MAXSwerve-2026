@@ -21,6 +21,7 @@ public class AimAtHub extends Command {
     private boolean m_isFinished;
 
 
+// This command assumes full control of the chassis. It will get the robot into a proper pose to shoot and end ASAP.
 public AimAtHub(DriveSubsystem drive, VisionTargeting vision) {
     m_drive = drive;
     m_vision = vision;
@@ -39,12 +40,10 @@ public void initialize() {
 @Override
 public void execute() {
     // Get to a close enough distance to score (minimal move time) while rotating to aim at the Hub center.
-        // Optionally, if variable RPM doesn't work, then we need a good distance range where we know X RPM will score.
-        // Once within that distance range, shoot at X RPM.
     
     // Get updated shot info.
     if (m_shot == null) {
-        m_shot = m_vision.getHubAimInfo();
+        m_shot = m_vision.getHubAimInfo(new ChassisSpeeds());
         if (m_shot == null) {
             // Abandon ship! No shot exists.
             m_isFinished = true;

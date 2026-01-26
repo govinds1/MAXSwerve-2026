@@ -11,10 +11,14 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelpers;
 import frc.robot.Constants.AprilTagConstants;
+import frc.robot.Constants.DriveAutoConstants;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.AprilTagConstants.Tag;
 import frc.robot.Constants.AprilTagConstants.TagLocation;
+import frc.robot.LimelightHelpers.RawFiducial;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 
 public class VisionTargeting extends SubsystemBase {
@@ -95,7 +99,42 @@ public class VisionTargeting extends SubsystemBase {
         return false;
     }
 
-    public ShootingInfo getHubAimInfo()
+    public ChassisSpeeds getSpeedsToTag(TagLocation location)
+    {
+        if (!canSee(location)) {
+            // TODO: Set some indicator in dashboard that we can't see the tag.
+            return new ChassisSpeeds();
+        }
+        // TODO: Set the proper pipeline to target this location
+        
+        // Get fiducial tag in view.
+        var tagsInView = LimelightHelpers.getRawFiducials("");
+        if (tagsInView.length == 0) {
+            // TODO: Set some indicator in dashboard that we can't see the tag.
+            return new ChassisSpeeds();
+        } else if (tagsInView.length >= 2) {
+            // TODO: Set some indicator in dashboard that we see too many tags.
+            // This means the pipeline is configured incorrectly!
+            DriverStation.reportWarning("Pipeline configured incorrectly! Ensure IDs are filtered and grouped.", null);
+            return new ChassisSpeeds();
+        }
+        RawFiducial tag = tagsInView[0];
+
+        // Get proportional controls to tag.
+        double targetingForwardVelocity = tag.tync * DriveAutoConstants.kPXYController;
+        double targetingAngularVelocity = tag.txnc * DriveAutoConstants.kPThetaController;
+        // Convert to drivetrain speeds.
+        targetingForwardVelocity *= DriveConstants.kMaxSpeedMetersPerSecond;
+        targetingAngularVelocity *= DriveConstants.kMaxAngularSpeedRadiansPerSecond;
+        // Invert since tx is positive when the target is to the right of the crosshair (meaning you would have to turn right, negative drive value).
+        targetingAngularVelocity *= -1.0;
+        // Invert since ty is positive when the target is above the crosshair (meaning you would have to drive backwards, negative drive value).
+        targetingForwardVelocity *= -1.0;
+        
+        return new ChassisSpeeds(0, targetingForwardVelocity, targetingAngularVelocity);
+    }
+
+    public ShootingInfo getHubAimInfo(ChassisSpeeds currentRobotSpeeds)
     {
         // TODO:
         // Get 1 or 2 Hub Tags that are visible, if applicable. With visible tags, calculate pose of CENTER of Hub.
@@ -111,7 +150,9 @@ public class VisionTargeting extends SubsystemBase {
 
         // TODO:
         // Get tags that we can see and calculate the pose of the CENTER of the hub.
-        // Localize our pose too!
+
+        // TODO:
+        // Use currentRobotSpeeds in calculation.
 
         ShootingInfo shot = new ShootingInfo();
         shot.pose = Pose2d.kZero;

@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 
 public class Helpers {
@@ -30,5 +31,10 @@ public class Helpers {
   public static double signedSquare(double input) {
     // Multiply input by absolute value of itself.
     return input * Math.abs(input);
+  }
+  
+  public static double chassisSpeedsDot(ChassisSpeeds speeds) {
+    // Get length of 3d vector.
+    return Math.sqrt(Math.pow(speeds.vxMetersPerSecond, 2) + Math.pow(speeds.vyMetersPerSecond, 2) + Math.pow(speeds.omegaRadiansPerSecond, 2));
   }
 }

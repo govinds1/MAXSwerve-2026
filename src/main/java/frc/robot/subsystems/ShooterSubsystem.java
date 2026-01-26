@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Configs;
 import frc.robot.Constants.ShooterConstants;
 
-public class Shooter extends SubsystemBase{
+public class ShooterSubsystem extends SubsystemBase{
   private final SparkFlex m_motor;
 
   private final RelativeEncoder m_encoder;
@@ -31,7 +31,7 @@ public class Shooter extends SubsystemBase{
    * MAXSwerve Module built with NEOs, SPARKS MAX, and a Through Bore
    * Encoder.
    */
-  public Shooter() {
+  public ShooterSubsystem() {
     m_motor = new SparkFlex(ShooterConstants.kShooterMotorCanId, MotorType.kBrushless);
 
     m_encoder = m_motor.getEncoder();
