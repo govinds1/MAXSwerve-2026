@@ -73,6 +73,8 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     // TODO: Stop other subsystems?
+    m_robotContainer.getDriveSubsystem().stop();
+    m_robotContainer.getIntakeSubsystem().stop();
 
     // When disabled, seed the Limelight's internal IMU with the external gyro input. 
     // Setting IMU mode of 1 enables seeding.
@@ -127,9 +129,6 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     // TODO: Add toggle/hold button for robot relative driving?
-
-
-
     /*
     TeleopTargetAndShoot command = new TeleopTargetAndShoot(
       m_robotContainer.getDriveSubsystem(),
@@ -150,6 +149,13 @@ public class Robot extends TimedRobot {
       }
       */
       m_robotContainer.getDriveSubsystem().driveWithJoystick(m_robotContainer.getDriverController(), new ChassisSpeeds());
+    }
+
+    // TODO: Use OperatorController for intake
+    if (m_robotContainer.getOperatorController().getWantsRunIntakeRoller()) {
+      m_robotContainer.getIntakeSubsystem().runRoller();
+    } else {
+      m_robotContainer.getIntakeSubsystem().stop();
     }
   }
 

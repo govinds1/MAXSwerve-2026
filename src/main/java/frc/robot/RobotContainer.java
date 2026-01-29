@@ -11,7 +11,9 @@ package frc.robot;
 //import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.controllers.DriverController;
+import frc.robot.controllers.OperatorController;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 //import frc.robot.subsystems.VisionTargeting;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -25,11 +27,14 @@ import edu.wpi.first.wpilibj2.command.Commands;
 public class RobotContainer {
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  private final IntakeSubsystem m_intake = new IntakeSubsystem();
   //private final VisionTargeting m_vision = new VisionTargeting();
   //private final Shooter m_shooter = new Shooter(); // TODO: Uncomment when shooter is ready.
 
   // The driver's controller
   private final DriverController m_driverController = new DriverController(OperatorConstants.kDriverControllerPort);
+  // The operator's controller
+  private final OperatorController m_operatorController = new OperatorController(OperatorConstants.kOperatorControllerPort);
 
   //private final SendableChooser<Command> autoChooser;
 
@@ -76,6 +81,10 @@ public class RobotContainer {
     return m_robotDrive;
   }
 
+  IntakeSubsystem getIntakeSubsystem() {
+    return m_intake;
+  }
+
   /*VisionTargeting getVisionSubsystem() {
     return m_vision;
   }*/
@@ -88,6 +97,10 @@ public class RobotContainer {
 
   DriverController getDriverController() {
     return m_driverController;
+  }
+
+  OperatorController getOperatorController() {
+    return m_operatorController;
   }
 
   /**

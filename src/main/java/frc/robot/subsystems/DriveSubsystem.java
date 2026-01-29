@@ -322,6 +322,10 @@ public class DriveSubsystem extends SubsystemBase {
     m_rearRight.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)));
   }
 
+  public void stop() {
+    drive(0, 0, 0, false);
+  }
+
   /**
    * Sets the swerve ModuleStates.
    *

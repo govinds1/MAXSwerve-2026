@@ -1,0 +1,40 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
+package frc.robot.subsystems;
+
+import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.IntakeConstants;
+
+public class IntakeSubsystem extends SubsystemBase {
+  SparkFlex m_rollerMotor = new SparkFlex(IntakeConstants.kIntakeRollerMotorCanId, MotorType.kBrushless);
+  // SparkFlex m_extenderMotor = new SparkFlex(IntakeConstants.kIntakeExtenderMotorCanId, MotorType.kBrushless); TODO: Comment out if extender is enabled.
+
+  /** Creates a new IntakeSubsystem. */
+  public IntakeSubsystem() {}
+
+  @Override
+  public void periodic() {
+    // This method will be called once per scheduler run
+  }
+
+  public void runRoller() {
+    m_rollerMotor.set(IntakeConstants.kIntakeRollerSpeed);
+  }
+
+  public void stop() {
+    m_rollerMotor.stopMotor();
+  }
+
+  public void extend() {
+    // TODO:
+  }
+
+  public void retract() {
+    // TODO:
+  }
+}

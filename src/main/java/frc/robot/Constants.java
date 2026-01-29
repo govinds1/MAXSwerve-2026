@@ -37,8 +37,8 @@ public final class Constants {
 
     // TODO: Modify chassis config lengths.
     // Chassis configuration
-    public static final double kTrackWidth = Units.inchesToMeters(26.5); // Distance between centers of right and left wheels on robot
-    public static final double kWheelBase = Units.inchesToMeters(26.5); // Distance between front and back wheels on robot
+    public static final double kTrackWidth = Units.inchesToMeters(23.5); // Distance between centers of right and left wheels on robot
+    public static final double kWheelBase = Units.inchesToMeters(23.5); // Distance between front and back wheels on robot
     public static final double kBumperWidth = Units.inchesToMeters(3); // Width of a single bumper.
     public static final double kFullWidth = Units.inchesToMeters(27) + (kBumperWidth * 2.0); // Width from bumper to bumper
     public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
@@ -115,12 +115,21 @@ public final class Constants {
         / kMotorReduction;
   }
 
-  public static final class IntakeCOnstants {
-    public static final int kIntakeMotorCanId = 31;
+  public static final class IntakeConstants {
+    public static final int kIntakeRollerMotorCanId = 31;
+    public static final int kIntakeExtenderMotorCanId = 32;
+    public static final double kIntakeRollerSpeed = 0.5;
+    public static final double kIntakeExtenderMotorSpeed = 0.1;
+
+    // TODO: Modify these buttons.
+    public static final int kRollerRunButton = 1; // A button
+    public static final int kExtenderOutButton = 2; // B button
+    public static final int kExtenderInButton = 3; // X button
   }
 
   public static final class OperatorConstants {
     public static final int kDriverControllerPort = 0;
+    public static final int kOperatorControllerPort = 1;
     public static final double kDriveDeadband = 0.05;
   }
 
