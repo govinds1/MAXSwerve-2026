@@ -33,7 +33,7 @@ public class Helpers {
     return input * Math.abs(input);
   }
   
-  public static double chassisSpeedsDot(ChassisSpeeds speeds) {
+  public static double chassisSpeedsMagnitude(ChassisSpeeds speeds) {
     // Get length of 3d vector.
     return Math.sqrt(Math.pow(speeds.vxMetersPerSecond, 2) + Math.pow(speeds.vyMetersPerSecond, 2) + Math.pow(speeds.omegaRadiansPerSecond, 2));
   }

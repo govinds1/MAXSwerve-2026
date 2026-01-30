@@ -163,6 +163,7 @@ public final class Constants {
     public static final double kRollDegrees = 0.0;
     public static final double kPitchDegrees = 30.0;
     public static final double kYawDegrees = 0.0;
+    public static final double kCameraLatencySeconds = 0.08; // Should adjust this empirically.
   }
 
   public static final class AprilTagConstants {

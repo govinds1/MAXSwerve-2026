@@ -48,7 +48,7 @@ public class AimAtHubWhileDriving extends Command {
     // Take driver controller input (for dx and dy only) and use simple PID to turn to face the Hub.
     
     // Get proportional control angular speed to the tag.
-    // TODO: Figure out what TagLocation to pass in? Is there a way we can see what Tag we can currently see?
+    // TODO: Figure out what TagLocation to pass in? Is there a way we can tell what Tag we can currently see? Or FindHub until we can see one.
     m_aimControlOffset = m_vision.getSpeedsToTag(TagLocation.kHubClose);
 
     // Drive with offset.
@@ -56,7 +56,7 @@ public class AimAtHubWhileDriving extends Command {
   }
 
   public boolean isAimed() {
-    return Helpers.chassisSpeedsDot(m_aimControlOffset) < 0.1;
+    return Helpers.chassisSpeedsMagnitude(m_aimControlOffset) < 0.1;
   }
 
   // Called once the command ends or is interrupted.

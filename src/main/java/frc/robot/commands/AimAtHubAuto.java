@@ -46,7 +46,7 @@ public void execute() {
 
     // Get updated shot info.
     if (m_shot == null) {
-        m_shot = m_vision.getHubAimInfo(new ChassisSpeeds());
+        m_shot = m_vision.getHubAimInfo(m_drive.getPose(), m_drive.getRobotRelativeSpeeds());
         if (m_shot == null) {
             // Abandon ship! No shot exists.
             m_isFinished = true;

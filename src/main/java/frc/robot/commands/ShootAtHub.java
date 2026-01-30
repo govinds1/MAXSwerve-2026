@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -38,7 +39,8 @@ public void initialize() {
 public void execute() {
     // Get updated shot info.
     if (m_shot == null) {
-        m_shot = m_vision.getHubAimInfo(new ChassisSpeeds());
+        // TODO: We need to know current pose/speeds to get this. Might have to combine with the other command.
+        m_shot = m_vision.getHubAimInfo(new Pose2d(), new ChassisSpeeds());
         if (m_shot == null) {
             // Abandon ship! No shot exists.
             m_isFinished = true;

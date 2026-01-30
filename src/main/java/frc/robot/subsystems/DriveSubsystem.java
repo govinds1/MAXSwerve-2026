@@ -142,6 +142,7 @@ public class DriveSubsystem extends SubsystemBase {
             m_rearRight.getPosition()
         });
     // Update Pose with Limelight if possible.
+    // TODO: Remove comment.
     //localizePose();
   }
 

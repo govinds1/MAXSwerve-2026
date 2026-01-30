@@ -13,11 +13,14 @@ import frc.robot.LimelightHelpers;
 import frc.robot.Constants.AprilTagConstants;
 import frc.robot.Constants.DriveAutoConstants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.AprilTagConstants.Tag;
 import frc.robot.Constants.AprilTagConstants.TagLocation;
 import frc.robot.LimelightHelpers.RawFiducial;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 
@@ -99,14 +102,7 @@ public class VisionTargeting extends SubsystemBase {
         return false;
     }
 
-    public ChassisSpeeds getSpeedsToTag(TagLocation location)
-    {
-        if (!canSee(location)) {
-            // TODO: Set some indicator in dashboard that we can't see the tag.
-            return null;
-        }
-        // TODO: Set the proper pipeline to target this location
-        
+    public RawFiducial getTagInView() {
         // Get fiducial tag in view.
         var tagsInView = LimelightHelpers.getRawFiducials("");
         if (tagsInView.length == 0) {
@@ -118,7 +114,20 @@ public class VisionTargeting extends SubsystemBase {
             DriverStation.reportWarning("Pipeline configured incorrectly! Ensure IDs are filtered and grouped.", null);
             return null;
         }
-        RawFiducial tag = tagsInView[0];
+        return tagsInView[0];
+    }
+
+    // THIS ASSUMES STATIONARY ROBOT!
+    public ChassisSpeeds getSpeedsToTag(TagLocation location)
+    {
+        if (!canSee(location)) {
+            // TODO: Set some indicator in dashboard that we can't see the tag.
+            return null;
+        }
+        // TODO: Set the proper pipeline to target this location
+        
+        // Get fiducial tag in view.
+        RawFiducial tag = getTagInView();
 
         // Get proportional controls to tag.
         double targetingForwardVelocity = tag.tync * DriveAutoConstants.kPXYController;
@@ -134,7 +143,8 @@ public class VisionTargeting extends SubsystemBase {
         return new ChassisSpeeds(0, targetingForwardVelocity, targetingAngularVelocity);
     }
 
-    public ShootingInfo getHubAimInfo(ChassisSpeeds currentRobotSpeeds)
+    // https://blog.eeshwark.com/robotblog/shooting-on-the-fly - uses a turret, we can use similar math to adjust our robot rotation.
+    public ShootingInfo getHubAimInfo(Pose2d currentRobotPose, ChassisSpeeds currentRobotSpeeds)
     {
         // TODO:
         // Get 1 or 2 Hub Tags that are visible, if applicable. With visible tags, calculate pose of CENTER of Hub.
@@ -148,16 +158,39 @@ public class VisionTargeting extends SubsystemBase {
             return null;
         }
 
+        // Extract speeds to 2d vector.
+        Translation2d robotVelVec = new Translation2d(currentRobotSpeeds.vxMetersPerSecond, currentRobotSpeeds.vyMetersPerSecond);
+
+        // Update pose for camera latency! Calculate the pose where we actually will shoot.
+        double latency = LimelightConstants.kCameraLatencySeconds;
+        Translation2d futurePos = currentRobotPose.getTranslation().plus(
+            new Translation2d(robotVelVec.getX(), robotVelVec.getY()).times(latency)
+        );
+
         // TODO:
         // Get tags that we can see and calculate the pose of the CENTER of the hub.
+        RawFiducial tag = getTagInView();
+        // TODO: Using tag ID, find pose of center of hub
+        Translation2d goalLocation = FieldConstants.kBlueHub; // TODO: Temporary.
+        // Get target vector, from robot pose to goal pose.
+        Translation2d targetVec = goalLocation.minus(futurePos);
+        double dist = targetVec.getNorm();
 
-        // TODO:
-        // Use currentRobotSpeeds in calculation.
+        // Calculate ideal shot, assuming stationary.
+        // TODO: Ensure the calculate function returns horizontal speed! Or calculate it here.
+        double idealHorizontalBallSpeed = ShooterSubsystem.calculateExitVelocityForDistanceToHub(dist); // meters/sec
+
+        // Calculate shot vector accounting for current robot speeds and desired ball speed.
+        Translation2d shotVec = targetVec.div(dist).times(idealHorizontalBallSpeed).minus(robotVelVec);
+
+        // Convert to controls.
+        double robotAngle = shotVec.getAngle().getRadians();
+        double newHorizontalSpeed = shotVec.getNorm();
 
         ShootingInfo shot = new ShootingInfo();
-        shot.pose = Pose2d.kZero;
-        shot.shootingRPM = 0;
-        shot.shotReference = TagLocation.kHubClose;
+        shot.pose = new Pose2d(futurePos.getX(), futurePos.getY(), new Rotation2d(robotAngle));
+        shot.shootingRPM = ShooterSubsystem.calcRPMForExitHorizontalVelocity(newHorizontalSpeed);
+        shot.shotReference = TagLocation.kHubClose; // TODO: Update with tag location of tag.
         return shot;
     }
 

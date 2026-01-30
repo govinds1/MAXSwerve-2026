@@ -26,15 +26,27 @@ public class IntakeSubsystem extends SubsystemBase {
     m_rollerMotor.set(IntakeConstants.kIntakeRollerSpeed);
   }
 
-  public void stop() {
+  public void stopRoller() {
     m_rollerMotor.stopMotor();
   }
 
   public void extend() {
     // TODO:
+    //m_extenderMotor.set(IntakeConstants.kIntakeExtenderMotorSpeed);
   }
 
   public void retract() {
     // TODO:
+    //m_extenderMotor.set(IntakeConstants.kIntakeExtenderMotorSpeed);
+  }
+
+  public void stopExtender() {
+    // TODO:
+    //m_extenderMotor.stopMotor();
+  }
+
+  public void stop() {
+    stopRoller();
+    stopExtender();
   }
 }

@@ -54,7 +54,7 @@ public void execute() {
     //Using vision, find Hub, rotating based off gyro angle and estimated robot pose to find it.
 
     // Try to get a shot at the Hub.
-    m_shot = m_vision.getHubAimInfo(m_drive.getRobotRelativeSpeeds());
+    m_shot = m_vision.getHubAimInfo(m_drive.getPose(), m_drive.getRobotRelativeSpeeds());
     if (m_shot != null)
     {
         // A shot is available! No need to do anything else.
