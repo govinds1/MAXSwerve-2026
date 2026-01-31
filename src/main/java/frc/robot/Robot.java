@@ -76,6 +76,7 @@ public class Robot extends TimedRobot {
     // TODO: Stop other subsystems?
     m_robotContainer.getDriveSubsystem().stop();
     m_robotContainer.getIntakeSubsystem().stop();
+    m_robotContainer.getShooterSubsystem().stop();
 
     // When disabled, seed the Limelight's internal IMU with the external gyro input. 
     // Setting IMU mode of 1 enables seeding.
