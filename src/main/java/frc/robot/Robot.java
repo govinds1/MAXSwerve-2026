@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.Autos;
 //import frc.robot.commands.TeleopTargetAndShoot;
 //import frc.robot.simulation.Field;
@@ -151,11 +152,18 @@ public class Robot extends TimedRobot {
       m_robotContainer.getDriveSubsystem().driveWithJoystick(m_robotContainer.getDriverController(), new ChassisSpeeds());
     }
 
-    // TODO: Use OperatorController for intake
+    // Intake control.
     if (m_robotContainer.getOperatorController().getWantsRunIntakeRoller()) {
       m_robotContainer.getIntakeSubsystem().runRoller();
     } else {
       m_robotContainer.getIntakeSubsystem().stop();
+    }
+
+    // Shooter control.
+    if (m_robotContainer.getOperatorController().getWantsRunShooter()) {
+      m_robotContainer.getShooterSubsystem().runOpenLoop(ShooterConstants.kShooterPower);;
+    } else if (m_robotContainer.getOperatorController().getWantsStopShooter()) {
+      m_robotContainer.getShooterSubsystem().stop();
     }
   }
 

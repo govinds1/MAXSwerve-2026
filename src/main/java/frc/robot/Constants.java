@@ -93,7 +93,15 @@ public final class Constants {
   }
 
   public static final class ShooterConstants {
-    public static final int kShooterMotorCanId = 21;
+    public static final int kLeftShooterMotorCanId = 21;
+    public static final int kRightShooterMotorCanId = 22;
+    public static final double kShooterPower = 0.7;
+    public static final boolean kInvertFollower = true;
+
+    // TODO: Modify these buttons if necessary.
+    public static final int kRunShooterButton = 1; // A button
+    public static final int kStopShooterButton = 4; // Y button
+
     public static final double kShooterMaxRPM = 600; // TODO:
     public static final double kPController = 5;
     public static final double kBallRadiusMeters = Units.inchesToMeters(3);
@@ -122,9 +130,9 @@ public final class Constants {
     public static final double kIntakeExtenderMotorSpeed = 0.1;
 
     // TODO: Modify these buttons.
-    public static final int kRollerRunButton = 1; // A button
-    public static final int kExtenderOutButton = 2; // B button
-    public static final int kExtenderInButton = 3; // X button
+    public static final int kRollerRunButton = 2; // B button
+    public static final int kExtenderOutButton = 5; // Right bumper
+    public static final int kExtenderInButton = 6; // Left bumper
   }
 
   public static final class OperatorConstants {

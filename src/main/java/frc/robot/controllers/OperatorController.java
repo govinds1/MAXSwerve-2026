@@ -2,6 +2,7 @@ package frc.robot.controllers;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import frc.robot.Constants.IntakeConstants;
+import frc.robot.Constants.ShooterConstants;
 
 public class OperatorController extends GenericHID {
 
@@ -26,5 +27,11 @@ public class OperatorController extends GenericHID {
 
   // Shooter
   // TODO: Add Shooter button getters.
+  public boolean getWantsRunShooter() {
+    return this.getRawButton(ShooterConstants.kRunShooterButton);
+  }
 
+  public boolean getWantsStopShooter() {
+    return this.getRawButton(ShooterConstants.kStopShooterButton);
+  }
 }

@@ -11,6 +11,7 @@ import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkBaseConfig;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Configs;
@@ -18,6 +19,7 @@ import frc.robot.Constants.ShooterConstants;
 
 public class ShooterSubsystem extends SubsystemBase{
   private final SparkFlex m_motor;
+  private final SparkFlex m_motorFollower;
 
   private final RelativeEncoder m_encoder;
 
@@ -32,7 +34,8 @@ public class ShooterSubsystem extends SubsystemBase{
    * Encoder.
    */
   public ShooterSubsystem() {
-    m_motor = new SparkFlex(ShooterConstants.kShooterMotorCanId, MotorType.kBrushless);
+    m_motor = new SparkFlex(ShooterConstants.kLeftShooterMotorCanId, MotorType.kBrushless);
+    m_motorFollower = new SparkFlex(ShooterConstants.kRightShooterMotorCanId, MotorType.kBrushless);
 
     m_encoder = m_motor.getEncoder();
 
@@ -41,8 +44,13 @@ public class ShooterSubsystem extends SubsystemBase{
     // Apply the respective configurations to the SPARKS. Reset parameters before
     // applying the configuration to bring the SPARK to a known good state. Persist
     // the settings to the SPARK to avoid losing them on a power cycle.
-    //m_motor.configure(Configs.Shooter.motorConfig, ResetMode.kResetSafeParameters,
-    //    PersistMode.kPersistParameters);
+    m_motor.configure(Configs.Shooter.motorConfig, ResetMode.kResetSafeParameters,
+      PersistMode.kPersistParameters);
+
+    SparkBaseConfig followerConfig = Configs.Shooter.motorConfig;
+    followerConfig.follow(m_motor, ShooterConstants.kInvertFollower); // Set to follow main motor, and invert.
+    m_motorFollower.configure(followerConfig, ResetMode.kResetSafeParameters,
+      PersistMode.kPersistParameters);
   }
 
   /**

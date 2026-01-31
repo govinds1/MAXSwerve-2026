@@ -14,6 +14,7 @@ import frc.robot.controllers.DriverController;
 import frc.robot.controllers.OperatorController;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 //import frc.robot.subsystems.VisionTargeting;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -29,7 +30,7 @@ public class RobotContainer {
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
   //private final VisionTargeting m_vision = new VisionTargeting();
-  //private final Shooter m_shooter = new Shooter(); // TODO: Uncomment when shooter is ready.
+  private final ShooterSubsystem m_shooter = new ShooterSubsystem();
 
   // The driver's controller
   private final DriverController m_driverController = new DriverController(OperatorConstants.kDriverControllerPort);
@@ -89,11 +90,9 @@ public class RobotContainer {
     return m_vision;
   }*/
 
-  /* // TODO: Uncomment when shooter is ready.
-  Shooter getShooterSubsystem() {
+  ShooterSubsystem getShooterSubsystem() {
     return m_shooter;
   }
-  */
 
   DriverController getDriverController() {
     return m_driverController;
