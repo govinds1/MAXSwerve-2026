@@ -12,7 +12,7 @@ import frc.robot.Constants.IntakeConstants;
 
 public class IntakeSubsystem extends SubsystemBase {
   SparkFlex m_rollerMotor = new SparkFlex(IntakeConstants.kIntakeRollerMotorCanId, MotorType.kBrushless);
-  // SparkFlex m_extenderMotor = new SparkFlex(IntakeConstants.kIntakeExtenderMotorCanId, MotorType.kBrushless); TODO: Comment out if extender is enabled.
+  SparkFlex m_extenderMotor = new SparkFlex(IntakeConstants.kIntakeExtenderMotorCanId, MotorType.kBrushless);
 
   /** Creates a new IntakeSubsystem. */
   public IntakeSubsystem() {}
@@ -31,18 +31,15 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public void extend() {
-    // TODO:
-    //m_extenderMotor.set(IntakeConstants.kIntakeExtenderMotorSpeed);
+    m_extenderMotor.set(IntakeConstants.kIntakeExtenderMotorSpeed);
   }
 
   public void retract() {
-    // TODO:
-    //m_extenderMotor.set(IntakeConstants.kIntakeExtenderMotorSpeed);
+    m_extenderMotor.set(-IntakeConstants.kIntakeExtenderMotorSpeed);
   }
 
   public void stopExtender() {
-    // TODO:
-    //m_extenderMotor.stopMotor();
+    m_extenderMotor.stopMotor();
   }
 
   public void stop() {

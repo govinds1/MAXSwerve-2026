@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.pathplanner.lib.events.TriggerEvent;
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
@@ -18,8 +19,9 @@ import frc.robot.Configs;
 import frc.robot.Constants.ShooterConstants;
 
 public class ShooterSubsystem extends SubsystemBase{
-  private final SparkFlex m_motor;
-  private final SparkFlex m_motorFollower;
+  private final SparkFlex m_shooterMotor;
+  private final SparkFlex m_shooterMotorFollower;
+  private final SparkFlex m_feederMotor;
 
   private final RelativeEncoder m_encoder;
 
@@ -34,22 +36,25 @@ public class ShooterSubsystem extends SubsystemBase{
    * Encoder.
    */
   public ShooterSubsystem() {
-    m_motor = new SparkFlex(ShooterConstants.kLeftShooterMotorCanId, MotorType.kBrushless);
-    m_motorFollower = new SparkFlex(ShooterConstants.kRightShooterMotorCanId, MotorType.kBrushless);
+    m_shooterMotor = new SparkFlex(ShooterConstants.kRightShooterMotorCanId, MotorType.kBrushless);
+    m_shooterMotorFollower = new SparkFlex(ShooterConstants.kLeftShooterMotorCanId, MotorType.kBrushless);
+    m_feederMotor = new SparkFlex(ShooterConstants.kFeederMotorCanId, MotorType.kBrushless);
 
-    m_encoder = m_motor.getEncoder();
-
-    m_closedLoopController = m_motor.getClosedLoopController();
+    m_encoder = m_shooterMotor.getEncoder();
+    m_closedLoopController = m_shooterMotor.getClosedLoopController();
 
     // Apply the respective configurations to the SPARKS. Reset parameters before
     // applying the configuration to bring the SPARK to a known good state. Persist
     // the settings to the SPARK to avoid losing them on a power cycle.
-    m_motor.configure(Configs.Shooter.motorConfig, ResetMode.kResetSafeParameters,
+    m_shooterMotor.configure(Configs.Shooter.shooterMotorConfig, ResetMode.kResetSafeParameters,
       PersistMode.kPersistParameters);
 
-    SparkBaseConfig followerConfig = Configs.Shooter.motorConfig;
-    followerConfig.follow(m_motor, ShooterConstants.kInvertFollower); // Set to follow main motor, and invert.
-    m_motorFollower.configure(followerConfig, ResetMode.kResetSafeParameters,
+    SparkBaseConfig followerConfig = Configs.Shooter.shooterMotorConfig;
+    followerConfig.follow(m_shooterMotor, ShooterConstants.kInvertFollower); // Set to follow main motor, and invert.
+    m_shooterMotorFollower.configure(followerConfig, ResetMode.kResetSafeParameters,
+      PersistMode.kPersistParameters);
+
+    m_feederMotor.configure(Configs.Shooter.feederMotorConfig, ResetMode.kResetSafeParameters,
       PersistMode.kPersistParameters);
   }
 
@@ -58,26 +63,48 @@ public class ShooterSubsystem extends SubsystemBase{
    * 
    * @param desiredRPM RPM to set as motor velocity setpoint.
    */
-  public void run(double desiredRPM) {
+  public void runShooterRPM(double desiredRPM) {
     //m_desiredRPM = desiredRPM;
-    m_closedLoopController.setSetpoint(desiredRPM, ControlType.kVelocity);
+    m_closedLoopController.setSetpoint(desiredRPM, ControlType.kVelocity);    
   }
 
   /**
    * Run flywheel on open loop control.
    * 
-   * @param desiredRPM RPM to set as motor velocity setpoint.
+   * @param power Open loop power (-1 to 1)
    */
-  public void runOpenLoop(double power) {
+  public void runShooterOpenLoop(double power) {
     //m_desiredRPM = desiredRPM;
-    m_motor.set(power);
+    m_shooterMotor.set(power);
   }
 
   /**
    * Stop flywheel.
    */
+  public void stopShooter() {
+    m_shooterMotor.stopMotor();
+  }
+
+    /**
+   * Run feeder on open loop control.
+   * 
+   * @param desiredRPM RPM to set as motor velocity setpoint.
+   */
+  public void runFeeder(double power) {
+    //m_desiredRPM = desiredRPM;
+    m_feederMotor.set(power);
+  }
+
+  /**
+   * Stop feeder.
+   */
+  public void stopFeeder() {
+    m_feederMotor.stopMotor();
+  }
+
   public void stop() {
-    m_motor.stopMotor();
+    stopShooter();
+    stopFeeder();
   }
 
   /**

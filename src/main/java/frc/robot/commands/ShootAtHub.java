@@ -49,7 +49,7 @@ public void execute() {
     }
 
     // Spin at RPM to shoot based off distance to center.
-    m_shooter.run(m_shot.shootingRPM);
+    m_shooter.runShooterRPM(m_shot.shootingRPM);
 }
 
 // Called once the command ends or is interrupted.

@@ -10,6 +10,7 @@ package frc.robot;
 //import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 //import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.controllers.DriverController;
 import frc.robot.controllers.OperatorController;
 import frc.robot.subsystems.DriveSubsystem;
@@ -66,6 +67,15 @@ public class RobotContainer {
 
     // Register Event Triggers
     //new EventTrigger("intake").whileTrue(Commands.parallel(Commands.print("running intake")/*, TODO: Add intake command */));
+    
+    // Register teleop Triggers
+    //getOperatorController().runIntake.whileTrue(Commands.run(getIntakeSubsystem().runRoller()))
+    //  .onFalse(Commands.run(getIntakeSubsystem().stopRoller()));
+    // TODO: Modify shoot trigger to run feeder too. Automate this process, run feeder after ShooterConstants.kShooterSpinUpTime.
+    //getOperatorController().runShooter.onTrue(Commands.runOnce(() -> getShooterSubsystem().runShooterOpenLoop(ShooterConstants.kShooterPower)));
+    //getOperatorController().stopShooter.onTrue(Commands.runOnce(() -> getShooterSubsystem().stopShooter()));
+    //getOperatorController().runFeeder.onTrue(Commands.runOnce(() -> getShooterSubsystem().runFeeder(ShooterConstants.kFeederPower)))
+      //.onFalse(Commands.runOnce(() -> getShooterSubsystem().stopFeeder()));
 
     // Build an auto chooser. This will use Commands.none() as the default option.
     //autoChooser = AutoBuilder.buildAutoChooser();

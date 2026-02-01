@@ -153,6 +153,8 @@ public class Robot extends TimedRobot {
       m_robotContainer.getDriveSubsystem().driveWithJoystick(m_robotContainer.getDriverController(), new ChassisSpeeds());
     }
 
+    // TODO: Replace with Triggers in RobotContainer constructor.
+
     // Intake control.
     /*if (m_robotContainer.getOperatorController().getWantsRunIntakeRoller()) {
       m_robotContainer.getIntakeSubsystem().runRoller();
@@ -162,9 +164,15 @@ public class Robot extends TimedRobot {
 
     // Shooter control.
     if (m_robotContainer.getOperatorController().getWantsRunShooter()) {
-      m_robotContainer.getShooterSubsystem().runOpenLoop(ShooterConstants.kShooterPower);;
+      m_robotContainer.getShooterSubsystem().runShooterOpenLoop(ShooterConstants.kShooterPower);;
     } else if (m_robotContainer.getOperatorController().getWantsStopShooter()) {
-      m_robotContainer.getShooterSubsystem().stop();
+      m_robotContainer.getShooterSubsystem().stopShooter();
+    }
+    // Feeder control.
+    if (m_robotContainer.getOperatorController().getWantsRunFeeder()) {
+      m_robotContainer.getShooterSubsystem().runFeeder(ShooterConstants.kFeederPower);
+    } else {
+      m_robotContainer.getShooterSubsystem().stopFeeder();
     }
   }
 
