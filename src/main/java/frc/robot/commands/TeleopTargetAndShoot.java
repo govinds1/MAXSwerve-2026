@@ -28,7 +28,7 @@ public class TeleopTargetAndShoot extends ParallelCommandGroup {
       Commands.idle().onlyWhile(aimCommand::isAimed)
     );
     addCommands(
-      new AimAtHubWhileDriving(drive, vision, controller),
+      aimCommand,
       new RepeatCommand(shootWhenAtHub)
     );
   }

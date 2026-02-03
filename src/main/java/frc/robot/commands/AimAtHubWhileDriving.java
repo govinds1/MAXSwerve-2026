@@ -12,6 +12,7 @@ import frc.robot.Constants.AprilTagConstants.TagLocation;
 import frc.robot.controllers.DriverController;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.VisionTargeting;
+import frc.robot.subsystems.VisionTargeting.ShootingInfo;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class AimAtHubWhileDriving extends Command {
@@ -49,10 +50,13 @@ public class AimAtHubWhileDriving extends Command {
     
     // Get proportional control angular speed to the tag.
     // TODO: Figure out what TagLocation to pass in? Is there a way we can tell what Tag we can currently see? Or FindHub until we can see one.
+    // TODO: Use Helpers.getAimHubInfo instead.
     m_aimControlOffset = m_vision.getSpeedsToTag(TagLocation.kHubClose);
 
+    ShootingInfo shot = m_vision.getHubAimInfo(m_drive.getPose(), m_drive.getRobotRelativeSpeeds());
+
     // Drive with offset.
-    m_drive.driveWithJoystick(m_controller, m_aimControlOffset);
+    m_drive.driveWithJoystick(m_controller, shot.pose.getRotation());
   }
 
   public boolean isAimed() {

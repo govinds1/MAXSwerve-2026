@@ -9,6 +9,7 @@ import java.util.Set;
 
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Helpers;
 import frc.robot.LimelightHelpers;
 import frc.robot.Constants.AprilTagConstants;
 import frc.robot.Constants.DriveAutoConstants;
@@ -142,63 +143,49 @@ public class VisionTargeting extends SubsystemBase {
         
         return new ChassisSpeeds(0, targetingForwardVelocity, targetingAngularVelocity);
     }
-
+    
     // https://blog.eeshwark.com/robotblog/shooting-on-the-fly - uses a turret, we can use similar math to adjust our robot rotation.
     public ShootingInfo getHubAimInfo(Pose2d currentRobotPose, ChassisSpeeds currentRobotSpeeds)
     {
-        // TODO:
-        // Get 1 or 2 Hub Tags that are visible, if applicable. With visible tags, calculate pose of CENTER of Hub.
-        // Given an ideal shooting RPM and ideal (minimal) movement time, calculate a pose to move the robot to in order to aim at hub.
-        // TODO: Use drive odometry to figure out where Hub could be? Isolate to a single side of the Hub and find those Tags, also can turn the right direction if robot is not facing Hub.
+    // This function will assume the currentRobotPose is accurate after AprilTag localization and calculate the proper adjustments 
+    // for current speeds to determine an angle and shooter RPM.
 
-        // Determine if we can see any of the Hub tags that we can shoot at.
-        if (!canSee(TagLocation.kHubClose) && !canSee(TagLocation.kHubLeft) && !canSee(TagLocation.kHubRight))
-        {
-            // We cannot see the Hub, return null.
-            return null;
-        }
+    // Extract speeds to 2d vector.
+    Translation2d robotVelVec = new Translation2d(currentRobotSpeeds.vxMetersPerSecond, currentRobotSpeeds.vyMetersPerSecond);
 
-        // Extract speeds to 2d vector.
-        Translation2d robotVelVec = new Translation2d(currentRobotSpeeds.vxMetersPerSecond, currentRobotSpeeds.vyMetersPerSecond);
+    // Update pose for camera latency! Calculate the pose where we actually will shoot.
+    double latency = LimelightConstants.kCameraLatencySeconds;
+    Translation2d futurePos = currentRobotPose.getTranslation().plus(
+        new Translation2d(robotVelVec.getX(), robotVelVec.getY()).times(latency)
+    );
 
-        // Update pose for camera latency! Calculate the pose where we actually will shoot.
-        double latency = LimelightConstants.kCameraLatencySeconds;
-        Translation2d futurePos = currentRobotPose.getTranslation().plus(
-            new Translation2d(robotVelVec.getX(), robotVelVec.getY()).times(latency)
-        );
+    // Determine alliance hub.
+    Translation2d goalLocation = (Helpers.onRedAlliance()) ? FieldConstants.kRedHub : FieldConstants.kBlueHub;
+    // TODO: Get visible Hub tag, if exists, and compare pose with goal location.
+    // Get target vector, from robot pose to goal pose.
+    Translation2d targetVec = goalLocation.minus(futurePos);
+    double dist = targetVec.getNorm();
 
-        // TODO:
-        // Get tags that we can see and calculate the pose of the CENTER of the hub.
-        RawFiducial tag = getTagInView();
-        // TODO: Using tag ID, find pose of center of hub
-        Translation2d goalLocation = FieldConstants.kBlueHub; // TODO: Temporary.
-        // Get target vector, from robot pose to goal pose.
-        Translation2d targetVec = goalLocation.minus(futurePos);
-        double dist = targetVec.getNorm();
+    // Calculate ideal shot, assuming stationary.
+    // TODO: Ensure the calculate function returns horizontal speed! Or calculate it here.
+    double idealHorizontalBallSpeed = ShooterSubsystem.calculateExitVelocityForDistanceToHub(dist); // meters/sec
 
-        // Calculate ideal shot, assuming stationary.
-        // TODO: Ensure the calculate function returns horizontal speed! Or calculate it here.
-        double idealHorizontalBallSpeed = ShooterSubsystem.calculateExitVelocityForDistanceToHub(dist); // meters/sec
+    // Calculate shot vector accounting for current robot speeds and desired ball speed.
+    Translation2d shotVec = targetVec.div(dist).times(idealHorizontalBallSpeed).minus(robotVelVec);
 
-        // Calculate shot vector accounting for current robot speeds and desired ball speed.
-        Translation2d shotVec = targetVec.div(dist).times(idealHorizontalBallSpeed).minus(robotVelVec);
+    // Convert to controls.
+    double robotAngle = shotVec.getAngle().getRadians();
+    double newHorizontalSpeed = shotVec.getNorm();
 
-        // Convert to controls.
-        double robotAngle = shotVec.getAngle().getRadians();
-        double newHorizontalSpeed = shotVec.getNorm();
-
-        ShootingInfo shot = new ShootingInfo();
-        shot.pose = new Pose2d(futurePos.getX(), futurePos.getY(), new Rotation2d(robotAngle));
-        shot.shootingRPM = ShooterSubsystem.calcRPMForExitHorizontalVelocity(newHorizontalSpeed);
-        shot.shotReference = TagLocation.kHubClose; // TODO: Update with tag location of tag.
-        return shot;
+    ShootingInfo shot = new ShootingInfo();
+    shot.pose = new Pose2d(futurePos.getX(), futurePos.getY(), new Rotation2d(robotAngle));
+    shot.shootingRPM = ShooterSubsystem.calcRPMForExitHorizontalVelocity(newHorizontalSpeed);
+    return shot;
     }
 
-    public class ShootingInfo
+    public static class ShootingInfo
     {
         public Pose2d pose;
         public double shootingRPM;
-        public TagLocation shotReference;
     }
-
 }

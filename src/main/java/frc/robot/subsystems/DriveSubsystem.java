@@ -17,6 +17,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -25,8 +26,12 @@ import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import frc.robot.Constants.AprilTagConstants.TagLocation;
 import frc.robot.Constants.DriveAutoConstants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.FieldConstants;
+import frc.robot.Constants.LimelightConstants;
+import frc.robot.Constants.OperatorConstants;
 import frc.robot.Helpers;
 import frc.robot.controllers.DriverController;
 import frc.robot.LimelightHelpers;
@@ -211,7 +216,7 @@ public class DriveSubsystem extends SubsystemBase {
    *                      field.
    */
   public void driveWithJoystick(DriverController controller) {
-    driveWithJoystick(controller, new ChassisSpeeds());
+    driveWithJoystick(controller, null);
   }
 
   /**
@@ -220,23 +225,51 @@ public class DriveSubsystem extends SubsystemBase {
    * @param controller    Controller object to grab teleop driver's desired inputs.
    * @param fieldRelative Whether the provided x and y speeds are relative to the
    *                      field.
-   * @param offset        ChassisSpeeds offset velocity to apply.
+   * @param aimHeading    Desired robot yaw, as Rotation2d
+   * @returns true if aimed (within tolerance) to aimHeading, false if not aimed or no aimHeading was provided
    */
-  public void driveWithJoystick(DriverController controller, ChassisSpeeds offset) {
+  public boolean driveWithJoystick(DriverController controller, Rotation2d aimHeading) {
     // Get driver controller inputs.
     double forward = -controller.getLeftY(); // Pushing forward on stick Y axis is negative, so invert to get forward speed.
     double left = -controller.getLeftX();    // Pushing right on stick X axis is positive, so invert to get left speed.
     double rotCCW = -controller.getRightX();  // Pushing right on stick X axis is positive, so invert to get CCW speed.
     // Apply deadbands.
-    forward = MathUtil.applyDeadband(forward, 0.05);
-    left = MathUtil.applyDeadband(left, 0.05);
-    rotCCW = MathUtil.applyDeadband(rotCCW, 0.05);
+    forward = MathUtil.applyDeadband(forward, OperatorConstants.kDriveDeadband);
+    left = MathUtil.applyDeadband(left, OperatorConstants.kDriveDeadband);
+    rotCCW = MathUtil.applyDeadband(rotCCW, OperatorConstants.kDriveDeadband);
     // Square inputs.
     forward = Helpers.signedSquare(forward);
     left = Helpers.signedSquare(left);
     rotCCW = Helpers.signedSquare(rotCCW);
+
+    // Return value.
+    boolean aimed = false;
+
+    // Are we overriding rotation control with auto aim control?
+    if (aimHeading != null) {
+      // Get current error (angle between aimHeading and current heading).
+      Rotation2d currentHeading = getHeadingRotation();
+      Rotation2d yawError = aimHeading.minus(currentHeading);
+      // Using error, get proportional control rotational output.
+      rotCCW = Helpers.modRadians(yawError.getRadians());
+      // Map from angle to power (-1 to 1)
+      if (rotCCW < Math.PI) {
+        // Angle is 0 to PI - rotate CCW (positive power)
+        rotCCW = MathUtil.inverseInterpolate(0, Math.PI, rotCCW);
+      } else {
+        // Angle is PI to 2PI - rotate CW (negative power)
+        // Power should be 0 if angle is 2PI, so subtract 1 instead of inverting.
+        rotCCW = MathUtil.inverseInterpolate(Math.PI, 2*Math.PI, rotCCW) - 1;
+      }
+      // Are we close?
+      if (Math.abs(rotCCW) < 0.02) {
+        aimed = true;
+      }
+    }
     // Drive robot manually.
-    drive(forward, left, rotCCW, true, offset);
+    drive(forward, left, rotCCW, true);
+
+    return aimed;
   }
 
   /**
@@ -249,24 +282,10 @@ public class DriveSubsystem extends SubsystemBase {
    *                      field.
    */
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
-    drive(xSpeed, ySpeed, rot, fieldRelative, new ChassisSpeeds());
-  }
-
-  /**
-   * Method to drive the robot using joystick info.
-   *
-   * @param xSpeed        Speed of the robot in the x direction (forward +).
-   * @param ySpeed        Speed of the robot in the y direction (left +).
-   * @param rot           Angular rate of the robot (ccw +).
-   * @param fieldRelative Whether the provided x and y speeds are relative to the
-   *                      field.
-   * @param offset        ChassisSpeeds offset velocity to apply.
-   */
-  public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative, ChassisSpeeds offset) {
     // Convert the commanded speeds into the correct units for the drivetrain
-    double xSpeedDelivered = (xSpeed * DriveConstants.kMaxSpeedMetersPerSecond) + offset.vxMetersPerSecond;
-    double ySpeedDelivered = (ySpeed * DriveConstants.kMaxSpeedMetersPerSecond) + offset.vyMetersPerSecond;
-    double rotDelivered = (rot * DriveConstants.kMaxAngularSpeedRadiansPerSecond) + offset.omegaRadiansPerSecond;
+    double xSpeedDelivered = (xSpeed * DriveConstants.kMaxSpeedMetersPerSecond);
+    double ySpeedDelivered = (ySpeed * DriveConstants.kMaxSpeedMetersPerSecond);
+    double rotDelivered = (rot * DriveConstants.kMaxAngularSpeedRadiansPerSecond);
 
     // Calculate robot relative ChassisSpeeds
     ChassisSpeeds newSpeeds;
@@ -323,6 +342,9 @@ public class DriveSubsystem extends SubsystemBase {
     m_rearRight.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)));
   }
 
+  /**
+   * Stop all motors.
+   */
   public void stop() {
     drive(0, 0, 0, false);
   }

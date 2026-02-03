@@ -53,8 +53,7 @@ public final class Constants {
     public static final double kBackLeftChassisAngularOffset = Math.PI;
     public static final double kBackRightChassisAngularOffset = Math.PI / 2;
 
-    // Spark Flex CAN IDs
-    // TODO: Set IDs.
+    // Spark Max CAN IDs
     public static final int kFrontLeftDrivingCanId = 11;
     public static final int kRearLeftDrivingCanId = 13;
     public static final int kFrontRightDrivingCanId = 15;
@@ -114,7 +113,7 @@ public final class Constants {
     public static final double kLaunchHeightMeters = Units.inchesToMeters(22) + kBallRadiusMeters;
     public static final double kHubHeightMeters = Units.inchesToMeters(72);
     public static final double kShotVerticalDistance = kHubHeightMeters - kLaunchHeightMeters;
-    public static final double kMaxShootTime = 5.0;
+    public static final double kMaxShootTime = 4.0;
 
     // Calculations required for driving motor conversion factors and feed forward
     public static final double kMotorFreeSpeedRps = NeoMotorConstants.kFreeSpeedRpm / 60;
