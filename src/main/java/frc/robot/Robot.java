@@ -173,6 +173,15 @@ public class Robot extends TimedRobot {
     } else {
       m_robotContainer.getShooterSubsystem().stopFeeder();
     }
+
+    // Climber control.
+    /*if (m_robotContainer.getDriverController().getClimberUp()) {
+      m_robotContainer.getClimberSubsystem().climb();
+    } else if (m_robotContainer.getDriverController().getClimberDown()) {
+      m_robotContainer.getClimberSubsystem().descend();
+    } else {
+      m_robotContainer.getClimberSubsystem().stop();
+    }*/
   }
 
   @Override

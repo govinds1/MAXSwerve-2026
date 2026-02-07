@@ -1,6 +1,7 @@
 package frc.robot.controllers;
 
 import edu.wpi.first.wpilibj.GenericHID;
+import frc.robot.Constants.ClimberConstants;
 
 public class DriverController extends GenericHID {
   
@@ -33,19 +34,11 @@ public class DriverController extends GenericHID {
   // Climber
   // TODO: Modify these once climber controls are set.
   public boolean getClimberUp(){
-    return this.getRawButton(4);  //this is the Y button
-  }
-
-  public boolean getClimberStopUp(){
-    return this.getRawButtonReleased(4);
+    return this.getRawButton(ClimberConstants.kClimbUpButton);
   }
 
   public boolean getClimberDown(){
-    return this.getRawButton(1);  //this is the A button
-  }
-  
-  public boolean getClimberStopDown(){
-    return this.getRawButtonReleased(1);
+    return this.getRawButton(ClimberConstants.kClimbUpButton);  //this is the A button
   }
 
   public void outputTelemetry() {

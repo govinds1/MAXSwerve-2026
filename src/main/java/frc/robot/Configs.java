@@ -90,4 +90,14 @@ public final class Configs {
                         .smartCurrentLimit(50);
         }
     }
+
+    public static final class Climber {
+        public static final SparkMaxConfig climberMotorConfig = new SparkMaxConfig();
+
+        static {
+                climberMotorConfig
+                        .idleMode(IdleMode.kBrake)
+                        .smartCurrentLimit(50);
+        }
+    }
 }

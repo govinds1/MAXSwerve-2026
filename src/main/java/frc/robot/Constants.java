@@ -139,6 +139,15 @@ public final class Constants {
     public static final int kExtenderInButton = 6; // Right bumper
   }
 
+  public static final class ClimberConstants {
+    public static final int kClimberMotorCanId = 41;
+    public static final double kClimbSpeed = 0.3;
+
+    // TODO: Modify these buttons.
+    public static final int kClimbUpButton = 5; // Left bumper
+    public static final int kClimbDownButton = 6; // Right bumper 
+  }
+
   public static final class OperatorConstants {
     public static final int kDriverControllerPort = 0;
     public static final int kOperatorControllerPort = 1;

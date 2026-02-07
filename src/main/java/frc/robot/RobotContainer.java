@@ -13,6 +13,7 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.controllers.DriverController;
 import frc.robot.controllers.OperatorController;
+import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -31,6 +32,7 @@ public class RobotContainer {
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   //private final IntakeSubsystem m_intake = new IntakeSubsystem();
   //private final VisionTargeting m_vision = new VisionTargeting();
+  //private final ClimberSubsystem m_climber = new ClimberSubsystem();
   private final ShooterSubsystem m_shooter = new ShooterSubsystem();
 
   // The driver's controller
@@ -98,6 +100,10 @@ public class RobotContainer {
 
   /*VisionTargeting getVisionSubsystem() {
     return m_vision;
+  }*/
+
+  /*ClimberSubsystem getClimberSubystem() {
+    return m_climber;
   }*/
 
   ShooterSubsystem getShooterSubsystem() {
