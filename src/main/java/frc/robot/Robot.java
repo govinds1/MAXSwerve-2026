@@ -149,17 +149,19 @@ public class Robot extends TimedRobot {
         CommandScheduler.getInstance().cancel(command);
       }
       */
-      m_robotContainer.getDriveSubsystem().driveWithJoystick(m_robotContainer.getDriverController(), null);
+     //'\' m_robotContainer.getDriveSubsystem().driveWithJoystick(m_robotContainer.getDriverController(), null);
     }
 
     // TODO: Replace with Triggers in RobotContainer constructor.
 
     // Intake control.
-    /*if (m_robotContainer.getOperatorController().getWantsRunIntakeRoller()) {
+    if (m_robotContainer.getOperatorController().getWantsRunIntakeRoller()) {
       m_robotContainer.getIntakeSubsystem().runRoller();
+    } else if (m_robotContainer.getOperatorController().getWantsReverseIntakeRoller()) {
+      m_robotContainer.getIntakeSubsystem().reverseRoller();
     } else {
       m_robotContainer.getIntakeSubsystem().stop();
-    }*/
+    }
 
     // Shooter control.
     if (m_robotContainer.getOperatorController().getWantsRunShooter()) {

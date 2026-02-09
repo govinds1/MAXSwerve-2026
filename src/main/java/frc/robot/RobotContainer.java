@@ -30,7 +30,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 public class RobotContainer {
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
-  //private final IntakeSubsystem m_intake = new IntakeSubsystem();
+  private final IntakeSubsystem m_intake = new IntakeSubsystem();
   //private final VisionTargeting m_vision = new VisionTargeting();
   //private final ClimberSubsystem m_climber = new ClimberSubsystem();
   private final ShooterSubsystem m_shooter = new ShooterSubsystem();
@@ -94,9 +94,9 @@ public class RobotContainer {
     return m_robotDrive;
   }
 
-  /*IntakeSubsystem getIntakeSubsystem() {
+  IntakeSubsystem getIntakeSubsystem() {
     return m_intake;
-  }*/
+  }
 
   /*VisionTargeting getVisionSubsystem() {
     return m_vision;

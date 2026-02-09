@@ -31,6 +31,10 @@ public class OperatorController extends GenericHID {
     return this.getRawButton(IntakeConstants.kRollerRunButton);
   }
 
+  public boolean getWantsReverseIntakeRoller() {
+    return this.getRawButton(IntakeConstants.kRollerReverseButton);
+  }
+
   public boolean getWantsExtenderOut() {
     return this.getRawButton(IntakeConstants.kExtenderOutButton);
   }

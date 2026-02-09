@@ -95,8 +95,8 @@ public final class Constants {
     public static final int kLeftShooterMotorCanId = 21;
     public static final int kRightShooterMotorCanId = 22;
     public static final int kFeederMotorCanId = 23;
-    public static final double kShooterPower = 0.4;
-    public static final double kFeederPower = 0.4;
+    public static final double kShooterPower = 0.55;
+    public static final double kFeederPower = 0.6;
     public static final boolean kInvertFollower = true;
     public static final double kShooterSpinUpTime = 0.25;
 
@@ -129,12 +129,13 @@ public final class Constants {
   public static final class IntakeConstants {
     public static final int kIntakeRollerMotorCanId = 31;
     public static final int kIntakeExtenderMotorCanId = 32;
-    public static final double kIntakeRollerSpeed = 0.5;
+    public static final double kIntakeRollerSpeed = 0.8;
     public static final double kIntakeExtenderMotorSpeed = 0.1;
     public static final double kIntakeExtendTime = 0.5;
 
     // TODO: Modify these buttons.
     public static final int kRollerRunButton = 2; // B button
+    public static final int kRollerReverseButton = 3; // X button
     public static final int kExtenderOutButton = 3; // X button // TODO: Modify extender to be like a toggle, on a single button.
     public static final int kExtenderInButton = 6; // Right bumper
   }

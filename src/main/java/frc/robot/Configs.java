@@ -87,6 +87,7 @@ public final class Configs {
 
                 feederMotorConfig
                         .idleMode(IdleMode.kBrake)
+                        .inverted(true)
                         .smartCurrentLimit(50);
         }
     }
@@ -97,6 +98,16 @@ public final class Configs {
         static {
                 climberMotorConfig
                         .idleMode(IdleMode.kBrake)
+                        .smartCurrentLimit(50);
+        }
+    }
+
+        public static final class Intake {
+        public static final SparkFlexConfig intakeMotorConfig = new SparkFlexConfig();
+
+        static {
+                intakeMotorConfig
+                        .idleMode(IdleMode.kCoast)
                         .smartCurrentLimit(50);
         }
     }
