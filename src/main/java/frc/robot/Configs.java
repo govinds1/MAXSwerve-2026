@@ -6,6 +6,7 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ModuleConstants;
 import frc.robot.Constants.ShooterConstants;
 
@@ -104,11 +105,19 @@ public final class Configs {
 
         public static final class Intake {
         public static final SparkFlexConfig intakeMotorConfig = new SparkFlexConfig();
+        public static final SparkFlexConfig extenderMotorConfig = new SparkFlexConfig();
 
         static {
                 intakeMotorConfig
+                        .inverted(false)
                         .idleMode(IdleMode.kCoast)
                         .smartCurrentLimit(50);
+                extenderMotorConfig
+                        .idleMode(IdleMode.kBrake)
+                        .smartCurrentLimit(50);
+                extenderMotorConfig.softLimit
+                        .forwardSoftLimit(IntakeConstants.kIntakeExtenderForwardLimitEncoderUnits)
+                        .reverseSoftLimit(0);
         }
     }
 }
