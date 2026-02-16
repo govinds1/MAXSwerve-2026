@@ -149,7 +149,7 @@ public class Robot extends TimedRobot {
         CommandScheduler.getInstance().cancel(command);
       }
       */
-     //'\' m_robotContainer.getDriveSubsystem().driveWithJoystick(m_robotContainer.getDriverController(), null);
+      m_robotContainer.getDriveSubsystem().driveWithJoystick(m_robotContainer.getDriverController(), null);
     }
 
     // TODO: Replace with Triggers in RobotContainer constructor.
