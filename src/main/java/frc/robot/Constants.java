@@ -133,11 +133,13 @@ public final class Constants {
     public static final double kIntakeExtenderMotorSpeed = 0.1;
     public static final double kIntakeExtendTime = 0.5;
 
+    public static final double kIntakeExtenderForwardLimitEncoderUnits = 1000; // TODO: Tune.
+
     // TODO: Modify these buttons.
     public static final int kRollerRunButton = 2; // B button
     public static final int kRollerReverseButton = 3; // X button
-    public static final int kExtenderOutButton = 3; // X button // TODO: Modify extender to be like a toggle, on a single button.
-    public static final int kExtenderInButton = 6; // Right bumper
+    public static final int kExtenderOutAxis = 2; // Left trigger // TODO: Should extender control be a toggle?
+    public static final int kExtenderInAxis = 3; // Right trigger
   }
 
   public static final class ClimberConstants {

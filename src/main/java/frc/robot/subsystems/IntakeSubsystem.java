@@ -9,13 +9,14 @@ import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Configs;
 import frc.robot.Constants.IntakeConstants;
 
 public class IntakeSubsystem extends SubsystemBase {
   SparkFlex m_rollerMotor = new SparkFlex(IntakeConstants.kIntakeRollerMotorCanId, MotorType.kBrushless);
-  //SparkFlex m_extenderMotor = new SparkFlex(IntakeConstants.kIntakeExtenderMotorCanId, MotorType.kBrushless);
+  SparkFlex m_extenderMotor = new SparkFlex(IntakeConstants.kIntakeExtenderMotorCanId, MotorType.kBrushless);
 
   /** Creates a new IntakeSubsystem. */
   public IntakeSubsystem() {
@@ -26,6 +27,8 @@ public class IntakeSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("Subsytems/Intake/Extender/EncoderValue", m_extenderMotor.getEncoder().getPosition());
+    System.out.printf("Intake Extension Encoder: %s", m_extenderMotor.getEncoder().getPosition());
   }
 
   public void runRoller() {
@@ -41,15 +44,15 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public void extend() {
-    //m_extenderMotor.set(IntakeConstants.kIntakeExtenderMotorSpeed);
+    m_extenderMotor.set(IntakeConstants.kIntakeExtenderMotorSpeed);
   }
 
   public void retract() {
-    //m_extenderMotor.set(-IntakeConstants.kIntakeExtenderMotorSpeed);
+    m_extenderMotor.set(-IntakeConstants.kIntakeExtenderMotorSpeed);
   }
 
   public void stopExtender() {
-    //m_extenderMotor.stopMotor();
+    m_extenderMotor.stopMotor();
   }
 
   public void stop() {

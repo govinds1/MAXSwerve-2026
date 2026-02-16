@@ -36,11 +36,11 @@ public class OperatorController extends GenericHID {
   }
 
   public boolean getWantsExtenderOut() {
-    return this.getRawButton(IntakeConstants.kExtenderOutButton);
+    return this.getRawAxis(IntakeConstants.kExtenderOutAxis) > 0.5;
   }
 
   public boolean getWantsExtenderIn() {
-    return this.getRawButton(IntakeConstants.kExtenderInButton);
+    return this.getRawAxis(IntakeConstants.kExtenderInAxis) > 0.5;
   }
 
 
