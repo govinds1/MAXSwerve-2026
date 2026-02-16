@@ -74,7 +74,7 @@ public class Robot extends TimedRobot {
   public void disabledInit() {
     // TODO: Stop other subsystems?
     m_robotContainer.getDriveSubsystem().stop();
-    //m_robotContainer.getIntakeSubsystem().stop();
+    m_robotContainer.getIntakeSubsystem().stop();
     m_robotContainer.getShooterSubsystem().stop();
 
     // When disabled, seed the Limelight's internal IMU with the external gyro input. 
@@ -164,9 +164,9 @@ public class Robot extends TimedRobot {
     }
 
     // Extender control.
-    if (m_robotContainer.getOperatorController().getWantsExtenderIn()) {
+    if (m_robotContainer.getOperatorController().getWantsExtenderOut()) {
       m_robotContainer.getIntakeSubsystem().extend();
-    } else if (m_robotContainer.getOperatorController().getWantsExtenderOut()) {
+    } else if (m_robotContainer.getOperatorController().getWantsExtenderIn()) {
       m_robotContainer.getIntakeSubsystem().retract();
     } else {
       m_robotContainer.getIntakeSubsystem().stopExtender();
