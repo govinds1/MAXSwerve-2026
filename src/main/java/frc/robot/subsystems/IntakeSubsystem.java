@@ -9,6 +9,7 @@ import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Configs;
 import frc.robot.Constants.IntakeConstants;
@@ -26,6 +27,8 @@ public class IntakeSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("Subsytems/Intake/Extender/EncoderValue", m_extenderMotor.getEncoder().getPosition());
+    System.out.printf("Intake Extension Encoder: %s", m_extenderMotor.getEncoder().getPosition());
   }
 
   public void runRoller() {
