@@ -113,6 +113,7 @@ public final class Configs {
                         .idleMode(IdleMode.kCoast)
                         .smartCurrentLimit(50);
                 extenderMotorConfig
+                        .inverted(true)
                         .idleMode(IdleMode.kBrake)
                         .smartCurrentLimit(50);
                 extenderMotorConfig.softLimit
