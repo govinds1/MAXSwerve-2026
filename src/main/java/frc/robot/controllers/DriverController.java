@@ -2,6 +2,7 @@ package frc.robot.controllers;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import frc.robot.Constants.ClimberConstants;
+import frc.robot.Constants.OperatorConstants;
 
 public class DriverController extends GenericHID {
   
@@ -28,7 +29,7 @@ public class DriverController extends GenericHID {
   }
   
   public boolean getWantsGyroReset(){
-    return this.getRawButton(7);  //this should be the start button
+    return this.getRawButton(OperatorConstants.kResetGyroButton);  //this should be the start button
   }
 
   // Climber

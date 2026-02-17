@@ -151,6 +151,9 @@ public class Robot extends TimedRobot {
       */
       m_robotContainer.getDriveSubsystem().driveWithJoystick(m_robotContainer.getDriverController(), null);
     }
+    if (m_robotContainer.getDriverController().getWantsGyroReset()) {
+      m_robotContainer.getDriveSubsystem().zeroHeading();
+    }
 
     // TODO: Replace with Triggers in RobotContainer constructor.
 
