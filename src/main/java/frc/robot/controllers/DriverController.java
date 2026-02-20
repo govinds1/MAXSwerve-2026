@@ -25,11 +25,15 @@ public class DriverController extends GenericHID {
   return getRawAxis(4);
   }
   public boolean getWantsHalfSpeedMode() {
-     return getRawAxis(2) > 0.5;
+    return getRawButton(OperatorConstants.kHalfSpeedAxis);
   }
   
   public boolean getWantsGyroReset(){
-    return this.getRawButton(OperatorConstants.kResetGyroButton);  //this should be the start button
+    return this.getRawButton(OperatorConstants.kResetGyroButton);
+  }
+
+  public boolean getWantsAimAndDrive(){
+    return this.getRawButton(OperatorConstants.kAimAndDriveButton);
   }
 
   // Climber

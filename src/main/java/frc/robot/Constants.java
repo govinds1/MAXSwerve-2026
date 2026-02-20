@@ -156,7 +156,9 @@ public final class Constants {
     public static final int kOperatorControllerPort = 1;
     public static final double kDriveDeadband = 0.05;
 
-    public static final int kResetGyroButton = 7;
+    public static final int kResetGyroButton = 7; // Start button
+    public static final int kHalfSpeedAxis = 2; // Left trigger
+    public static final int kAimAndDriveButton = 1; // A button
   }
 
   public static final class DriveAutoConstants {
@@ -267,6 +269,8 @@ public final class Constants {
     public static final Translation2d kRedTower = kBlueTower.rotateAround(kCenterOfField, new Rotation2d(Math.PI));
     public static final Translation2d kRedLeftTrench = kBlueLeftTrench.rotateAround(kCenterOfField, new Rotation2d(Math.PI));
     public static final Translation2d kRedRightTrench = kBlueRightTrench.rotateAround(kCenterOfField, new Rotation2d(Math.PI));
+
+    public static final double kHubHeightMeters = 2.0;
 
     // Robot starting poses, marking the center of the robot.
     private static final double kRobotPoseXAtBlueStartLine = Units.inchesToMeters(156.61 - (DriveConstants.kFullWidth / 2.0));

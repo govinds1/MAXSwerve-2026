@@ -76,20 +76,20 @@ public final class Configs {
                 double shootingVelocityFeedForward = nominalVoltage / ShooterConstants.kFlyWheelFreeSpeedRps;
                 shooterMotorConfig
                         .idleMode(IdleMode.kCoast)
-                        .smartCurrentLimit(50);
+                        .smartCurrentLimit(60);
                 shooterMotorConfig.encoder
                         .positionConversionFactor(ShooterConstants.kMotorReduction) // revolutions
                         .velocityConversionFactor(ShooterConstants.kMotorReduction); // RPM
                 shooterMotorConfig.closedLoop
                         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-                        .pid(ShooterConstants.kPController, 0, 0)
-                        .outputRange(-1, 1)
-                        .feedForward.kV(shootingVelocityFeedForward);
+                        .pid(ShooterConstants.kPController, 0, 0);
+                        //.outputRange(-1, 1)
+                        //.feedForward.kV(shootingVelocityFeedForward);
 
                 feederMotorConfig
                         .idleMode(IdleMode.kBrake)
                         .inverted(true)
-                        .smartCurrentLimit(50);
+                        .smartCurrentLimit(60);
         }
     }
 
