@@ -22,6 +22,8 @@ public class IntakeSubsystem extends SubsystemBase {
   public IntakeSubsystem() {
     m_rollerMotor.configure(Configs.Intake.intakeMotorConfig, ResetMode.kResetSafeParameters,
       PersistMode.kPersistParameters);
+    m_extenderMotor.configure(Configs.Intake.extenderMotorConfig, ResetMode.kResetSafeParameters, 
+      PersistMode.kPersistParameters);
   }
 
   @Override
@@ -44,11 +46,11 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public void extend() {
-    m_extenderMotor.set(IntakeConstants.kIntakeExtenderMotorSpeed);
+    m_extenderMotor.set(IntakeConstants.kIntakeExtenderExtendSpeed);
   }
 
   public void retract() {
-    m_extenderMotor.set(-IntakeConstants.kIntakeExtenderMotorSpeed);
+    m_extenderMotor.set(-IntakeConstants.kIntakeExtenderRetractSpeed);
   }
 
   public void stopExtender() {

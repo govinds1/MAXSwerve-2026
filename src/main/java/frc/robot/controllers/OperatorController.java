@@ -53,6 +53,10 @@ public class OperatorController extends GenericHID {
     return this.getRawButton(ShooterConstants.kStopShooterButton);
   }
 
+  public boolean getWantsBallSender(){
+    return this.getRawButton(ShooterConstants.kSendBallsButton);  //Added to test BM Feb 19
+  }
+
   // Feeder
   public boolean getWantsRunFeeder() {
     return this.getRawButton(ShooterConstants.kRunFeederButton);

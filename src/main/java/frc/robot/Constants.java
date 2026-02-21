@@ -95,15 +95,17 @@ public final class Constants {
     public static final int kLeftShooterMotorCanId = 21;
     public static final int kRightShooterMotorCanId = 22;
     public static final int kFeederMotorCanId = 23;
-    public static final double kShooterPower = 0.55;
+    public static final double kShooterPower = 0.5;
     public static final double kFeederPower = 0.6;
     public static final boolean kInvertFollower = true;
     public static final double kShooterSpinUpTime = 0.25;
+    public static final double kShooterSendBalls = 0.80; //Added to test BM Feb 19
 
     // TODO: Modify these buttons if necessary.
     public static final int kRunShooterButton = 1; // A button
     public static final int kStopShooterButton = 4; // Y button
     public static final int kRunFeederButton = 5; // Left bumper?
+    public static final int kSendBallsButton = 6; //right bumper Added to test Bm feb 19
 
     public static final double kShooterMaxRPM = 600; // TODO:
     public static final double kPController = 5;
@@ -130,8 +132,9 @@ public final class Constants {
     public static final int kIntakeRollerMotorCanId = 31;
     public static final int kIntakeExtenderMotorCanId = 32;
     public static final double kIntakeRollerSpeed = 0.8;
-    public static final double kIntakeExtenderMotorSpeed = 0.1;
-    public static final double kIntakeExtendTime = 0.5;
+    public static final double kIntakeExtenderExtendSpeed = 0.1;
+    public static final double kIntakeExtenderRetractSpeed = 0.15;
+    public static final double kIntakeExtendTime = 0.3;
 
     public static final double kIntakeExtenderForwardLimitEncoderUnits = 1000; // TODO: Tune.
 

@@ -98,6 +98,7 @@ public final class Configs {
 
         static {
                 climberMotorConfig
+                        .inverted(false)
                         .idleMode(IdleMode.kBrake)
                         .smartCurrentLimit(50);
         }
@@ -111,14 +112,16 @@ public final class Configs {
                 intakeMotorConfig
                         .inverted(false)
                         .idleMode(IdleMode.kCoast)
-                        .smartCurrentLimit(50);
+                        .smartCurrentLimit(60);
                 extenderMotorConfig
-                        .inverted(true)
+                        .inverted(false)
                         .idleMode(IdleMode.kBrake)
                         .smartCurrentLimit(50);
                 extenderMotorConfig.softLimit
-                        .forwardSoftLimit(IntakeConstants.kIntakeExtenderForwardLimitEncoderUnits)
-                        .reverseSoftLimit(0);
+                        .forwardSoftLimitEnabled(false)
+                        .reverseSoftLimitEnabled(false);
+                        /*.forwardSoftLimit(IntakeConstants.kIntakeExtenderForwardLimitEncoderUnits)
+                        .reverseSoftLimit(0);*/
         }
     }
 }

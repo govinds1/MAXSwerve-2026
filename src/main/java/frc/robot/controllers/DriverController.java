@@ -38,7 +38,7 @@ public class DriverController extends GenericHID {
   }
 
   public boolean getClimberDown(){
-    return this.getRawButton(ClimberConstants.kClimbUpButton);  //this is the A button
+    return this.getRawButton(ClimberConstants.kClimbDownButton);  //this is the A button
   }
 
   public void outputTelemetry() {

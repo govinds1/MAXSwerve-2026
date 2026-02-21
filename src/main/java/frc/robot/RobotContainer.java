@@ -32,7 +32,7 @@ public class RobotContainer {
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
   //private final VisionTargeting m_vision = new VisionTargeting();
-  //private final ClimberSubsystem m_climber = new ClimberSubsystem();
+  private final ClimberSubsystem m_climber = new ClimberSubsystem();
   private final ShooterSubsystem m_shooter = new ShooterSubsystem();
 
   // The driver's controller
@@ -102,9 +102,9 @@ public class RobotContainer {
     return m_vision;
   }*/
 
-  /*ClimberSubsystem getClimberSubystem() {
+  ClimberSubsystem getClimberSubystem() {
     return m_climber;
-  }*/
+  }
 
   ShooterSubsystem getShooterSubsystem() {
     return m_shooter;

@@ -76,6 +76,7 @@ public class Robot extends TimedRobot {
     m_robotContainer.getDriveSubsystem().stop();
     m_robotContainer.getIntakeSubsystem().stop();
     m_robotContainer.getShooterSubsystem().stop();
+    m_robotContainer.getClimberSubystem().stop();
 
     // When disabled, seed the Limelight's internal IMU with the external gyro input. 
     // Setting IMU mode of 1 enables seeding.
@@ -174,8 +175,10 @@ public class Robot extends TimedRobot {
 
     // Shooter control.
     if (m_robotContainer.getOperatorController().getWantsRunShooter()) {
-      m_robotContainer.getShooterSubsystem().runShooterOpenLoop(ShooterConstants.kShooterPower);;
-    } else if (m_robotContainer.getOperatorController().getWantsStopShooter()) {
+      m_robotContainer.getShooterSubsystem().runShooterOpenLoop(ShooterConstants.kShooterPower);
+    } else if (m_robotContainer.getOperatorController().getWantsBallSender()) {    // created to test BM Feb 19
+      m_robotContainer.getShooterSubsystem().runShooterOpenLoop(ShooterConstants.kShooterSendBalls);
+    }  else if (m_robotContainer.getOperatorController().getWantsStopShooter()) {
       m_robotContainer.getShooterSubsystem().stopShooter();
     }
     // Feeder control.
@@ -186,13 +189,13 @@ public class Robot extends TimedRobot {
     }
 
     // Climber control.
-    /*if (m_robotContainer.getDriverController().getClimberUp()) {
-      m_robotContainer.getClimberSubsystem().climb();
+    if (m_robotContainer.getDriverController().getClimberUp()) {
+      m_robotContainer.getClimberSubystem().climb();
     } else if (m_robotContainer.getDriverController().getClimberDown()) {
-      m_robotContainer.getClimberSubsystem().descend();
+      m_robotContainer.getClimberSubystem().descend();
     } else {
-      m_robotContainer.getClimberSubsystem().stop();
-    }*/
+      m_robotContainer.getClimberSubystem().stop();
+    }
   }
 
   @Override
