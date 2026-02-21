@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.commands.AimClosedLoop;
 import frc.robot.commands.Autos;
 //import frc.robot.commands.TeleopTargetAndShoot;
 //import frc.robot.simulation.Field;
@@ -76,7 +77,7 @@ public class Robot extends TimedRobot {
     m_robotContainer.getDriveSubsystem().stop();
     m_robotContainer.getIntakeSubsystem().stop();
     m_robotContainer.getShooterSubsystem().stop();
-    m_robotContainer.getClimberSubystem().stop();
+    m_robotContainer.getClimberSubsystem().stop();
 
     // When disabled, seed the Limelight's internal IMU with the external gyro input. 
     // Setting IMU mode of 1 enables seeding.
@@ -139,18 +140,20 @@ public class Robot extends TimedRobot {
       m_robotContainer.getDriverController()
     );
     */
-    // TODO: Get driver button to see if we want to target hub.
-    boolean driveAndTarget = false;
-    if (driveAndTarget) {
+
+    if (m_robotContainer.getDriverController().getWantsAimAndDrive()) {
       // TODO: Run DriveTargetAndShoot command
-      //CommandScheduler.getInstance().schedule(command);
+      //CommandScheduler.getInstance().schedule(aimCommand);
     } else {
       /*
       if (command.isScheduled()) {
         CommandScheduler.getInstance().cancel(command);
       }
       */
-      m_robotContainer.getDriveSubsystem().driveWithJoystick(m_robotContainer.getDriverController(), null);
+      //m_robotContainer.getDriveSubsystem().driveWithJoystick(m_robotContainer.getDriverController(), null);
+    }
+    if (m_robotContainer.getDriverController().getWantsGyroReset()) {
+      m_robotContainer.getDriveSubsystem().zeroHeading();
     }
 
     // TODO: Replace with Triggers in RobotContainer constructor.
@@ -190,11 +193,11 @@ public class Robot extends TimedRobot {
 
     // Climber control.
     if (m_robotContainer.getDriverController().getClimberUp()) {
-      m_robotContainer.getClimberSubystem().climb();
+      m_robotContainer.getClimberSubsystem().climb();
     } else if (m_robotContainer.getDriverController().getClimberDown()) {
-      m_robotContainer.getClimberSubystem().descend();
+      m_robotContainer.getClimberSubsystem().descend();
     } else {
-      m_robotContainer.getClimberSubystem().stop();
+      m_robotContainer.getClimberSubsystem().stop();
     }
   }
 

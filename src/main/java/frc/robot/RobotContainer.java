@@ -11,15 +11,21 @@ package frc.robot;
 //import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.commands.AimClosedLoop;
 import frc.robot.controllers.DriverController;
 import frc.robot.controllers.OperatorController;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.VisionTargeting;
+import edu.wpi.first.math.MathUtil;
 //import frc.robot.subsystems.VisionTargeting;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -31,7 +37,7 @@ public class RobotContainer {
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
-  //private final VisionTargeting m_vision = new VisionTargeting();
+  private final VisionTargeting m_vision = new VisionTargeting();
   private final ClimberSubsystem m_climber = new ClimberSubsystem();
   private final ShooterSubsystem m_shooter = new ShooterSubsystem();
 
@@ -47,21 +53,24 @@ public class RobotContainer {
    */
   public RobotContainer() {
     // Configure the button bindings
-    //configureButtonBindings();
+    configureButtonBindings();
 
     // Configure default commands
-    /*
     m_robotDrive.setDefaultCommand(
-        // The left stick controls translation of the robot.
-        // Turning is controlled by the X axis of the right stick.
         new RunCommand(
-            () -> m_robotDrive.drive(
-                -MathUtil.applyDeadband(m_driverController.getLeftY(), OperatorConstants.kDriveDeadband),
-                -MathUtil.applyDeadband(m_driverController.getLeftX(), OperatorConstants.kDriveDeadband),
-                -MathUtil.applyDeadband(m_driverController.getRightX(), OperatorConstants.kDriveDeadband),
-                true),
-            m_robotDrive));
-    */
+            () -> m_robotDrive.driveWithJoystick(m_driverController)
+     ));
+
+    AimClosedLoop aimCommand = new AimClosedLoop(
+      getDriveSubsystem(), 
+      getShooterSubsystem(), 
+      getVisionSubsystem(), 
+      () -> -getDriverController().getLeftY(), 
+      () -> -getDriverController().getLeftX()
+    );
+
+    Trigger aimAndDriveTrigger = new Trigger(getDriverController()::getWantsAimAndDrive);
+    aimAndDriveTrigger.onTrue(aimCommand);
 
     // Register Named Commands
     // TODO: Register shoot, intake, intake and move, and climb commands
@@ -88,6 +97,10 @@ public class RobotContainer {
     //SmartDashboard.putData("Auto Chooser", autoChooser);
   }
 
+  public void configureButtonBindings() {
+
+  }
+
   // GETTERS //
 
   DriveSubsystem getDriveSubsystem() {
@@ -98,11 +111,11 @@ public class RobotContainer {
     return m_intake;
   }
 
-  /*VisionTargeting getVisionSubsystem() {
+  VisionTargeting getVisionSubsystem() {
     return m_vision;
-  }*/
+  }
 
-  ClimberSubsystem getClimberSubystem() {
+  ClimberSubsystem getClimberSubsystem() {
     return m_climber;
   }
 

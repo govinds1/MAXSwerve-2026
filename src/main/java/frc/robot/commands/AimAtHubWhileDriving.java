@@ -8,7 +8,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Helpers;
-import frc.robot.Constants.AprilTagConstants.TagLocation;
 import frc.robot.controllers.DriverController;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.VisionTargeting;
@@ -47,11 +46,6 @@ public class AimAtHubWhileDriving extends Command {
   @Override
   public void execute() {
     // Take driver controller input (for dx and dy only) and use simple PID to turn to face the Hub.
-    
-    // Get proportional control angular speed to the tag.
-    // TODO: Figure out what TagLocation to pass in? Is there a way we can tell what Tag we can currently see? Or FindHub until we can see one.
-    // TODO: Use Helpers.getAimHubInfo instead.
-    m_aimControlOffset = m_vision.getSpeedsToTag(TagLocation.kHubClose);
 
     ShootingInfo shot = m_vision.getHubAimInfo(m_drive.getPose(), m_drive.getRobotRelativeSpeeds());
 
