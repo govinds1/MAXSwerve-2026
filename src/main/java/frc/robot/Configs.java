@@ -82,7 +82,7 @@ public final class Configs {
                         .velocityConversionFactor(ShooterConstants.kMotorReduction); // RPM
                 shooterMotorConfig.closedLoop
                         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-                        .pid(ShooterConstants.kPController, 0, 0);
+                        .pid(ShooterConstants.kPController, 0, 0.012);
                         //.outputRange(-1, 1)
                         //.feedForward.kV(shootingVelocityFeedForward);
 

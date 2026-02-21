@@ -23,6 +23,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants.DriveAutoConstants;
 import frc.robot.Constants.DriveConstants;
@@ -142,8 +143,12 @@ public class DriveSubsystem extends SubsystemBase {
             m_rearRight.getPosition()
         });
     // Update Pose with Limelight if possible.
-    // TODO: Remove comment.
+    // TODO: Enable when fmap is updated.
     //localizePose();
+
+    SmartDashboard.putNumber("Subsystems/Drive/Odometry/EstimatedPose/X", m_poseEstimator.getEstimatedPosition().getX());
+    SmartDashboard.putNumber("Subsystems/Drive/Odometry/EstimatedPose/Y", m_poseEstimator.getEstimatedPosition().getX());
+    SmartDashboard.putNumber("Subsystems/Drive/Odometry/EstimatedPose/Theta", m_poseEstimator.getEstimatedPosition().getRotation().getDegrees());
   }
 
   /**

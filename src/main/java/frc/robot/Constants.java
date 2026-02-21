@@ -107,8 +107,8 @@ public final class Constants {
     public static final int kRunFeederButton = 5; // Left bumper?
     public static final int kSendBallsButton = 6; //right bumper Added to test Bm feb 19
 
-    public static final double kShooterMaxRPM = 600; // TODO:
-    public static final double kPController = 5;
+    public static final double kShooterMaxRPM = 6000; // TODO:
+    public static final double kPController = 0.00017;
     public static final double kBallRadiusMeters = Units.inchesToMeters(3);
     public static final double kLaunchAngleDegrees = 60; // TODO:
     public static final double kLaunchAngleRadians = Math.toRadians(kLaunchAngleDegrees);
@@ -159,7 +159,7 @@ public final class Constants {
     public static final int kOperatorControllerPort = 1;
     public static final double kDriveDeadband = 0.05;
 
-    public static final int kResetGyroButton = 7; // Start button
+    public static final int kResetGyroButton = 8; // Start button
     public static final int kHalfSpeedAxis = 2; // Left trigger
     public static final int kAimAndDriveButton = 1; // A button
   }
@@ -170,8 +170,8 @@ public final class Constants {
     public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
     public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI;
 
-    public static final double kPXYController = 5;
-    public static final double kPThetaController = 5;
+    public static final double kPXYController = 1;
+    public static final double kPThetaController = 1;
     public static final Pose2d kRobotControllerTolerance = new Pose2d(0.1, 0.1, new Rotation2d(Units.degreesToRadians(1)));
 
     // Constraint for the motion profiled robot angle controller
@@ -190,7 +190,7 @@ public final class Constants {
     // Camera's pose in robot space.
     public static final double kForwardOffsetMeters = 0.5;
     public static final double kSideOffsetMeters = 0.0;
-    public static final double kHeightOffsetMeters = 0.5;
+    public static final double kHeightOffsetMeters = 0.508;
     public static final double kRollDegrees = 0.0;
     public static final double kPitchDegrees = 30.0;
     public static final double kYawDegrees = 0.0;
@@ -273,7 +273,7 @@ public final class Constants {
     public static final Translation2d kRedLeftTrench = kBlueLeftTrench.rotateAround(kCenterOfField, new Rotation2d(Math.PI));
     public static final Translation2d kRedRightTrench = kBlueRightTrench.rotateAround(kCenterOfField, new Rotation2d(Math.PI));
 
-    public static final double kHubHeightMeters = 2.0;
+    public static final double kHubHeightMeters = 1.83;
 
     // Robot starting poses, marking the center of the robot.
     private static final double kRobotPoseXAtBlueStartLine = Units.inchesToMeters(156.61 - (DriveConstants.kFullWidth / 2.0));

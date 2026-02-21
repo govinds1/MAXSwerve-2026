@@ -57,9 +57,11 @@ public class RobotContainer {
 
     // Configure default commands
     m_robotDrive.setDefaultCommand(
-        new RunCommand(
-            () -> m_robotDrive.driveWithJoystick(m_driverController)
-     ));
+      new RunCommand(
+          () -> m_robotDrive.driveWithJoystick(m_driverController),
+          m_robotDrive
+      )
+     );
 
     AimClosedLoop aimCommand = new AimClosedLoop(
       getDriveSubsystem(), 
@@ -69,8 +71,9 @@ public class RobotContainer {
       () -> -getDriverController().getLeftX()
     );
 
-    Trigger aimAndDriveTrigger = new Trigger(getDriverController()::getWantsAimAndDrive);
-    aimAndDriveTrigger.onTrue(aimCommand);
+    //Trigger aimAndDriveTrigger = new Trigger(getDriverController()::getWantsAimAndDrive);
+    Trigger aimAndDriveTrigger = new Trigger(getOperatorController()::getWantsRunShooter);
+    aimAndDriveTrigger.whileTrue(aimCommand);
 
     // Register Named Commands
     // TODO: Register shoot, intake, intake and move, and climb commands

@@ -82,7 +82,7 @@ public class Robot extends TimedRobot {
     // When disabled, seed the Limelight's internal IMU with the external gyro input. 
     // Setting IMU mode of 1 enables seeding.
     // TODO:
-    //LimelightHelpers.SetIMUMode("limelight", 1); // Seed internal IMU
+    LimelightHelpers.SetIMUMode("limelight", 1); // Seed internal IMU
   }
 
   @Override
@@ -96,7 +96,9 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     String selectedAutoName = SmartDashboard.getString("Auto Selector", Autos.autoNames[0]);
-    m_autonomousCommand = Autos.getSelectedAuto(selectedAutoName, m_robotContainer.getDriveSubsystem());
+    m_autonomousCommand = Autos.getSelectedAuto(selectedAutoName, m_robotContainer.getDriveSubsystem(), m_robotContainer.getShooterSubsystem(),
+      m_robotContainer.getVisionSubsystem(), m_robotContainer.getIntakeSubsystem()
+    );
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
@@ -104,7 +106,7 @@ public class Robot extends TimedRobot {
     }
 
     // TODO:
-    //LimelightHelpers.SetIMUMode("limelight", 4); // Use internal IMU + external IMU
+    LimelightHelpers.SetIMUMode("limelight", 4); // Use internal IMU + external IMU
   }
 
   /** This function is called periodically during autonomous. */
@@ -125,7 +127,7 @@ public class Robot extends TimedRobot {
     // If we climbed in auto, drop the climber.
 
     // TODO:
-    //LimelightHelpers.SetIMUMode("limelight", 4); // Use internal IMU + external IMU
+    LimelightHelpers.SetIMUMode("limelight", 4); // Use internal IMU + external IMU
   }
 
   /** This function is called periodically during operator control. */
@@ -177,19 +179,19 @@ public class Robot extends TimedRobot {
     }
 
     // Shooter control.
-    if (m_robotContainer.getOperatorController().getWantsRunShooter()) {
+    /*if (m_robotContainer.getOperatorController().getWantsRunShooter()) {
       m_robotContainer.getShooterSubsystem().runShooterOpenLoop(ShooterConstants.kShooterPower);
     } else if (m_robotContainer.getOperatorController().getWantsBallSender()) {    // created to test BM Feb 19
       m_robotContainer.getShooterSubsystem().runShooterOpenLoop(ShooterConstants.kShooterSendBalls);
     }  else if (m_robotContainer.getOperatorController().getWantsStopShooter()) {
       m_robotContainer.getShooterSubsystem().stopShooter();
-    }
+    }*/
     // Feeder control.
-    if (m_robotContainer.getOperatorController().getWantsRunFeeder()) {
+    /*if (m_robotContainer.getOperatorController().getWantsRunFeeder()) {
       m_robotContainer.getShooterSubsystem().runFeeder(ShooterConstants.kFeederPower);
     } else {
       m_robotContainer.getShooterSubsystem().stopFeeder();
-    }
+    }*/
 
     // Climber control.
     if (m_robotContainer.getDriverController().getClimberUp()) {
