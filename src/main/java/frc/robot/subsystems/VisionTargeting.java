@@ -67,11 +67,35 @@ public class VisionTargeting extends SubsystemBase {
     }
 
     public double getTx() {
-        return LimelightHelpers.getTX(limelightName);
+        LimelightHelpers.RawFiducial[] fiducials = LimelightHelpers.getRawFiducials(limelightName);
+        
+        if (fiducials.length >= 2) {
+            double tx1 = fiducials[0].txnc;
+            double tx2 = fiducials[1].txnc;
+            
+            return (tx1 + tx2) / 2.0; 
+        } 
+        else if (fiducials.length == 1) {
+            return fiducials[0].txnc;
+        }
+        
+        return 0.0; // No targets
     }
 
     public double getTy() {
-        return LimelightHelpers.getTY(limelightName);
+        LimelightHelpers.RawFiducial[] fiducials = LimelightHelpers.getRawFiducials(limelightName);
+        
+        if (fiducials.length >= 2) {
+            double ty1 = fiducials[0].tync;
+            double ty2 = fiducials[1].tync;
+            
+            return (ty1 + ty2) / 2.0; 
+        } 
+        else if (fiducials.length == 1) {
+            return fiducials[0].tync;
+        }
+        
+        return 0.0;
     }
 
     public double getDistanceToTargetMeters() {
@@ -87,6 +111,10 @@ public class VisionTargeting extends SubsystemBase {
         double angleToGoalRadians = Math.toRadians(angleToGoalDegrees);
 
         return (FieldConstants.kHubHeightMeters - LimelightConstants.kHeightOffsetMeters) / Math.tan(angleToGoalRadians);
+    }
+
+    public Tag getTagFromFiducial(RawFiducial fid) {
+        return AprilTagConstants.tags.get(fid.id);
     }
 
     // https://blog.eeshwark.com/robotblog/shooting-on-the-fly - uses a turret, we can use similar math to adjust our robot rotation.

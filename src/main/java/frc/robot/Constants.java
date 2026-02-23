@@ -203,15 +203,25 @@ public final class Constants {
       kOutpost, kTower, kHubRight, kHubFar, kHubLeft, kHubClose
     }
     public static class Tag {
-      public TagLocation m_location;
-      public Alliance m_alliance;
-      public int m_id;
+      private TagLocation m_location;
+      private Alliance m_alliance;
+      private int m_id;
       Tag(TagLocation location, Alliance alliance, int id) {
         m_location = location;
         m_alliance = alliance;
         m_id = id;
       }
+      public TagLocation getLocation() {
+        return m_location;
+      }
+      public Alliance getAlliance() {
+        return m_alliance;
+      }
+      public int getID() {
+        return m_id;
+      }
     }
+    // Keep this list sorted by Tag ID - ascending.
     public static final List<Tag> tags = List.of(
       new Tag(TagLocation.kTrenchRightFar, Alliance.Red, 1),
       new Tag(TagLocation.kHubRight, Alliance.Red, 2),

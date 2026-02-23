@@ -72,17 +72,17 @@ public final class Configs {
                 // Use module constants to calculate conversion factors and feed forward gain.
                 // double flywheelFactor = ShooterConstants.kFlyWheelDiameterMeters * Math.PI
                 //        / ShooterConstants.kMotorReduction; 
-                double nominalVoltage = 12.0;
-                double shootingVelocityFeedForward = nominalVoltage / ShooterConstants.kFlyWheelFreeSpeedRps;
+                //double nominalVoltage = 12.0;
+                //double shootingVelocityFeedForward = nominalVoltage / ShooterConstants.kFlyWheelFreeSpeedRps;
                 shooterMotorConfig
                         .idleMode(IdleMode.kCoast)
                         .smartCurrentLimit(60);
                 shooterMotorConfig.encoder
                         .positionConversionFactor(ShooterConstants.kMotorReduction) // revolutions
                         .velocityConversionFactor(ShooterConstants.kMotorReduction); // RPM
-                shooterMotorConfig.closedLoop
-                        .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-                        .pid(ShooterConstants.kPController, 0, 0.012);
+                //shooterMotorConfig.closedLoop
+                        //.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+                        //.pid(ShooterConstants.kPController, 0, 0.012);
                         //.outputRange(-1, 1)
                         //.feedForward.kV(shootingVelocityFeedForward);
 
