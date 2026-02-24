@@ -6,11 +6,15 @@ package frc.robot.commands;
 
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DriveAutoConstants;
+import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.Helpers;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.VisionTargeting;
@@ -28,6 +32,8 @@ public class AimClosedLoop extends Command {
   private final PIDController m_aimPID = new PIDController(0.05, 0.0, 0.005);
   private double m_targetRpm;
   private boolean m_isAimed; 
+  private double m_overrideStartTime = 0;
+  private boolean m_noTarget = false;
 
   public AimClosedLoop(DriveSubsystem drive, ShooterSubsystem shooter, VisionTargeting vision, 
                           DoubleSupplier xSupplier, DoubleSupplier ySupplier) {
@@ -37,22 +43,38 @@ public class AimClosedLoop extends Command {
     m_translationXSupplier = xSupplier;
     m_translationYSupplier = ySupplier;
     m_isAimed = false;
-    m_targetRpm = 1500;
+    m_targetRpm = 18000;
 
     addRequirements(m_drive, m_shooter);
+
+    SmartDashboard.putNumber("Subsystems/Vision/Auto/RotationSpeed", 0);
+    SmartDashboard.putNumber("Subsystems/Vision/Auto/TargetRPM", 0);
+    SmartDashboard.putBoolean("Subsystems/Vision/Auto/IsAimed", false);
+  }
+
+  @Override
+  public void initialize() {
+    m_isAimed = false;
+    m_targetRpm = 18000;
   }
 
   @Override
   public void execute() {
       double translationX = m_translationXSupplier.getAsDouble();
       double translationY = m_translationYSupplier.getAsDouble();
+      // Apply deadband.
+      translationX = MathUtil.applyDeadband(translationX, OperatorConstants.kDriveDeadband);
+      translationY = MathUtil.applyDeadband(translationY, OperatorConstants.kDriveDeadband);
+      // Square inputs.
+      translationX = Helpers.signedSquare(translationX);
+      translationY = Helpers.signedSquare(translationY);
       
       double rotationSpeed = 0.0;
 
-      if (m_vision.hasTarget()) {
+      if (m_vision.hasTarget() && !m_isAimed) {
           
           rotationSpeed = m_aimPID.calculate(m_vision.getTx(), 0.0);
-          if (Math.abs(rotationSpeed) < 0.02) {
+          if (Math.abs(rotationSpeed) < 0.05) {
             m_isAimed = true;
             rotationSpeed = 0;
           } else {
@@ -60,7 +82,17 @@ public class AimClosedLoop extends Command {
           }
           double distance = m_vision.getDistanceToTargetMeters();
           m_targetRpm = ShooterSubsystem.calculateRPMForDistanceToHUB(distance);
+          m_noTarget = false;
       } else {
+        if (!m_noTarget) {
+          m_overrideStartTime = Timer.getFPGATimestamp();
+          m_noTarget = true;
+        } else {
+          if (Timer.getFPGATimestamp() - m_overrideStartTime > 1) {
+            m_isAimed = true;
+            m_targetRpm = 18000;
+          }
+        }
         //m_isAimed = true;
       }
       SmartDashboard.putNumber("Subsystems/Vision/Auto/RotationSpeed", rotationSpeed);
@@ -68,7 +100,7 @@ public class AimClosedLoop extends Command {
       SmartDashboard.putBoolean("Subsystems/Vision/Auto/IsAimed", m_isAimed);
       
       // Aim Robot
-      //m_drive.drive(translationX, translationY, rotationSpeed, true); 
+      m_drive.drive(0, 0, rotationSpeed, true); 
 
       // Rev the shooter
       m_shooter.runShooterRPM(m_targetRpm);

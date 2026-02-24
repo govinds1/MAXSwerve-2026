@@ -185,9 +185,9 @@ public class Robot extends TimedRobot {
       m_robotContainer.getShooterSubsystem().runShooterOpenLoop(ShooterConstants.kShooterSendBalls);
     }  else if (m_robotContainer.getOperatorController().getWantsStopShooter()) {
       m_robotContainer.getShooterSubsystem().stopShooter();
-    }*/
+    }
     // Feeder control.
-    /*if (m_robotContainer.getOperatorController().getWantsRunFeeder()) {
+    if (m_robotContainer.getOperatorController().getWantsRunFeeder()) {
       m_robotContainer.getShooterSubsystem().runFeeder(ShooterConstants.kFeederPower);
     } else {
       m_robotContainer.getShooterSubsystem().stopFeeder();

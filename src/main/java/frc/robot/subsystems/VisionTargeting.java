@@ -51,7 +51,7 @@ public class VisionTargeting extends SubsystemBase {
         LimelightHelpers.SetFiducialDownscalingOverride(limelightName, 1.5f);
 
         // Turn off Limelight LED.
-        LimelightHelpers.setLEDMode_ForceOff(limelightName);
+        //LimelightHelpers.setLEDMode_ForceOff(limelightName);
     }
 
     @Override

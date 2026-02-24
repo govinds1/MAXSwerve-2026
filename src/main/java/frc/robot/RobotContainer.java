@@ -74,6 +74,7 @@ public class RobotContainer {
     //Trigger aimAndDriveTrigger = new Trigger(getDriverController()::getWantsAimAndDrive);
     Trigger aimAndDriveTrigger = new Trigger(getOperatorController()::getWantsRunShooter);
     aimAndDriveTrigger.whileTrue(aimCommand);
+    //aimAndDriveTrigger.whileTrue(new RunCommand(() -> getShooterSubsystem().runShooterRPM(1500), getShooterSubsystem()));
 
     // Register Named Commands
     // TODO: Register shoot, intake, intake and move, and climb commands

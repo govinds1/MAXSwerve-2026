@@ -108,8 +108,8 @@ public final class Constants {
     public static final int kSendBallsButton = 6; //right bumper Added to test Bm feb 19
 
     public static final double kShooterMaxRPM = 6000; // TODO:
-    public static final double kPController = 0.00017;
-    public static final double kBallRadiusMeters = Units.inchesToMeters(3);
+    public static final double kPController = 0.00005;
+    public static final double kBallRadiusMeters = 0.15;
     public static final double kLaunchAngleDegrees = 60; // TODO:
     public static final double kLaunchAngleRadians = Math.toRadians(kLaunchAngleDegrees);
     public static final double kLaunchHeightMeters = Units.inchesToMeters(22) + kBallRadiusMeters;

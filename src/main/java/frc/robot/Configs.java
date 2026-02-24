@@ -80,11 +80,11 @@ public final class Configs {
                 shooterMotorConfig.encoder
                         .positionConversionFactor(ShooterConstants.kMotorReduction) // revolutions
                         .velocityConversionFactor(ShooterConstants.kMotorReduction); // RPM
-                //shooterMotorConfig.closedLoop
-                        //.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-                        //.pid(ShooterConstants.kPController, 0, 0.012);
-                        //.outputRange(-1, 1)
-                        //.feedForward.kV(shootingVelocityFeedForward);
+                shooterMotorConfig.closedLoop
+                        .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+                        //.pid(ShooterConstants.kPController, 0, 0.05)
+                        .outputRange(0, 1);
+                        //.feedForward.kV(0.00007);
 
                 feederMotorConfig
                         .idleMode(IdleMode.kBrake)
