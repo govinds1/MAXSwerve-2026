@@ -36,18 +36,9 @@ public class AlignToTarget extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    // Assume robot is already more or less facing the target (in order to see April Tag).
-    // Rotate robot to 0, 180, or 360 degrees, depending on which is closer.
-    double offsetTo180 = 180.0 - Helpers.modDegrees(m_drive.getHeadingDegrees());
-    if (Math.abs(offsetTo180) <= 90) {
-      m_targetAngleDegrees = 180.0;
-    } else {
-      if (offsetTo180 < 0) {
-        m_targetAngleDegrees = 360.0;
-      } else {
-        m_targetAngleDegrees = 0.0;
-      }
-    }
+    m_rotationPID.setTolerance(1.0);
+    m_alignPID.setTolerance(0.5); // TODO: Adjust.
+    m_targetAngleDegrees = getTargetAngleDegrees(m_drive.getHeadingDegrees());
 
     m_state = 0;
     m_startTime = Timer.getFPGATimestamp();
@@ -56,7 +47,35 @@ public class AlignToTarget extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    
+    switch (m_state) {
+      case 0:
+        // Rotate.
+        double currentHeadingDegrees = m_drive.getHeadingDegrees();
+        m_targetAngleDegrees = getTargetAngleDegrees(currentHeadingDegrees);
+        double error = m_targetAngleDegrees - currentHeadingDegrees;
+        double rotSpeed = m_rotationPID.calculate(error);
+        if (m_rotationPID.atSetpoint()) {
+          m_drive.stop();
+          m_state++;
+        } else {
+          m_drive.drive(0, 0, rotSpeed, true);
+        }
+      break;
+      case 1:
+        // Align.
+        double translationY = m_alignPID.calculate(m_vision.getTx(), 0.0);
+        if (m_alignPID.atSetpoint()) {
+          m_drive.stop();
+          m_state++;
+        } else {
+          m_drive.drive(0, translationY, 0, false);
+        }
+      break;
+      case 2:
+        // Done.
+      break;
+    }
+
   }
 
   // Called once the command ends or is interrupted.
@@ -70,5 +89,22 @@ public class AlignToTarget extends Command {
   public boolean isFinished() {
     // End if aligning is complete, or if timeout reached.
     return m_state == 2 || ((Timer.getFPGATimestamp() - m_startTime) > 6.0);
+  }
+
+  public double getTargetAngleDegrees(double currentAngle) {
+    // Assume robot is already more or less facing the target (in order to see April Tag).
+    // Rotate robot to 0, 180, or 360 degrees, depending on which is closer.
+    double offsetTo180 = 180.0 - Helpers.modDegrees(currentAngle);
+    double targetAngleDegrees = 0.0;
+    if (Math.abs(offsetTo180) <= 90) {
+      targetAngleDegrees = 180.0;
+    } else {
+      if (offsetTo180 < 0) {
+        targetAngleDegrees = 360.0;
+      } else {
+        targetAngleDegrees = 0.0;
+      }
+    }
+    return targetAngleDegrees;
   }
 }
