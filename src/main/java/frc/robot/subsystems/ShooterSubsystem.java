@@ -41,7 +41,7 @@ public class ShooterSubsystem extends SubsystemBase{
   public static final InterpolatingDoubleTreeMap rpmMap = InterpolatingDoubleTreeMap.ofEntries(
     Map.entry(1.0, 10000.0),
     Map.entry(1.7, 18000.0),
-    Map.entry(2.0, 22000.0),
+    Map.entry(2.4, 20000.0),
     Map.entry(3.0, 25000.0),
     Map.entry(5.0, 31000.0)
     //Map.entry(1.0, 2000.0),

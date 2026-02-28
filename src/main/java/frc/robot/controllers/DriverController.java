@@ -7,8 +7,8 @@ import frc.robot.Constants.OperatorConstants;
 
 public class DriverController extends GenericHID {
 
-  SlewRateLimiter limiterX = new SlewRateLimiter(0.8);
-  SlewRateLimiter limiterY = new SlewRateLimiter(0.8);
+  SlewRateLimiter limiterX = new SlewRateLimiter(1);
+  SlewRateLimiter limiterY = new SlewRateLimiter(1);
   
   public DriverController(int port) {
     super(port);
