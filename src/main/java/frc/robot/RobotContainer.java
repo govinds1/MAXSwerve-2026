@@ -59,7 +59,8 @@ public class RobotContainer {
     getShooterSubsystem(), 
     getVisionSubsystem(), 
     () -> -getDriverController().getLeftY(), 
-    () -> -getDriverController().getLeftX()
+    () -> -getDriverController().getLeftX(),
+    () -> getOperatorController().getWantsVisionOverride()
   );
 
   /**

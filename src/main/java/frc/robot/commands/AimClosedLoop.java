@@ -29,6 +29,8 @@ public class AimClosedLoop extends Command {
   private final DoubleSupplier m_translationXSupplier;
   private final DoubleSupplier m_translationYSupplier;
 
+  private final DoubleSupplier m_visionOverrideSupplier;
+
   private final PIDController m_aimPID = new PIDController(0.05, 0.0, 0.005);
   private double m_targetRpm;
   private boolean m_isAimed; 
@@ -36,12 +38,13 @@ public class AimClosedLoop extends Command {
   private boolean m_noTarget = false;
 
   public AimClosedLoop(DriveSubsystem drive, ShooterSubsystem shooter, VisionTargeting vision, 
-                          DoubleSupplier xSupplier, DoubleSupplier ySupplier) {
+                          DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier visionOverrideSupplier) {
     m_drive = drive;
     m_shooter = shooter;
     m_vision = vision;
     m_translationXSupplier = xSupplier;
     m_translationYSupplier = ySupplier;
+    m_visionOverrideSupplier = visionOverrideSupplier;
     m_isAimed = false;
     m_targetRpm = 18000;
 
@@ -71,7 +74,16 @@ public class AimClosedLoop extends Command {
       
       double rotationSpeed = 0.0;
 
-      if (m_vision.hasTarget() && !m_isAimed) {
+      double visionOverride = m_visionOverrideSupplier.getAsDouble();
+      if (visionOverride != 0) {
+        if (visionOverride == 1) {
+          // Shoot from Hub
+          m_targetRpm = ShooterSubsystem.calculateRPMForDistanceToHUB(0.8);
+        } else {
+          // Shoot from Tower
+          m_targetRpm = ShooterSubsystem.calculateRPMForDistanceToHUB(2.2);
+        }
+      } else if (m_vision.hasTarget() && !m_isAimed) {
           
           rotationSpeed = m_aimPID.calculate(m_vision.getTx(), 0.0);
           if (Math.abs(rotationSpeed) < 0.05) {
@@ -90,7 +102,7 @@ public class AimClosedLoop extends Command {
         } else {
           if (Timer.getFPGATimestamp() - m_overrideStartTime > 1) {
             m_isAimed = true;
-            m_targetRpm = 18000;
+            m_targetRpm = ShooterSubsystem.calculateRPMForDistanceToHUB(2.2);
           }
         }
         //m_isAimed = true;

@@ -47,7 +47,7 @@ public final class Autos {
     public static Command driveBackAimShoot(DriveSubsystem robotDrive, ShooterSubsystem shooter, VisionTargeting vision) {
         return new SequentialCommandGroup(
             new AutonSwerveControlCommand(robotDrive, -0.2, 0, -0.1, 3, true),
-            new AimClosedLoop(robotDrive, shooter, vision, () -> 0, () -> 0).withTimeout(5.0)
+            new AimClosedLoop(robotDrive, shooter, vision, () -> 0, () -> 0, () -> 0).withTimeout(5.0)
         );
     }
 }

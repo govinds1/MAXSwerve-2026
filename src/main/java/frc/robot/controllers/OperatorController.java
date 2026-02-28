@@ -55,8 +55,23 @@ public class OperatorController extends GenericHID {
     return this.getRawButton(ShooterConstants.kStopShooterButton);
   }
 
-  public boolean getWantsBallSender(){
-    return this.getRawButton(ShooterConstants.kSendBallsButton);  //Added to test BM Feb 19
+  public boolean getWantsShootFromHubOverride() {
+    return this.getRawButton(ShooterConstants.kShootFromHubOverrideButton);
+  }
+
+  public boolean getWantsShootFromTowerOverride() {
+    return this.getRawButton(ShooterConstants.kShootFromTowerOverrideButton);
+  }
+
+  public double getWantsVisionOverride() {
+    // Used primarily by AimClosedLoop command.
+    if (getWantsShootFromHubOverride()) {
+      return 1;
+    } else if (getWantsShootFromTowerOverride()) {
+      return 2;
+    } else {
+      return 0;
+    }
   }
 
   // Feeder

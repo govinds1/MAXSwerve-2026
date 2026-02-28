@@ -99,13 +99,13 @@ public final class Constants {
     public static final double kFeederPower = 0.6;
     public static final boolean kInvertFollower = true;
     public static final double kShooterSpinUpTime = 0.25;
-    public static final double kShooterSendBalls = 0.80; //Added to test BM Feb 19
 
     // TODO: Modify these buttons if necessary.
     public static final int kRunShooterButton = 1; // A button
     public static final int kStopShooterButton = 4; // Y button
-    public static final int kRunFeederButton = 5; // Left bumper?
-    public static final int kSendBallsButton = 6; //right bumper Added to test Bm feb 19
+    public static final int kRunFeederButton = 5; // Left bumper - TODO: Remove manual feeder control
+    public static final int kShootFromTowerOverrideButton = 5; // Left bumper
+    public static final int kShootFromHubOverrideButton = 6; //right bumper
 
     public static final double kShooterMaxRPM = 6000; // TODO:
     public static final double kPController = 0.00005;
