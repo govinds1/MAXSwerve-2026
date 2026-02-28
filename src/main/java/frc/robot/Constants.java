@@ -131,7 +131,7 @@ public final class Constants {
   public static final class IntakeConstants {
     public static final int kIntakeRollerMotorCanId = 31;
     public static final int kIntakeExtenderMotorCanId = 32;
-    public static final double kIntakeRollerSpeed = 0.8;
+    public static final double kIntakeRollerSpeed = 0.6;
     public static final double kIntakeExtenderExtendSpeed = 0.1;
     public static final double kIntakeExtenderRetractSpeed = 0.15;
     public static final double kIntakeExtendTime = 0.3;
@@ -148,7 +148,7 @@ public final class Constants {
 
   public static final class ClimberConstants {
     public static final int kClimberMotorCanId = 41;
-    public static final double kClimbSpeed = 0.3;
+    public static final double kClimbSpeed = 0.4;
     public static final double kClimberUpTime = 2.0; // TODO: Update.
     public static final double kClimberDownTime = 2.0; // TODO: Update.
 

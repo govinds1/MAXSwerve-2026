@@ -100,7 +100,7 @@ public final class Configs {
                 climberMotorConfig
                         .inverted(false)
                         .idleMode(IdleMode.kBrake)
-                        .smartCurrentLimit(50);
+                        .smartCurrentLimit(60);
         }
     }
 
@@ -112,7 +112,7 @@ public final class Configs {
                 intakeMotorConfig
                         .inverted(false)
                         .idleMode(IdleMode.kCoast)
-                        .smartCurrentLimit(60);
+                        .smartCurrentLimit(40);
                 extenderMotorConfig
                         .inverted(false)
                         .idleMode(IdleMode.kBrake)
