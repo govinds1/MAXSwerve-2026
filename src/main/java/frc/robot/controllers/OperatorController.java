@@ -9,6 +9,7 @@ import frc.robot.Constants.ShooterConstants;
 public class OperatorController extends GenericHID {
 
   public Trigger runIntake;
+  public Trigger runExtake;
   public Trigger extendIntake;
   public Trigger retractIntake;
   public Trigger runShooter;
@@ -18,6 +19,7 @@ public class OperatorController extends GenericHID {
   public OperatorController(int port) {
     super(port);
     runIntake = new Trigger(this::getWantsRunIntakeRoller);
+    runExtake = new Trigger(this::getWantsReverseIntakeRoller);
     extendIntake = new Trigger(this::getWantsExtenderOut);
     retractIntake = new Trigger(this::getWantsExtenderIn);
     runShooter = new Trigger(this::getWantsRunShooter);

@@ -100,6 +100,7 @@ public class AimClosedLoop extends Command {
       SmartDashboard.putBoolean("Subsystems/Vision/Auto/IsAimed", m_isAimed);
       
       // Aim Robot
+      // TODO: Update with drive input when Vision aiming adjusts for robot speeds. See AimAndShootAuto/AimAtHubWhileDriving commands.
       m_drive.drive(0, 0, rotationSpeed, true); 
 
       // Rev the shooter

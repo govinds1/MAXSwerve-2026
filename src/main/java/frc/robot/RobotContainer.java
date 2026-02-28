@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import frc.robot.Constants.IntakeConstants;
+
 //import com.pathplanner.lib.auto.AutoBuilder;
 //import com.pathplanner.lib.events.EventTrigger;
 
@@ -19,6 +21,10 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.VisionTargeting;
+
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.events.EventTrigger;
+
 import edu.wpi.first.math.MathUtil;
 //import frc.robot.subsystems.VisionTargeting;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -48,6 +54,14 @@ public class RobotContainer {
 
   //private final SendableChooser<Command> autoChooser;
 
+  AimClosedLoop m_aimCommand = new AimClosedLoop(
+    getDriveSubsystem(), 
+    getShooterSubsystem(), 
+    getVisionSubsystem(), 
+    () -> -getDriverController().getLeftY(), 
+    () -> -getDriverController().getLeftX()
+  );
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -58,39 +72,33 @@ public class RobotContainer {
     // Configure default commands
     m_robotDrive.setDefaultCommand(
       new RunCommand(
-          () -> m_robotDrive.driveWithJoystick(m_driverController),
-          m_robotDrive
+        () -> m_robotDrive.driveWithJoystick(m_driverController),
+        m_robotDrive
       )
-     );
-
-    AimClosedLoop aimCommand = new AimClosedLoop(
-      getDriveSubsystem(), 
-      getShooterSubsystem(), 
-      getVisionSubsystem(), 
-      () -> -getDriverController().getLeftY(), 
-      () -> -getDriverController().getLeftX()
     );
-
-    //Trigger aimAndDriveTrigger = new Trigger(getDriverController()::getWantsAimAndDrive);
-    Trigger aimAndDriveTrigger = new Trigger(getOperatorController()::getWantsRunShooter);
-    aimAndDriveTrigger.whileTrue(aimCommand);
-    //aimAndDriveTrigger.whileTrue(new RunCommand(() -> getShooterSubsystem().runShooterRPM(1500), getShooterSubsystem()));
-
     // Register Named Commands
-    // TODO: Register shoot, intake, intake and move, and climb commands
-    //NamedCommands.registerCommand("autoBalance", swerve.autoBalanceCommand());
+    NamedCommands.registerCommand("Shoot", m_aimCommand);
+    NamedCommands.registerCommand("ExtendIntake", Commands.sequence(
+        Commands.runOnce(() -> m_intake.extend(), m_intake),
+        Commands.waitSeconds(IntakeConstants.kIntakeExtendTime),
+        Commands.runOnce(() -> m_intake.stopExtender(), m_intake)
+      )
+    );
+    NamedCommands.registerCommand("RetractIntake", Commands.sequence(
+        Commands.runOnce(() -> m_intake.extend(), m_intake),
+        Commands.waitSeconds(IntakeConstants.kIntakeRetractTime),
+        Commands.runOnce(() -> m_intake.stopExtender(), m_intake)
+      )
+    );
+    NamedCommands.registerCommand("RunIntake", Commands.runOnce(() -> m_intake.runRoller(), m_intake));
+    NamedCommands.registerCommand("StopIntake", Commands.runOnce(() -> m_intake.stopRoller(), m_intake));
+
+    NamedCommands.registerCommand("ClimberUp", Commands.runOnce(() -> m_climber.raiseHook(), m_climber));
+    NamedCommands.registerCommand("ClimberDown", Commands.runOnce(() -> m_climber.lowerHook(), m_climber));
 
     // Register Event Triggers
-    //new EventTrigger("intake").whileTrue(Commands.parallel(Commands.print("running intake")/*, TODO: Add intake command */));
-    
-    // Register teleop Triggers
-    //getOperatorController().runIntake.whileTrue(Commands.run(getIntakeSubsystem().runRoller()))
-    //  .onFalse(Commands.run(getIntakeSubsystem().stopRoller()));
-    // TODO: Modify shoot trigger to run feeder too. Automate this process, run feeder after ShooterConstants.kShooterSpinUpTime.
-    //getOperatorController().runShooter.onTrue(Commands.runOnce(() -> getShooterSubsystem().runShooterOpenLoop(ShooterConstants.kShooterPower)));
-    //getOperatorController().stopShooter.onTrue(Commands.runOnce(() -> getShooterSubsystem().stopShooter()));
-    //getOperatorController().runFeeder.onTrue(Commands.runOnce(() -> getShooterSubsystem().runFeeder(ShooterConstants.kFeederPower)))
-      //.onFalse(Commands.runOnce(() -> getShooterSubsystem().stopFeeder()));
+    new EventTrigger("RunIntake").whileTrue(Commands.runOnce(() -> m_intake.runRoller(), m_intake));
+    new EventTrigger("StopIntake").whileTrue(Commands.runOnce(() -> m_intake.stopRoller(), m_intake));
 
     // Build an auto chooser. This will use Commands.none() as the default option.
     //autoChooser = AutoBuilder.buildAutoChooser();
@@ -102,7 +110,8 @@ public class RobotContainer {
   }
 
   public void configureButtonBindings() {
-
+    // Shooter Triggers
+    getOperatorController().runShooter.whileTrue(m_aimCommand);
   }
 
   // GETTERS //
@@ -140,8 +149,7 @@ public class RobotContainer {
    * 
    */
   public void init() {
-    // Initialize Limelight.
-    //m_vision.init();
+
   }
 
   /**

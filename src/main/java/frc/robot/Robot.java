@@ -134,26 +134,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     // TODO: Add toggle/hold button for robot relative driving?
-    /*
-    TeleopTargetAndShoot command = new TeleopTargetAndShoot(
-      m_robotContainer.getDriveSubsystem(),
-      null, // m_robotContainer.getVisionSubsystem(), // TODO: Update when enabling vision.
-      null, // m_robotContainer.getShooterSubsystem(), // TODO: Update when enabling shooter.
-      m_robotContainer.getDriverController()
-    );
-    */
 
-    if (m_robotContainer.getDriverController().getWantsAimAndDrive()) {
-      // TODO: Run DriveTargetAndShoot command
-      //CommandScheduler.getInstance().schedule(aimCommand);
-    } else {
-      /*
-      if (command.isScheduled()) {
-        CommandScheduler.getInstance().cancel(command);
-      }
-      */
-      //m_robotContainer.getDriveSubsystem().driveWithJoystick(m_robotContainer.getDriverController(), null);
-    }
     if (m_robotContainer.getDriverController().getWantsGyroReset()) {
       m_robotContainer.getDriveSubsystem().zeroHeading();
     }
@@ -178,26 +159,11 @@ public class Robot extends TimedRobot {
       m_robotContainer.getIntakeSubsystem().stopExtender();
     }
 
-    // Shooter control.
-    /*if (m_robotContainer.getOperatorController().getWantsRunShooter()) {
-      m_robotContainer.getShooterSubsystem().runShooterOpenLoop(ShooterConstants.kShooterPower);
-    } else if (m_robotContainer.getOperatorController().getWantsBallSender()) {    // created to test BM Feb 19
-      m_robotContainer.getShooterSubsystem().runShooterOpenLoop(ShooterConstants.kShooterSendBalls);
-    }  else if (m_robotContainer.getOperatorController().getWantsStopShooter()) {
-      m_robotContainer.getShooterSubsystem().stopShooter();
-    }
-    // Feeder control.
-    if (m_robotContainer.getOperatorController().getWantsRunFeeder()) {
-      m_robotContainer.getShooterSubsystem().runFeeder(ShooterConstants.kFeederPower);
-    } else {
-      m_robotContainer.getShooterSubsystem().stopFeeder();
-    }*/
-
     // Climber control.
     if (m_robotContainer.getDriverController().getClimberUp()) {
-      m_robotContainer.getClimberSubsystem().climb();
+      m_robotContainer.getClimberSubsystem().raiseHook();
     } else if (m_robotContainer.getDriverController().getClimberDown()) {
-      m_robotContainer.getClimberSubsystem().descend();
+      m_robotContainer.getClimberSubsystem().lowerHook();
     } else {
       m_robotContainer.getClimberSubsystem().stop();
     }

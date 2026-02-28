@@ -1,10 +1,14 @@
 package frc.robot.controllers;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.GenericHID;
 import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.OperatorConstants;
 
 public class DriverController extends GenericHID {
+
+  SlewRateLimiter limiterX = new SlewRateLimiter(0.8);
+  SlewRateLimiter limiterY = new SlewRateLimiter(0.8);
   
   public DriverController(int port) {
     super(port);
@@ -16,16 +20,16 @@ public class DriverController extends GenericHID {
 
   // Drive
   public double getLeftY(){
-  return getRawAxis(1);
+  return limiterX.calculate(getRawAxis(1));
   }
   public double getLeftX(){
-  return getRawAxis(0);
+  return limiterY.calculate(getRawAxis(0));
   }
   public double getRightX(){
   return getRawAxis(4);
   }
   public boolean getWantsHalfSpeedMode() {
-    return getRawButton(OperatorConstants.kHalfSpeedAxis);
+    return getRawAxis(OperatorConstants.kHalfSpeedAxis) >= 0.5;
   }
   
   public boolean getWantsGyroReset(){
@@ -39,11 +43,11 @@ public class DriverController extends GenericHID {
   // Climber
   // TODO: Modify these once climber controls are set.
   public boolean getClimberUp(){
-    return this.getRawButton(ClimberConstants.kClimbUpButton);
+    return this.getRawButton(ClimberConstants.kClimberUpButton);
   }
 
   public boolean getClimberDown(){
-    return this.getRawButton(ClimberConstants.kClimbDownButton);  //this is the A button
+    return this.getRawButton(ClimberConstants.kClimberDownButton);
   }
 
   public void outputTelemetry() {

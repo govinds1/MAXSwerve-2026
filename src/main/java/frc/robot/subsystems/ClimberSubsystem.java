@@ -27,11 +27,11 @@ public class ClimberSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
-  public void climb() {
+  public void raiseHook() {
     m_motor.set(ClimberConstants.kClimbSpeed);
   }
 
-  public void descend() {
+  public void lowerHook() {
     m_motor.set(-ClimberConstants.kClimbSpeed);
   }
 

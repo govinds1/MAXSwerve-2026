@@ -135,6 +135,7 @@ public final class Constants {
     public static final double kIntakeExtenderExtendSpeed = 0.1;
     public static final double kIntakeExtenderRetractSpeed = 0.15;
     public static final double kIntakeExtendTime = 0.3;
+    public static final double kIntakeRetractTime = 0.7;
 
     public static final double kIntakeExtenderForwardLimitEncoderUnits = 1000; // TODO: Tune.
 
@@ -148,10 +149,12 @@ public final class Constants {
   public static final class ClimberConstants {
     public static final int kClimberMotorCanId = 41;
     public static final double kClimbSpeed = 0.3;
+    public static final double kClimberUpTime = 2.0; // TODO: Update.
+    public static final double kClimberDownTime = 2.0; // TODO: Update.
 
     // TODO: Modify these buttons.
-    public static final int kClimbUpButton = 5; // Left bumper
-    public static final int kClimbDownButton = 6; // Right bumper 
+    public static final int kClimberUpButton = 5; // Left bumper
+    public static final int kClimberDownButton = 6; // Right bumper 
   }
 
   public static final class OperatorConstants {
