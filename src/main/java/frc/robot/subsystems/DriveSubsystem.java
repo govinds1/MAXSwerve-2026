@@ -379,7 +379,7 @@ public class DriveSubsystem extends SubsystemBase {
   /**
    * Returns the heading of the robot.
    *
-   * @return the robot's heading in degrees, from -180 to 180
+   * @return the robot's heading in degrees. // TODO: Is this from -180 to 180 or 0 to 360?
    */
   public double getHeadingDegrees() {
     return getHeadingRotation().getDegrees();
