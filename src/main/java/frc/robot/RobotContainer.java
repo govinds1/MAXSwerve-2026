@@ -14,6 +14,8 @@ import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.AimClosedLoop;
+import frc.robot.commands.StrafeCenterToTag;
+import frc.robot.commands.TurnToAngle;
 import frc.robot.controllers.DriverController;
 import frc.robot.controllers.OperatorController;
 import frc.robot.subsystems.ClimberSubsystem;
@@ -26,6 +28,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.events.EventTrigger;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Rotation2d;
 //import frc.robot.subsystems.VisionTargeting;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -63,6 +66,20 @@ public class RobotContainer {
     () -> getOperatorController().getWantsVisionOverride()
   );
 
+  TurnToAngle m_turnAwayCommand = new TurnToAngle(
+    getDriveSubsystem(), 
+    Rotation2d.fromDegrees(0), 
+    () -> -getDriverController().getLeftY(), 
+    () -> -getDriverController().getLeftX()
+  );
+
+  TurnToAngle m_turnTowardsCommand = new TurnToAngle(
+    getDriveSubsystem(), 
+    Rotation2d.fromDegrees(180), 
+    () -> -getDriverController().getLeftY(), 
+    () -> -getDriverController().getLeftX()
+  );
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -79,23 +96,15 @@ public class RobotContainer {
     );
     // Register Named Commands
     NamedCommands.registerCommand("Shoot", m_aimCommand);
-    NamedCommands.registerCommand("ExtendIntake", Commands.sequence(
-        Commands.runOnce(() -> m_intake.extend(), m_intake),
-        Commands.waitSeconds(IntakeConstants.kIntakeExtendTime),
-        Commands.runOnce(() -> m_intake.stopExtender(), m_intake)
-      )
-    );
-    NamedCommands.registerCommand("RetractIntake", Commands.sequence(
-        Commands.runOnce(() -> m_intake.extend(), m_intake),
-        Commands.waitSeconds(IntakeConstants.kIntakeRetractTime),
-        Commands.runOnce(() -> m_intake.stopExtender(), m_intake)
-      )
-    );
+    NamedCommands.registerCommand("ExtendIntake", m_intake.extendAuto());
+    NamedCommands.registerCommand("RetractIntake", m_intake.retractAuto());
     NamedCommands.registerCommand("RunIntake", Commands.runOnce(() -> m_intake.runRoller(), m_intake));
     NamedCommands.registerCommand("StopIntake", Commands.runOnce(() -> m_intake.stopRoller(), m_intake));
 
     NamedCommands.registerCommand("ClimberUp", Commands.runOnce(() -> m_climber.raiseHook(), m_climber));
     NamedCommands.registerCommand("ClimberDown", Commands.runOnce(() -> m_climber.lowerHook(), m_climber));
+
+    NamedCommands.registerCommand("AlignToTag", new StrafeCenterToTag(m_robotDrive, m_vision));
 
     // Register Event Triggers
     new EventTrigger("RunIntake").whileTrue(Commands.runOnce(() -> m_intake.runRoller(), m_intake));
@@ -113,6 +122,10 @@ public class RobotContainer {
   public void configureButtonBindings() {
     // Shooter Triggers
     getOperatorController().runShooter.whileTrue(m_aimCommand);
+
+    // Turn to Angle Triggers
+    getDriverController().turnAway.onTrue(m_turnAwayCommand.withTimeout(1.5));
+    getDriverController().turnTowards.onTrue(m_turnTowardsCommand.withTimeout(1.5));
   }
 
   // GETTERS //

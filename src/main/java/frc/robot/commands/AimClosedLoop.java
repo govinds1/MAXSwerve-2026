@@ -65,12 +65,6 @@ public class AimClosedLoop extends Command {
   public void execute() {
       double translationX = m_translationXSupplier.getAsDouble();
       double translationY = m_translationYSupplier.getAsDouble();
-      // Apply deadband.
-      translationX = MathUtil.applyDeadband(translationX, OperatorConstants.kDriveDeadband);
-      translationY = MathUtil.applyDeadband(translationY, OperatorConstants.kDriveDeadband);
-      // Square inputs.
-      translationX = Helpers.signedSquare(translationX);
-      translationY = Helpers.signedSquare(translationY);
       
       double rotationSpeed = 0.0;
 

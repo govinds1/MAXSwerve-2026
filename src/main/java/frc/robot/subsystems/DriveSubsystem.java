@@ -125,6 +125,9 @@ public class DriveSubsystem extends SubsystemBase {
         m_thetaController
     );
     // Set controller tolerance.
+    m_xController.setTolerance(DriveAutoConstants.kRobotControllerTolerance.getX());
+    m_yController.setTolerance(DriveAutoConstants.kRobotControllerTolerance.getY());
+    m_thetaController.setTolerance(DriveAutoConstants.kRobotControllerTolerance.getRotation().getRadians());
     m_robotDriveController.setTolerance(DriveAutoConstants.kRobotControllerTolerance);
   }
 
@@ -233,6 +236,8 @@ public class DriveSubsystem extends SubsystemBase {
     double forward = -controller.getLeftY(); // Pushing forward on stick Y axis is negative, so invert to get forward speed.
     double left = -controller.getLeftX();    // Pushing right on stick X axis is positive, so invert to get left speed.
     double rotCCW = -controller.getRightX();  // Pushing right on stick X axis is positive, so invert to get CCW speed.
+    
+    /* // Smoothing/deadband will happen in DriverController functions themselves!
     // Apply deadbands.
     forward = MathUtil.applyDeadband(forward, OperatorConstants.kDriveDeadband);
     left = MathUtil.applyDeadband(left, OperatorConstants.kDriveDeadband);
@@ -241,6 +246,7 @@ public class DriveSubsystem extends SubsystemBase {
     forward = Helpers.signedSquare(forward);
     left = Helpers.signedSquare(left);
     rotCCW = Helpers.signedSquare(rotCCW);
+    */
 
     // Return value.
     boolean aimed = false;

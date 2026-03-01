@@ -10,6 +10,8 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Configs;
 import frc.robot.Constants.IntakeConstants;
@@ -55,6 +57,22 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public void stopExtender() {
     m_extenderMotor.stopMotor();
+  }
+
+  public Command extendAuto() {
+    return Commands.sequence(
+      Commands.runOnce(() -> this.extend(), this),
+      Commands.waitSeconds(IntakeConstants.kIntakeExtendTime),
+      Commands.runOnce(() -> this.stopExtender(), this)
+    );
+  }
+
+  public Command retractAuto() {
+    return Commands.sequence(
+      Commands.runOnce(() -> this.retract(), this),
+      Commands.waitSeconds(IntakeConstants.kIntakeRetractTime),
+      Commands.runOnce(() -> this.stopExtender(), this)
+    );
   }
 
   public void stop() {
