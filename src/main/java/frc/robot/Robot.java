@@ -95,6 +95,8 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+    // Reset gyro for auto.
+    m_robotContainer.getDriveSubsystem().zeroHeading();
     // Get selected autonomous command.
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 

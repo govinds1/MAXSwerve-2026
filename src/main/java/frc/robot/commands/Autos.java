@@ -28,7 +28,7 @@ public final class Autos {
     throw new UnsupportedOperationException("This is a utility class!");
     }
 
-    public static String[] autoNames = {"DoNothing", "DriveBackAndShoot", "Shoot", "ShootAndOutpost"};
+    public static String[] autoNames = {"DoNothing",  "OnlyShoot", "DriveBackAndShoot_StartRight", "ShootAndOutpost_StartRight"};
 
     public static Command getSelectedAuto(String selectedAutoName, DriveSubsystem robotDrive, ShooterSubsystem shooter, 
             VisionTargeting vision, IntakeSubsystem intake) {
@@ -38,14 +38,14 @@ public final class Autos {
             case "DoNothing":
             command = Commands.idle();
             break;
-            case "DriveBackAndShoot":
-            command = Autos.driveBackAndShoot(robotDrive, shooter, vision, intake);
-            break;
-            case "Shoot":
+            case "OnlyShoot":
             command = new AimClosedLoop(robotDrive, shooter, vision, () -> 0, () -> 0, () -> 0).withTimeout(5.0);
             break;
-            case "ShootAndOutpost":
-            command = Autos.outpostStart(robotDrive, shooter, vision, intake);
+            case "DriveBackAndShoot_StartRight":
+            command = Autos.driveBackAndShoot(robotDrive, shooter, vision, intake);
+            break;
+            case "ShootAndOutpost_StartRight":
+            command = Autos.shootAndOutpost(robotDrive, shooter, vision, intake);
             break;
         }
         
@@ -53,14 +53,25 @@ public final class Autos {
     }
 
     public static Command driveBackAndShoot(DriveSubsystem robotDrive, ShooterSubsystem shooter, VisionTargeting vision, IntakeSubsystem intake) {
+        // Assumes we are starting on right side, in line with trench and outpost.
         return new SequentialCommandGroup(
-            new AutonSwerveTimeControlCommand(robotDrive, -0.2, 0, -0.1, 3, true),
+            /*
+            Commands.parallel(
+                new TurnToAngle(robotDrive, Rotation2d.fromDegrees(-70), () -> 0, () -> 0), // TODO: Update angle
+                intake.extendAuto()
+            ),
+            */
+            // Drive back and rotate to roughly aim and get away from trench. TODO: Will replace with better TurnToAngle command after tuning.
+            new AutonSwerveTimeControlCommand(robotDrive, -0.15, 0, -0.15, 2, true), // TODO: Update backwards and rotational speeds and time parameter until in shooting position.
+            // Extend intake.
             intake.extendAuto(),
+            // Shoot.
             new AimClosedLoop(robotDrive, shooter, vision, () -> 0, () -> 0, () -> 0).withTimeout(3.0)
         );
     }
 
-    public static Command outpostStart(DriveSubsystem robotDrive, ShooterSubsystem shooter, VisionTargeting vision, IntakeSubsystem intake) {
+    public static Command shootAndOutpost(DriveSubsystem robotDrive, ShooterSubsystem shooter, VisionTargeting vision, IntakeSubsystem intake) {
+        // Assumes we are starting on right side, in line with trench and outpost.
         return new SequentialCommandGroup(
             // TODO:
             // 1. Aim and shoot at Hub.
@@ -68,11 +79,7 @@ public final class Autos {
             // 3. Align to outpost (or trench? if feeding from outpost from behind). TODO: Are trench and outpost lined up?
             // 4. Wait for fuel to be dumped.
             // 5. Aim and shoot at Hub.
-            Commands.parallel(
-                new TurnToAngle(robotDrive, Rotation2d.fromDegrees(-70), () -> 0, () -> 0), // TODO: Update angle
-                intake.extendAuto()
-            ),
-            new AimClosedLoop(robotDrive, shooter, vision, () -> 0, () -> 0, () -> 0).withTimeout(3.0), // TODO: Update timeout.
+            driveBackAndShoot(robotDrive, shooter, vision, intake),
             new AutonSwerveTimeControlCommand(robotDrive, -0.3, 0, 0, 2, true), // TODO: Update time parameter to get to outpost.
             //new AlignToTarget(robotDrive, vision),
             new WaitCommand(2.5), // TODO: Update how long we need to wait at outpost.
