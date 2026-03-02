@@ -14,6 +14,7 @@ import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.AimClosedLoop;
+import frc.robot.commands.Autos;
 import frc.robot.commands.StrafeCenterToTag;
 import frc.robot.commands.TurnToAngle;
 import frc.robot.controllers.DriverController;
@@ -29,6 +30,7 @@ import com.pathplanner.lib.events.EventTrigger;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 //import frc.robot.subsystems.VisionTargeting;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -173,11 +175,11 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // Grab selected auto from SmartDashboard drop down menu
-    //String selectedAutoName = SmartDashboard.getString("Auto Selector", Autos.autoNames[0]);
-    //return Autos.getSelectedAuto(selectedAutoName, m_robotDrive);
+    String selectedAutoName = SmartDashboard.getString("Auto Selector", Autos.autoNames[0]);
+    return Autos.getSelectedAuto(selectedAutoName, m_robotDrive, m_shooter, m_vision, m_intake);
 
     // Grab selected auto from SmartDashboard chooser.
     //return autoChooser.getSelected();
-    return Commands.idle();
+    //return Commands.idle();
   }
 }

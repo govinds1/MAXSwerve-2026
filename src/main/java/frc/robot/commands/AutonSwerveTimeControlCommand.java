@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.DriveSubsystem;
 
 // Simply utility command for Autos to drive robot in a straight line without worrying about trajectory control
-public class AutonSwerveControlCommand extends Command {
+public class AutonSwerveTimeControlCommand extends Command {
 
     private DriveSubsystem m_drive;
     private double m_forwardSpeed;
@@ -16,7 +16,7 @@ public class AutonSwerveControlCommand extends Command {
     private double startTime;
     
 
-public AutonSwerveControlCommand(DriveSubsystem subsystem, double forward, double right, double omega, double time, boolean fieldRel) {
+public AutonSwerveTimeControlCommand(DriveSubsystem subsystem, double forward, double right, double omega, double time, boolean fieldRel) {
     m_drive = subsystem;
     m_forwardSpeed = forward;
     m_rightSpeed = right;

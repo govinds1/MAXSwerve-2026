@@ -28,20 +28,23 @@ public final class Autos {
     throw new UnsupportedOperationException("This is a utility class!");
     }
 
-    public static String[] autoNames = {"DriveBackAndShoot", "Shoot", "Outpost"};
+    public static String[] autoNames = {"DoNothing", "DriveBackAndShoot", "Shoot", "ShootAndOutpost"};
 
     public static Command getSelectedAuto(String selectedAutoName, DriveSubsystem robotDrive, ShooterSubsystem shooter, 
             VisionTargeting vision, IntakeSubsystem intake) {
         Command command = null;
 
         switch(selectedAutoName) {
+            case "DoNothing":
+            command = Commands.idle();
+            break;
             case "DriveBackAndShoot":
             command = Autos.driveBackAndShoot(robotDrive, shooter, vision, intake);
             break;
             case "Shoot":
             command = new AimClosedLoop(robotDrive, shooter, vision, () -> 0, () -> 0, () -> 0).withTimeout(5.0);
             break;
-            case "Outpost":
+            case "ShootAndOutpost":
             command = Autos.outpostStart(robotDrive, shooter, vision, intake);
             break;
         }
@@ -51,7 +54,7 @@ public final class Autos {
 
     public static Command driveBackAndShoot(DriveSubsystem robotDrive, ShooterSubsystem shooter, VisionTargeting vision, IntakeSubsystem intake) {
         return new SequentialCommandGroup(
-            new AutonSwerveControlCommand(robotDrive, -0.2, 0, -0.1, 3, true),
+            new AutonSwerveTimeControlCommand(robotDrive, -0.2, 0, -0.1, 3, true),
             intake.extendAuto(),
             new AimClosedLoop(robotDrive, shooter, vision, () -> 0, () -> 0, () -> 0).withTimeout(3.0)
         );
@@ -65,12 +68,16 @@ public final class Autos {
             // 3. Align to outpost (or trench? if feeding from outpost from behind). TODO: Are trench and outpost lined up?
             // 4. Wait for fuel to be dumped.
             // 5. Aim and shoot at Hub.
-            new AimClosedLoop(robotDrive, shooter, vision, () -> 0, () -> 0, () -> 0).withTimeout(3.0),
-            new AutonSwerveControlCommand(robotDrive, -0.5, 0, 0, 2, true),
-            new AlignToTarget(robotDrive, vision),
-            new WaitCommand(1.5),
-            new AutonSwerveControlCommand(robotDrive, 0.3, 0.3, 0.1, 1.5, true),
-            new AimClosedLoop(robotDrive, shooter, vision, () -> 0, () -> 0, () -> 0).withTimeout(3.0)
+            Commands.parallel(
+                new TurnToAngle(robotDrive, Rotation2d.fromDegrees(-70), () -> 0, () -> 0), // TODO: Update angle
+                intake.extendAuto()
+            ),
+            new AimClosedLoop(robotDrive, shooter, vision, () -> 0, () -> 0, () -> 0).withTimeout(3.0), // TODO: Update timeout.
+            new AutonSwerveTimeControlCommand(robotDrive, -0.3, 0, 0, 2, true), // TODO: Update time parameter to get to outpost.
+            //new AlignToTarget(robotDrive, vision),
+            new WaitCommand(2.5), // TODO: Update how long we need to wait at outpost.
+            new AutonSwerveTimeControlCommand(robotDrive, 0.3, 0, 0, 2, true), // TODO: Update time parameter to get back into shooting position.
+            new AimClosedLoop(robotDrive, shooter, vision, () -> 0, () -> 0, () -> 0).withTimeout(3.0) // TODO: Update timeout.
         );
     }
 }

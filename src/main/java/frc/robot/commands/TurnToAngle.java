@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -39,13 +40,20 @@ public class TurnToAngle extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // Get current error to setpoint.
-    double currentHeadingRadians = Helpers.modRadians(m_drive.getHeadingRotation().getRadians());
-    double error = m_targetAngle.getRadians() - currentHeadingRadians;
-    // Apply PID controller to error and calculate value.
-    double rotSpeed = m_drive.m_thetaController.calculate(error);
+    // Get current rotation speed to apply.
+    double rotSpeed = TurnToAngle.getRotSpeed(m_drive.getHeadingRotation().getRadians(), m_targetAngle.getRadians(), m_drive.m_thetaController);
     // Apply rotational output to drive, along with strafe inputs from supplier.
     m_drive.drive(m_translationXSupplier.getAsDouble(), m_translationYSupplier.getAsDouble(), rotSpeed, true);
+  }
+
+  // Make this public static so other commands can use the same control math for turning.
+  public static double getRotSpeed(double currentHeadingRadians, double targetAngleRadians, ProfiledPIDController thetaController) {
+    // Get current error to setpoint.
+    currentHeadingRadians = Helpers.modRadians(currentHeadingRadians);
+    targetAngleRadians = Helpers.modRadians(targetAngleRadians);
+    double error = targetAngleRadians - currentHeadingRadians;
+    // Apply PID controller to error and calculate value.
+    return thetaController.calculate(error);
   }
 
   // Called once the command ends or is interrupted.
