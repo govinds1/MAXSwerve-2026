@@ -271,8 +271,8 @@ public final class Constants {
     // All units are in meters. Conversion factor from inches to meters is 0.0254.
 
     // Important Field locations
-    private static final Translation2d kCenterOfField = new Translation2d(Units.inchesToMeters(325.06), Units.inchesToMeters(158.32));
-    //private static final double kCenterXMeters = kCenterOfField.getX();
+    private static final Translation2d kCenterOfField = new Translation2d(Units.inchesToMeters(325.61), Units.inchesToMeters(158.84));
+    private static final double kCenterXMeters = kCenterOfField.getX();
     private static final double kCenterYMeters = kCenterOfField.getY();
     public static final Translation2d kBlueHub = new Translation2d(Units.inchesToMeters(181.56), kCenterYMeters);
     public static final Translation2d kBlueDepot = new Translation2d(Units.inchesToMeters(13.50), kCenterYMeters + (Units.inchesToMeters(75.93)));
@@ -302,6 +302,8 @@ public final class Constants {
     // Useful distances and poses for Auto.
     public static final Pose2d kBlueRightShootingPosition = new Pose2d(kBlueRightStart.getTranslation(), Rotation2d.fromDegrees(80));
     public static final Pose2d kBlueLeftShootingPosition = new Pose2d(kBlueLeftStart.getTranslation(), Rotation2d.fromDegrees(280));
-    public static final double kStartLineToOutpostMeters = kBlueRightStart.getTranslation().getDistance(kBlueOutpost);
+    public static final double kOutpostToStartLineMeters = kBlueRightStart.getTranslation().getDistance(kBlueOutpost);
+    public static final double kStartLineToCenterLineMeters = kCenterXMeters - (kRobotPoseXAtBlueStartLine + (DriveConstants.kFullWidth / 2.0));
+    public static final double kEdgeToCenterFuelPickupMeters = kCenterYMeters * 0.5;
   }
 }

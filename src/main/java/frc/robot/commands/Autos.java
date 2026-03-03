@@ -31,7 +31,7 @@ public final class Autos {
     throw new UnsupportedOperationException("This is a utility class!");
     }
 
-    public static String[] autoNames = {"DoNothing",  "OnlyShoot", "TurnAndShoot_StartRight", "ShootAndOutpost_StartRight"};
+    public static String[] autoNames = {"DoNothing",  "OnlyShoot", "TurnAndShoot_StartRight", "ShootAndOutpost_StartRight", "ShootAndTrench_StartRight", "ShootAndTrenchAndOutpost_StartRight"};
 
     public static Command getSelectedAuto(String selectedAutoName, DriveSubsystem robotDrive, ShooterSubsystem shooter, 
             VisionTargeting vision, IntakeSubsystem intake) {
@@ -49,6 +49,15 @@ public final class Autos {
             break;
             case "ShootAndOutpost_StartRight":
             command = Autos.shootAndOutpostTimeBased(robotDrive, shooter, vision, intake);
+            break;
+            case "ShootAndTrench_StartRight":
+            command = Autos.shootAndTrench(robotDrive, shooter, vision, intake);
+            break;
+            case "ShootAndTrenchAndOutpost_StartRight":
+            command = Autos.shootAndTrenchAndOutpost(robotDrive, shooter, vision, intake);
+            break;
+            default:
+            command = Commands.idle();
             break;
         }
         
@@ -108,10 +117,57 @@ public final class Autos {
             // 4. Wait for fuel to be dumped.
             // 5. Aim and shoot at Hub.
             turnAndShoot(robotDrive, shooter, vision, intake),
-            new AutonSwerveDistanceControlCommand(robotDrive, new Pose2d(-FieldConstants.kStartLineToOutpostMeters, 0, Rotation2d.fromDegrees(0))),
+            new AutonSwerveDistanceControlCommand(robotDrive, new Pose2d(-FieldConstants.kOutpostToStartLineMeters, 0, Rotation2d.fromDegrees(0))),
             new WaitCommand(2.5), // TODO: Update how long we need to wait at outpost.
-            new AutonSwerveDistanceControlCommand(robotDrive, new Pose2d(FieldConstants.kStartLineToOutpostMeters, 0, FieldConstants.kBlueRightShootingPosition.getRotation())),
+            new AutonSwerveDistanceControlCommand(robotDrive, new Pose2d(FieldConstants.kOutpostToStartLineMeters, 0, FieldConstants.kBlueRightShootingPosition.getRotation())),
             new AimClosedLoop(robotDrive, shooter, vision, () -> 0, () -> 0, () -> 0).withTimeout(3.0) // TODO: Update timeout.
+        );
+    }
+
+    public static Command shootAndTrench(DriveSubsystem robotDrive, ShooterSubsystem shooter, VisionTargeting vision, IntakeSubsystem intake) {
+        // Assumes we are starting on right side, in line with trench and outpost.
+        return new SequentialCommandGroup(
+            // 1. Aim and shoot at Hub.
+            // 2. Drive thru trench until close to half line, turn to face fuel.
+            // 3. Intake fuel, driving forward.
+            // 4. Drive back to trench.
+            // 5. Drive thru trench to shooting position.
+            // 6. Aim and shoot at Hub.
+            Autos.shootAndTrenchNoLastShot(robotDrive, shooter, vision, intake),
+            turnAndShoot(robotDrive, shooter, vision, intake)
+        );
+    }
+
+    private static Command shootAndTrenchNoLastShot(DriveSubsystem robotDrive, ShooterSubsystem shooter, VisionTargeting vision, IntakeSubsystem intake) {
+        // Assumes we are starting on right side, in line with trench and outpost.
+        // FOR INTERMEDIATE USE ONLY!
+        return new SequentialCommandGroup(
+            turnAndShoot(robotDrive, shooter, vision, intake),
+            new AutonSwerveDistanceControlCommand(robotDrive, new Pose2d(FieldConstants.kStartLineToCenterLineMeters, 0, Rotation2d.fromDegrees(90))),
+            Commands.parallel(
+                new AutonSwerveDistanceControlCommand(robotDrive, new Pose2d(0, FieldConstants.kEdgeToCenterFuelPickupMeters, Rotation2d.fromDegrees(90))),
+                Commands.runOnce(() -> intake.runRoller(), intake)
+            ),
+            new AutonSwerveDistanceControlCommand(robotDrive, new Pose2d(0, -FieldConstants.kEdgeToCenterFuelPickupMeters, Rotation2d.fromDegrees(90))),
+            new AutonSwerveDistanceControlCommand(robotDrive, new Pose2d(-FieldConstants.kStartLineToCenterLineMeters, 0, Rotation2d.fromDegrees(90)))
+        );
+    }
+
+    public static Command shootAndTrenchAndOutpost(DriveSubsystem robotDrive, ShooterSubsystem shooter, VisionTargeting vision, IntakeSubsystem intake) {
+        // Assumes we are starting on right side, in line with trench and outpost.
+        return new SequentialCommandGroup(
+            // 1. Aim and shoot at Hub.
+            // 2. Drive thru trench until close to half line, turn to face fuel.
+            // 3. Intake fuel, driving forward.
+            // 4. Drive back to trench.
+            // 5. Drive thru trench to shooting position.
+            // 6. Aim and shoot at Hub.
+            // 7. Drive to outpost.
+            // 8. Wait for fueling.
+            // 9. Drive to shooting position.
+            // 10. Aim and shoot.
+            Autos.shootAndTrenchNoLastShot(robotDrive, shooter, vision, intake),
+            Autos.shootAndOutpost(robotDrive, shooter, vision, intake)
         );
     }
 }
