@@ -10,6 +10,7 @@ import com.pathplanner.lib.config.RobotConfig;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -290,12 +291,17 @@ public final class Constants {
 
     // Robot starting poses, marking the center of the robot.
     private static final double kRobotPoseXAtBlueStartLine = Units.inchesToMeters(156.61 - (DriveConstants.kFullWidth / 2.0));
-    private static final Rotation2d kRobotRotAtStartLine = new Rotation2d(Math.PI);
-    public static final Pose2d kBlueLeftStart = new Pose2d(kRobotPoseXAtBlueStartLine, kCenterYMeters + Units.inchesToMeters(75.93), kRobotRotAtStartLine);
-    public static final Pose2d kBlueMiddleStart = new Pose2d(kRobotPoseXAtBlueStartLine, kCenterYMeters, kRobotRotAtStartLine);
-    public static final Pose2d kBlueRightStart = new Pose2d(kRobotPoseXAtBlueStartLine, kCenterYMeters - Units.inchesToMeters(96.5) - (DriveConstants.kFullWidth / 2.0), kRobotRotAtStartLine);
+    public static final Rotation2d kRobotRotAtBlueStartLine = new Rotation2d(0);
+    public static final Pose2d kBlueLeftStart = new Pose2d(kRobotPoseXAtBlueStartLine, kCenterYMeters + Units.inchesToMeters(158.84 - 26.22), kRobotRotAtBlueStartLine);
+    public static final Pose2d kBlueMiddleStart = new Pose2d(kRobotPoseXAtBlueStartLine, kCenterYMeters, kRobotRotAtBlueStartLine);
+    public static final Pose2d kBlueRightStart = new Pose2d(kRobotPoseXAtBlueStartLine, Units.inchesToMeters(26.22), kRobotRotAtBlueStartLine);
     public static final Pose2d kRedLeftStart = kBlueLeftStart.rotateAround(kCenterOfField, new Rotation2d(Math.PI));
     public static final Pose2d kRedMiddleStart = kBlueMiddleStart.rotateAround(kCenterOfField, new Rotation2d(Math.PI));
     public static final Pose2d kRedRightStart = kBlueRightStart.rotateAround(kCenterOfField, new Rotation2d(Math.PI));
+
+    // Useful distances and poses for Auto.
+    public static final Pose2d kBlueRightShootingPosition = new Pose2d(kBlueRightStart.getTranslation(), Rotation2d.fromDegrees(80));
+    public static final Pose2d kBlueLeftShootingPosition = new Pose2d(kBlueLeftStart.getTranslation(), Rotation2d.fromDegrees(280));
+    public static final double kStartLineToOutpostMeters = kBlueRightStart.getTranslation().getDistance(kBlueOutpost);
   }
 }
