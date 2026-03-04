@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.Helpers;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -31,11 +32,27 @@ public final class Autos {
     throw new UnsupportedOperationException("This is a utility class!");
     }
 
-    public static String[] autoNames = {"DoNothing",  "OnlyShoot", "TurnAndShoot_StartRight", "ShootAndOutpost_StartRight", "ShootAndTrench_StartRight", "ShootAndTrenchAndOutpost_StartRight"};
+    public static String[] autoNames = {"DoNothing",  "OnlyShoot", 
+        "TurnAndShoot_StartRight", "ShootAndOutpost_StartRight", "ShootAndTrench_StartRight", "ShootAndTrenchAndOutpost_StartRight", 
+        "TurnAndShoot_StartLeft", "ShootAndOutpost_StartLeft", "ShootAndTrench_StartLeft", "ShootAndTrenchAndOutpost_StartLeft"
+    };
+    
+    enum StartSide {
+        kLEFT, kCENTER, kRIGHT
+    }
+    private static StartSide m_startingSide = StartSide.kRIGHT;
 
     public static Command getSelectedAuto(String selectedAutoName, DriveSubsystem robotDrive, ShooterSubsystem shooter, 
             VisionTargeting vision, IntakeSubsystem intake) {
         Command command = null;
+
+        if (selectedAutoName.contains("StartRight")) {
+            m_startingSide = StartSide.kRIGHT;
+        } else if (selectedAutoName.contains("StartLeft")) {
+            m_startingSide = StartSide.kLEFT;
+        } else if (selectedAutoName.contains("StartCenter")) {
+            m_startingSide = StartSide.kCENTER;
+        }
 
         switch(selectedAutoName) {
             case "DoNothing":
@@ -56,12 +73,64 @@ public final class Autos {
             case "ShootAndTrenchAndOutpost_StartRight":
             command = Autos.shootAndTrenchAndOutpost(robotDrive, shooter, vision, intake);
             break;
+            case "TurnAndShoot_StartLeft":
+            command = Autos.turnAndShootTimeBased(robotDrive, shooter, vision, intake);
+            break;
+            case "ShootAndOutpost_StartLeft":
+            command = Autos.shootAndOutpostTimeBased(robotDrive, shooter, vision, intake);
+            break;
+            case "ShootAndTrench_StartLeft":
+            command = Autos.shootAndTrench(robotDrive, shooter, vision, intake);
+            break;
+            case "ShootAndTrenchAndOutpost_StartLeft":
+            command = Autos.shootAndTrenchAndOutpost(robotDrive, shooter, vision, intake);
+            break;
             default:
             command = Commands.idle();
             break;
         }
         
         return command;
+    }
+
+    private static Pose2d getStartingPose() {
+        // TODO: 
+        // When using PathPlanner, use this starting pose to set drive Pose (for estimator). 
+        // Enable using different pose for different alliance, so we know starting rotation.
+        switch (m_startingSide) {
+            case kLEFT:
+                //return (Helpers.onRedAlliance()) ? FieldConstants.kRedLeftStart : FieldConstants.kBlueLeftStart;
+                return FieldConstants.kBlueLeftStart;
+            case kCENTER:
+                //return (Helpers.onRedAlliance()) ? FieldConstants.kRedMiddleStart : FieldConstants.kBlueMiddleStart;
+                return FieldConstants.kBlueCenterStart;
+            case kRIGHT:
+                //return (Helpers.onRedAlliance()) ? FieldConstants.kRedRightStart : FieldConstants.kBlueRightStart;
+                return FieldConstants.kBlueRightStart;
+            default:
+                //return (Helpers.onRedAlliance()) ? FieldConstants.kRedRightStart : FieldConstants.kBlueRightStart;
+                return FieldConstants.kBlueRightStart;
+        }
+    }
+
+    private static Pose2d getShootingPose() {
+        // TODO: 
+        // When using PathPlanner, use this starting pose to set drive Pose (for estimator). 
+        // Enable using different pose for different alliance, so we know starting rotation.
+        switch (m_startingSide) {
+            case kLEFT:
+                //return (Helpers.onRedAlliance()) ? FieldConstants.kRedLeftShootingPosition : FieldConstants.kBlueLeftShootingPosition;
+                return FieldConstants.kBlueLeftShootingPosition;
+            case kCENTER:
+                //return (Helpers.onRedAlliance()) ? FieldConstants.kRedCenterShootingPosition : FieldConstants.kBlueCenterShootingPosition;
+                return FieldConstants.kBlueCenterShootingPosition;
+            case kRIGHT:
+                //return (Helpers.onRedAlliance()) ? FieldConstants.kRedRightShootingPosition : FieldConstants.kBlueRightShootingPosition;
+                return FieldConstants.kBlueRightShootingPosition;
+            default:
+                //return (Helpers.onRedAlliance()) ? FieldConstants.kRedRightShootingPosition : FieldConstants.kBlueRightShootingPosition;
+                return FieldConstants.kBlueRightShootingPosition;
+        }
     }
 
     public static Command turnAndShootTimeBased(DriveSubsystem robotDrive, ShooterSubsystem shooter, VisionTargeting vision, IntakeSubsystem intake) {
@@ -77,11 +146,11 @@ public final class Autos {
     }
 
     public static Command turnAndShoot(DriveSubsystem robotDrive, ShooterSubsystem shooter, VisionTargeting vision, IntakeSubsystem intake) {
-        // Assumes we are starting on right side, in line with trench and outpost.
+        // Assumes we are starting in line with trench and outpost.
         return new SequentialCommandGroup(
             // Turn to approx. face Hub and extend intake.
             Commands.parallel(
-                new TurnToAngle(robotDrive, FieldConstants.kBlueRightShootingPosition.getRotation(), () -> 0, () -> 0), // TODO: Update angle
+                new TurnToAngle(robotDrive, getStartingPose().getRotation(), () -> 0, () -> 0), // TODO: Update angle
                 intake.extendAuto()
             ),
             // Shoot.
@@ -108,7 +177,7 @@ public final class Autos {
     }
 
     public static Command shootAndOutpost(DriveSubsystem robotDrive, ShooterSubsystem shooter, VisionTargeting vision, IntakeSubsystem intake) {
-        // Assumes we are starting on right side, in line with trench and outpost.
+        // Assumes we are starting in line with trench and outpost.
         return new SequentialCommandGroup(
             // TODO:
             // 1. Aim and shoot at Hub.
@@ -119,13 +188,13 @@ public final class Autos {
             turnAndShoot(robotDrive, shooter, vision, intake),
             new AutonSwerveDistanceControlCommand(robotDrive, new Pose2d(-FieldConstants.kOutpostToStartLineMeters, 0, Rotation2d.fromDegrees(0))),
             new WaitCommand(2.5), // TODO: Update how long we need to wait at outpost.
-            new AutonSwerveDistanceControlCommand(robotDrive, new Pose2d(FieldConstants.kOutpostToStartLineMeters, 0, FieldConstants.kBlueRightShootingPosition.getRotation())),
+            new AutonSwerveDistanceControlCommand(robotDrive, new Pose2d(FieldConstants.kOutpostToStartLineMeters, 0, getShootingPose().getRotation())),
             new AimClosedLoop(robotDrive, shooter, vision, () -> 0, () -> 0, () -> 0).withTimeout(3.0) // TODO: Update timeout.
         );
     }
 
     public static Command shootAndTrench(DriveSubsystem robotDrive, ShooterSubsystem shooter, VisionTargeting vision, IntakeSubsystem intake) {
-        // Assumes we are starting on right side, in line with trench and outpost.
+        // Assumes we are starting in line with trench and outpost.
         return new SequentialCommandGroup(
             // 1. Aim and shoot at Hub.
             // 2. Drive thru trench until close to half line, turn to face fuel.
@@ -139,22 +208,28 @@ public final class Autos {
     }
 
     private static Command shootAndTrenchNoLastShot(DriveSubsystem robotDrive, ShooterSubsystem shooter, VisionTargeting vision, IntakeSubsystem intake) {
-        // Assumes we are starting on right side, in line with trench and outpost.
+        // Assumes we are starting in line with trench and outpost.
         // FOR INTERMEDIATE USE ONLY!
+
+        // If went through right trench, travel left (+) to refuel. Otherwise, travel right (-).
+        int yDirection = (m_startingSide == StartSide.kRIGHT) ? 1 : -1;
         return new SequentialCommandGroup(
+            // Shoot.
             turnAndShoot(robotDrive, shooter, vision, intake),
+            // Go to refuel.
             new AutonSwerveDistanceControlCommand(robotDrive, new Pose2d(FieldConstants.kStartLineToCenterLineMeters, 0, Rotation2d.fromDegrees(90))),
             Commands.parallel(
-                new AutonSwerveDistanceControlCommand(robotDrive, new Pose2d(0, FieldConstants.kEdgeToCenterFuelPickupMeters, Rotation2d.fromDegrees(90))),
+                new AutonSwerveDistanceControlCommand(robotDrive, new Pose2d(0, yDirection * FieldConstants.kEdgeToCenterFuelPickupMeters, Rotation2d.fromDegrees(90))),
                 Commands.runOnce(() -> intake.runRoller(), intake)
             ),
-            new AutonSwerveDistanceControlCommand(robotDrive, new Pose2d(0, -FieldConstants.kEdgeToCenterFuelPickupMeters, Rotation2d.fromDegrees(90))),
+            // Travel back.
+            new AutonSwerveDistanceControlCommand(robotDrive, new Pose2d(0, -yDirection * FieldConstants.kEdgeToCenterFuelPickupMeters, Rotation2d.fromDegrees(90))),
             new AutonSwerveDistanceControlCommand(robotDrive, new Pose2d(-FieldConstants.kStartLineToCenterLineMeters, 0, Rotation2d.fromDegrees(90)))
         );
     }
 
     public static Command shootAndTrenchAndOutpost(DriveSubsystem robotDrive, ShooterSubsystem shooter, VisionTargeting vision, IntakeSubsystem intake) {
-        // Assumes we are starting on right side, in line with trench and outpost.
+        // Assumes we are starting in line with trench and outpost.
         return new SequentialCommandGroup(
             // 1. Aim and shoot at Hub.
             // 2. Drive thru trench until close to half line, turn to face fuel.
