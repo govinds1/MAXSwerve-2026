@@ -59,7 +59,7 @@ public final class Autos {
             command = Commands.idle();
             break;
             case "OnlyShoot":
-            command = new AimClosedLoop(robotDrive, shooter, vision, () -> 0, () -> 0, () -> 0).withTimeout(5.0);
+            command = Autos.AimAndShootCommand(robotDrive, shooter, vision, intake);
             break;
             case "TurnAndShoot_StartRight":
             command = Autos.turnAndShootTimeBased(robotDrive, shooter, vision, intake);
@@ -133,6 +133,18 @@ public final class Autos {
         }
     }
 
+    private static Command AimAndShootCommand(DriveSubsystem robotDrive, ShooterSubsystem shooter, VisionTargeting vision, IntakeSubsystem intake) {
+        return Commands.parallel(
+            new AimClosedLoop(robotDrive, shooter, vision, () -> 0, () -> 0, () -> 0).withTimeout(4.0),
+            Commands.sequence(
+                Commands.runOnce(() -> intake.runRoller()),
+                Commands.waitSeconds(1.5),
+                intake.retractAuto(),
+                intake.extendAuto()
+            )
+        ).andThen(Commands.runOnce(() -> intake.stopRoller(), intake));
+    }
+
     public static Command turnAndShootTimeBased(DriveSubsystem robotDrive, ShooterSubsystem shooter, VisionTargeting vision, IntakeSubsystem intake) {
         // Assumes we are starting on right side, in line with trench and outpost.
         return new SequentialCommandGroup(
@@ -141,7 +153,7 @@ public final class Autos {
             // Extend intake.
             intake.extendAuto(),
             // Shoot.
-            new AimClosedLoop(robotDrive, shooter, vision, () -> 0, () -> 0, () -> 0).withTimeout(3.0)
+            Autos.AimAndShootCommand(robotDrive, shooter, vision, intake)
         );
     }
 
@@ -154,7 +166,7 @@ public final class Autos {
                 intake.extendAuto()
             ),
             // Shoot.
-            new AimClosedLoop(robotDrive, shooter, vision, () -> 0, () -> 0, () -> 0).withTimeout(3.0)
+            Autos.AimAndShootCommand(robotDrive, shooter, vision, intake)
         );
     }
 
@@ -172,7 +184,7 @@ public final class Autos {
             //new AlignToTarget(robotDrive, vision),
             new WaitCommand(2.5), // TODO: Update how long we need to wait at outpost.
             new AutonSwerveTimeControlCommand(robotDrive, 0.3, 0, 0, 2, true), // TODO: Update time parameter to get back into shooting position.
-            new AimClosedLoop(robotDrive, shooter, vision, () -> 0, () -> 0, () -> 0).withTimeout(3.0) // TODO: Update timeout.
+            Autos.AimAndShootCommand(robotDrive, shooter, vision, intake)
         );
     }
 
@@ -189,7 +201,7 @@ public final class Autos {
             new AutonSwerveDistanceControlCommand(robotDrive, new Pose2d(-FieldConstants.kOutpostToStartLineMeters, 0, Rotation2d.fromDegrees(0))),
             new WaitCommand(2.5), // TODO: Update how long we need to wait at outpost.
             new AutonSwerveDistanceControlCommand(robotDrive, new Pose2d(FieldConstants.kOutpostToStartLineMeters, 0, getShootingPose().getRotation())),
-            new AimClosedLoop(robotDrive, shooter, vision, () -> 0, () -> 0, () -> 0).withTimeout(3.0) // TODO: Update timeout.
+            Autos.AimAndShootCommand(robotDrive, shooter, vision, intake)
         );
     }
 
