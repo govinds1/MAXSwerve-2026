@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -162,7 +163,7 @@ public final class Autos {
         return new SequentialCommandGroup(
             // Turn to approx. face Hub and extend intake.
             Commands.parallel(
-                new TurnToAngle(robotDrive, getStartingPose().getRotation(), () -> 0, () -> 0), // TODO: Update angle
+                new TurnToAngle(robotDrive, getShootingPose().getRotation(), () -> 0, () -> 0), // TODO: Update angle
                 intake.extendAuto()
             ),
             // Shoot.
@@ -198,9 +199,9 @@ public final class Autos {
             // 4. Wait for fuel to be dumped.
             // 5. Aim and shoot at Hub.
             turnAndShoot(robotDrive, shooter, vision, intake),
-            new AutonSwerveDistanceControlCommand(robotDrive, new Pose2d(-FieldConstants.kOutpostToStartLineMeters, 0, Rotation2d.fromDegrees(0))),
+            new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(-FieldConstants.kOutpostToStartLineMeters, 0), Rotation2d.fromDegrees(0)),
             new WaitCommand(2.5), // TODO: Update how long we need to wait at outpost.
-            new AutonSwerveDistanceControlCommand(robotDrive, new Pose2d(FieldConstants.kOutpostToStartLineMeters, 0, getShootingPose().getRotation())),
+            new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(FieldConstants.kOutpostToStartLineMeters, 0), getShootingPose().getRotation()),
             Autos.AimAndShootCommand(robotDrive, shooter, vision, intake)
         );
     }
@@ -225,18 +226,19 @@ public final class Autos {
 
         // If went through right trench, travel left (+) to refuel. Otherwise, travel right (-).
         int yDirection = (m_startingSide == StartSide.kRIGHT) ? 1 : -1;
+        Rotation2d intakeHeading = Rotation2d.fromDegrees(yDirection * 80);
         return new SequentialCommandGroup(
             // Shoot.
             turnAndShoot(robotDrive, shooter, vision, intake),
             // Go to refuel.
-            new AutonSwerveDistanceControlCommand(robotDrive, new Pose2d(FieldConstants.kStartLineToCenterLineMeters, 0, Rotation2d.fromDegrees(90))),
+            new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(FieldConstants.kStartLineToCenterLineMeters, 0), intakeHeading),
             Commands.parallel(
-                new AutonSwerveDistanceControlCommand(robotDrive, new Pose2d(0, yDirection * FieldConstants.kEdgeToCenterFuelPickupMeters, Rotation2d.fromDegrees(90))),
+                new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(0, yDirection * FieldConstants.kEdgeToCenterFuelPickupMeters), intakeHeading),
                 Commands.runOnce(() -> intake.runRoller(), intake)
             ),
             // Travel back.
-            new AutonSwerveDistanceControlCommand(robotDrive, new Pose2d(0, -yDirection * FieldConstants.kEdgeToCenterFuelPickupMeters, Rotation2d.fromDegrees(90))),
-            new AutonSwerveDistanceControlCommand(robotDrive, new Pose2d(-FieldConstants.kStartLineToCenterLineMeters, 0, Rotation2d.fromDegrees(90)))
+            new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(0, -yDirection * FieldConstants.kEdgeToCenterFuelPickupMeters), intakeHeading),
+            new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(-FieldConstants.kStartLineToCenterLineMeters, 0), getShootingPose().getRotation())
         );
     }
 
