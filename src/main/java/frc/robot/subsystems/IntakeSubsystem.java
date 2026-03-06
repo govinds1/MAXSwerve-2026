@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -18,7 +19,8 @@ import frc.robot.Constants.IntakeConstants;
 
 public class IntakeSubsystem extends SubsystemBase {
   SparkFlex m_rollerMotor = new SparkFlex(IntakeConstants.kIntakeRollerMotorCanId, MotorType.kBrushless);
-  SparkFlex m_extenderMotor = new SparkFlex(IntakeConstants.kIntakeExtenderMotorCanId, MotorType.kBrushless);
+  //SparkFlex m_extenderMotor = new SparkFlex(IntakeConstants.kIntakeExtenderMotorCanId, MotorType.kBrushless);
+  SparkMax m_extenderMotor = new SparkMax(IntakeConstants.kIntakeExtenderMotorCanId, MotorType.kBrushless);
 
   /** Creates a new IntakeSubsystem. */
   public IntakeSubsystem() {
