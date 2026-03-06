@@ -8,11 +8,9 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Helpers;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.VisionTargeting;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class TurnToAngle extends Command {
@@ -21,7 +19,6 @@ public class TurnToAngle extends Command {
   private final DoubleSupplier m_translationYSupplier;
 
   private Rotation2d m_targetAngle;
-  private double m_startTime;
 
   /** Creates a new TurnToAngle. */
   public TurnToAngle(DriveSubsystem drive, Rotation2d targetAngle, DoubleSupplier xSupplier, DoubleSupplier ySupplier) {

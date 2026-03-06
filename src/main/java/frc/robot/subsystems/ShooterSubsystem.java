@@ -6,7 +6,6 @@ package frc.robot.subsystems;
 
 import java.util.Map;
 
-import com.pathplanner.lib.events.TriggerEvent;
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;

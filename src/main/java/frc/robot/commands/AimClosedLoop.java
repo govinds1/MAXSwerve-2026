@@ -6,15 +6,11 @@ package frc.robot.commands;
 
 import java.util.function.DoubleSupplier;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.DriveAutoConstants;
-import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.Helpers;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.VisionTargeting;
@@ -107,7 +103,7 @@ public class AimClosedLoop extends Command {
       
       // Aim Robot
       // TODO: Update with drive input when Vision aiming adjusts for robot speeds. See AimAndShootAuto/AimAtHubWhileDriving commands.
-      m_drive.drive(0, 0, rotationSpeed, true); 
+      m_drive.drive(translationX, translationY, rotationSpeed, true); 
 
       // Rev the shooter
       m_shooter.runShooterRPM(m_targetRpm);

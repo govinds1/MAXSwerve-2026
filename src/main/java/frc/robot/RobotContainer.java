@@ -4,15 +4,7 @@
 
 package frc.robot;
 
-import frc.robot.Constants.IntakeConstants;
-
-//import com.pathplanner.lib.auto.AutoBuilder;
-//import com.pathplanner.lib.events.EventTrigger;
-
-//import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-//import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.AimClosedLoop;
 import frc.robot.commands.Autos;
 import frc.robot.commands.StrafeCenterToTag;
@@ -28,15 +20,11 @@ import frc.robot.subsystems.VisionTargeting;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.events.EventTrigger;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-//import frc.robot.subsystems.VisionTargeting;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -63,8 +51,8 @@ public class RobotContainer {
     getDriveSubsystem(), 
     getShooterSubsystem(), 
     getVisionSubsystem(), 
-    () -> -getDriverController().getLeftY(), 
-    () -> -getDriverController().getLeftX(),
+    () -> -getDriverController().getLeftY() * 0, // TODO: Update to allow driving very slowly while shooting -> at least until we adjust for speeds.
+    () -> -getDriverController().getLeftX() * 0, // TODO: Update to allow driving very slowly while shooting -> at least until we adjust for speeds.
     () -> getOperatorController().getWantsVisionOverride()
   );
 

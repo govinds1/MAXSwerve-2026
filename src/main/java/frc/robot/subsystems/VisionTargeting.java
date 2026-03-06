@@ -4,31 +4,23 @@
 
 package frc.robot.subsystems;
 
-import java.util.Collections;
-import java.util.Set;
-
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Helpers;
 import frc.robot.LimelightHelpers;
 import frc.robot.Constants.AprilTagConstants;
-import frc.robot.Constants.DriveAutoConstants;
-import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.AprilTagConstants.Tag;
-import frc.robot.Constants.AprilTagConstants.TagLocation;
 import frc.robot.LimelightHelpers.RawFiducial;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.DriverStation;
 
 public class VisionTargeting extends SubsystemBase {
 
-    private TagLocation m_seekingLocation;
+    //private TagLocation m_seekingLocation;
     private final String limelightName = "limelight";
 
     public VisionTargeting() {
