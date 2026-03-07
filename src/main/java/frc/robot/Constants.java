@@ -108,7 +108,7 @@ public final class Constants {
     public static final int kShootFromHubOverrideButton = 6; //right bumper
 
     public static final double kShooterMaxRPM = 6000; // TODO:
-    public static final double kPController = 0.00005;
+    public static final double kPController = 0.00007; // 0.000032
     public static final double kBallRadiusMeters = 0.15;
     public static final double kLaunchAngleDegrees = 60; // TODO:
     public static final double kLaunchAngleRadians = Math.toRadians(kLaunchAngleDegrees);
@@ -133,7 +133,7 @@ public final class Constants {
     public static final int kIntakeExtenderMotorCanId = 32;
     public static final double kIntakeRollerSpeed = 0.7;
     public static final double kIntakeExtenderExtendSpeed = 0.1;
-    public static final double kIntakeExtenderRetractSpeed = 0.2;
+    public static final double kIntakeExtenderRetractSpeed = 0.3;
     public static final double kIntakeExtendTime = 1.0;
     public static final double kIntakeRetractTime = 1.8;
 
@@ -174,7 +174,7 @@ public final class Constants {
     public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI;
 
     public static final double kPXYController = 0.01;
-    public static final double kPThetaController = 0.01;
+    public static final double kPThetaController = 0.42;
     public static final Pose2d kRobotControllerTolerance = new Pose2d(0.1, 0.1, new Rotation2d(Units.degreesToRadians(1)));
 
     // Constraint for the motion profiled robot angle controller

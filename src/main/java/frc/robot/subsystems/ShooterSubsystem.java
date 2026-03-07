@@ -32,15 +32,15 @@ public class ShooterSubsystem extends SubsystemBase{
   private final RelativeEncoder m_encoder;
 
   private final SparkClosedLoopController m_closedLoopController;
-  private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.003, 0.000283, 0); // (0.035, 0.0007, 0);
+  private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.003, 0.00026, 0); // (0.003, 0.000283, 0);
   private final double RPM_TOLERANCE = 1000; // Spped margin of error
   private double m_desiredRPM = 0;
 
   // Distance (meters) - RPM mapping
   public static final InterpolatingDoubleTreeMap rpmMap = InterpolatingDoubleTreeMap.ofEntries(
     Map.entry(1.0, 10000.0),
-    Map.entry(1.7, 18000.0),
-    Map.entry(2.4, 20000.0),
+    Map.entry(1.7, 19000.0),
+    Map.entry(2.4, 22000.0),
     Map.entry(3.0, 25000.0),
     Map.entry(5.0, 31000.0)
     //Map.entry(1.0, 2000.0),
@@ -82,6 +82,7 @@ public class ShooterSubsystem extends SubsystemBase{
   public void periodic() {
     SmartDashboard.putNumber("Subsytems/Shooter/Flywheel/RPMSetpoint", m_desiredRPM);
     SmartDashboard.putNumber("Subsytems/Shooter/Flywheel/RPMCurrent", m_encoder.getVelocity());
+    SmartDashboard.putBoolean("Subsytems/Shooter/Flywheel/AtSpeed", isAtSpeed());
   }
 
   /**

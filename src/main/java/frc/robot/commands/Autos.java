@@ -71,7 +71,7 @@ public final class Autos {
             command = Autos.shootAndTrenchAndOutpost(robotDrive, shooter, vision, intake);
             break;
             case "TurnAndShoot_StartLeft":
-            command = Autos.turnAndShootTimeBased(robotDrive, shooter, vision, intake);
+            command = Autos.turnAndShoot(robotDrive, shooter, vision, intake);
             break;
             case "ShootAndOutpost_StartLeft":
             command = Autos.shootAndOutpostTimeBased(robotDrive, shooter, vision, intake);
@@ -163,7 +163,7 @@ public final class Autos {
             Commands.parallel(
                 new TurnToAngle(robotDrive, getShootingPose().getRotation(), () -> 0, () -> 0), // TODO: Update angle
                 intake.extendAuto()
-            ),
+            ).withTimeout(1.5),
             // Shoot.
             Autos.AimAndShootCommand(robotDrive, shooter, vision, intake)
         );

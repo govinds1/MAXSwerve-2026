@@ -112,6 +112,8 @@ public class RobotContainer {
   public void configureButtonBindings() {
     // Shooter Triggers
     getOperatorController().runShooter.whileTrue(m_aimCommand);
+    //getOperatorController().runShooter.onTrue(Commands.runOnce(() -> m_shooter.runShooterRPM(18000)));
+    //getOperatorController().runShooter.onFalse(Commands.runOnce(() -> m_shooter.stop(), m_shooter));
 
     // Turn to Angle Triggers
     getDriverController().turnAway.onTrue(m_turnAwayCommand.withTimeout(1.5));

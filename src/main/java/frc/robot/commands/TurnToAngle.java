@@ -8,6 +8,7 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Helpers;
 import frc.robot.subsystems.DriveSubsystem;
@@ -37,10 +38,12 @@ public class TurnToAngle extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    SmartDashboard.putNumber("Subsystems/Drive/Auto/TurnToAngle/TargetAngle", Helpers.modDegrees(m_targetAngle.getDegrees()));
+    SmartDashboard.putNumber("Subsystems/Drive/Auto/TurnToAngle/CurrentAngle", Helpers.modDegrees(m_drive.getHeadingDegrees()));
     // Get current rotation speed to apply.
     double rotSpeed = TurnToAngle.getRotSpeed(m_drive.getHeadingRotation().getRadians(), m_targetAngle.getRadians(), m_drive.m_thetaController);
     // Apply rotational output to drive, along with strafe inputs from supplier.
-    m_drive.drive(m_translationXSupplier.getAsDouble(), m_translationYSupplier.getAsDouble(), rotSpeed, true);
+    m_drive.drive(m_translationXSupplier.getAsDouble(), m_translationYSupplier.getAsDouble(), -rotSpeed, true);
   }
 
   // Make this public static so other commands can use the same control math for turning.
