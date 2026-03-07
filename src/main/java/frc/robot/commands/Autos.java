@@ -132,10 +132,12 @@ public final class Autos {
 
     private static Command AimAndShootCommand(DriveSubsystem robotDrive, ShooterSubsystem shooter, VisionTargeting vision, IntakeSubsystem intake) {
         return Commands.parallel(
-            new AimClosedLoop(robotDrive, shooter, vision, () -> 0, () -> 0, () -> 0).withTimeout(4.0),
+            new AimClosedLoop(robotDrive, shooter, vision, () -> 0, () -> 0, () -> 0).withTimeout(6.0),
             Commands.sequence(
                 Commands.runOnce(() -> intake.runRoller()),
-                Commands.waitSeconds(1.5),
+                Commands.waitSeconds(0.5),
+                intake.retractAuto(),
+                intake.extendAuto(),
                 intake.retractAuto(),
                 intake.extendAuto()
             )
