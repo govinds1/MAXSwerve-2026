@@ -38,8 +38,8 @@ public class ShooterSubsystem extends SubsystemBase{
 
   // Distance (meters) - RPM mapping
   public static final InterpolatingDoubleTreeMap rpmMap = InterpolatingDoubleTreeMap.ofEntries(
-    Map.entry(1.0, 10000.0),
-    Map.entry(1.7, 19000.0),
+    Map.entry(1.0, 13000.0),
+    Map.entry(1.7, 19500.0),
     Map.entry(2.4, 22000.0),
     Map.entry(3.0, 25000.0),
     Map.entry(5.0, 31000.0)

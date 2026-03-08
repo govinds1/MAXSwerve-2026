@@ -43,7 +43,7 @@ public class TurnToAngle extends Command {
     // Get current rotation speed to apply.
     double rotSpeed = TurnToAngle.getRotSpeed(m_drive.getHeadingRotation().getRadians(), m_targetAngle.getRadians(), m_drive.m_thetaController);
     // Apply rotational output to drive, along with strafe inputs from supplier.
-    m_drive.drive(m_translationXSupplier.getAsDouble(), m_translationYSupplier.getAsDouble(), -rotSpeed, true);
+    m_drive.drive(m_translationXSupplier.getAsDouble(), m_translationYSupplier.getAsDouble(), rotSpeed, true);
   }
 
   // Make this public static so other commands can use the same control math for turning.
@@ -52,8 +52,8 @@ public class TurnToAngle extends Command {
     currentHeadingRadians = Helpers.modRadians(currentHeadingRadians);
     targetAngleRadians = Helpers.modRadians(targetAngleRadians);
     double error = targetAngleRadians - currentHeadingRadians;
-    // Apply PID controller to error and calculate value.
-    return thetaController.calculate(error);
+    // Apply PID controller to error and calculate value. Negate to get expected direction.
+    return -thetaController.calculate(error);
   }
 
   // Called once the command ends or is interrupted.
