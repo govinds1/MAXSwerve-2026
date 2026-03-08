@@ -109,6 +109,9 @@ public final class Constants {
 
     public static final double kShooterMaxRPM = 6000; // TODO:
     public static final double kPController = 0.00007; // 0.000032
+    public static final double kRPMTolerance = 500;
+    
+    // Unused parameters -> prototype commands.
     public static final double kBallRadiusMeters = 0.15;
     public static final double kLaunchAngleDegrees = 60; // TODO:
     public static final double kLaunchAngleRadians = Math.toRadians(kLaunchAngleDegrees);

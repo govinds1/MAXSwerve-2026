@@ -33,7 +33,6 @@ public class ShooterSubsystem extends SubsystemBase{
 
   private final SparkClosedLoopController m_closedLoopController;
   private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.003, 0.00026, 0); // (0.003, 0.000283, 0);
-  private final double RPM_TOLERANCE = 1000; // Spped margin of error
   private double m_desiredRPM = 0;
 
   // Distance (meters) - RPM mapping
@@ -201,7 +200,7 @@ public class ShooterSubsystem extends SubsystemBase{
    * @returns true if motor has reached the velocity setpoint.
    */
   public boolean isAtSpeed() {
-    return Math.abs(m_encoder.getVelocity() - m_desiredRPM) < RPM_TOLERANCE || (m_encoder.getVelocity() > m_desiredRPM);
+    return Math.abs(m_encoder.getVelocity() - m_desiredRPM) < ShooterConstants.kRPMTolerance; // || (m_encoder.getVelocity() > m_desiredRPM);
   }
 
   /**

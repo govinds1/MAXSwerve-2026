@@ -140,7 +140,11 @@ public class AimClosedLoop extends Command {
       
       // Aim Robot
       // TODO: Update with drive input when Vision aiming adjusts for robot speeds. See AimAndShootAuto/AimAtHubWhileDriving commands.
-      m_drive.drive(translationX, translationY, rotationSpeed, true); 
+      if (translationX == 0 && translationY == 0 && rotationSpeed == 0) {
+        m_drive.setX();
+      } else {
+        m_drive.drive(translationX, translationY, rotationSpeed, true);
+      }
 
       // Rev the shooter
       m_shooter.runShooterRPM(m_targetRpm);
@@ -148,6 +152,8 @@ public class AimClosedLoop extends Command {
 
       if (m_isAimed && m_isAdjusted && m_shooter.isAtSpeed()) {
         m_shooter.runFeeder(ShooterConstants.kFeederPower);
+      } else {
+        m_shooter.stopFeeder();
       }
   }
 
