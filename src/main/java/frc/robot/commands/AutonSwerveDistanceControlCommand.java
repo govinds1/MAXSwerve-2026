@@ -16,13 +16,23 @@ public class AutonSwerveDistanceControlCommand extends Command {
     private Pose2d m_startingPose;
     private Translation2d m_desiredTranslationDelta; // desired pose relative to starting pose. Example -> (2, -3) means we move 2 meters forward, 3 meters right
     private Rotation2d m_desiredRotation; // desired angle (field relative) at the end of driving. Example -> 0 means we face opponent's driver station.
+    private double m_desiredEndVelocityMps; // desired linear velocity (mps) at the end of route. 
     private double startTime;
     
+
+public AutonSwerveDistanceControlCommand(DriveSubsystem subsystem, Translation2d desiredTranslationDelta, Rotation2d desiredRotation, double desiredEndVelocityMps) {
+    m_drive = subsystem;
+    m_desiredTranslationDelta = desiredTranslationDelta;
+    m_desiredRotation = desiredRotation;
+    m_desiredEndVelocityMps = desiredEndVelocityMps;
+    addRequirements(m_drive);
+}
 
 public AutonSwerveDistanceControlCommand(DriveSubsystem subsystem, Translation2d desiredTranslationDelta, Rotation2d desiredRotation) {
     m_drive = subsystem;
     m_desiredTranslationDelta = desiredTranslationDelta;
     m_desiredRotation = desiredRotation;
+    m_desiredEndVelocityMps = 0;
     addRequirements(m_drive);
 }
 
@@ -40,7 +50,7 @@ public void execute() {
     // Get current pose.
     Pose2d currentPose = m_drive.getPose().relativeTo(m_startingPose);
     // Apply PID controllers to get output.
-    ChassisSpeeds newSpeeds = m_drive.m_robotDriveController.calculate(currentPose, new Pose2d(m_desiredTranslationDelta, m_desiredRotation), 0, m_desiredRotation);
+    ChassisSpeeds newSpeeds = m_drive.m_robotDriveController.calculate(currentPose, new Pose2d(m_desiredTranslationDelta, m_desiredRotation), m_desiredEndVelocityMps, m_desiredRotation);
     // Apply output to drive.
     m_drive.driveRobotRelative(newSpeeds);
 }
@@ -48,19 +58,20 @@ public void execute() {
 // Called once the command ends or is interrupted.
 @Override
 public void end(boolean interrupted) {
-    m_drive.drive(0, 0, 0, false);
+    if (m_desiredEndVelocityMps == 0) {
+        m_drive.drive(0, 0, 0, false);
+    }
 }
 
 // Returns true when the command should end.
 @Override
 public boolean isFinished() {
-    double maxAllowedTime = Math.max(Math.sqrt(m_desiredTranslationDelta.getSquaredNorm()), 2.0);
-    return (Timer.getFPGATimestamp() - startTime) > maxAllowedTime;
+    double maxAllowedTime = Math.max(m_desiredTranslationDelta.getNorm(), 20.0); // TODO: For testing, set unlimited time.
+    return ((Timer.getFPGATimestamp() - startTime) > maxAllowedTime) || m_drive.m_robotDriveController.atReference();
 }
 
 @Override
 public boolean runsWhenDisabled() {
         return false;
-
     }
 }

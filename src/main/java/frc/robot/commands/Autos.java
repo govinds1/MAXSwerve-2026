@@ -29,9 +29,10 @@ public final class Autos {
     throw new UnsupportedOperationException("This is a utility class!");
     }
 
-    public static String[] autoNames = {"DoNothing",  "OnlyShoot", 
+    public static String[] autoNames = {"DoNothing",  "OnlyShoot", "Test",
         "TurnAndShoot_StartRight", "ShootAndOutpost_StartRight", "ShootAndTrench_StartRight", "ShootAndTrenchAndOutpost_StartRight", 
-        "TurnAndShoot_StartLeft", "ShootAndOutpost_StartLeft", "ShootAndTrench_StartLeft", "ShootAndTrenchAndOutpost_StartLeft"
+        "TurnAndShoot_StartLeft", "ShootAndOutpost_StartLeft", "ShootAndTrench_StartLeft", "ShootAndTrenchAndOutpost_StartLeft",
+        "QuickTrenchShoot_StartLeft", "QuickTrenchShoot_StartRight"
     };
     
     enum StartSide {
@@ -58,8 +59,16 @@ public final class Autos {
             case "OnlyShoot":
             command = Autos.AimAndShootCommand(robotDrive, shooter, vision, intake);
             break;
+            case "Test":
+            command = Commands.sequence(
+                new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(1, -2), Rotation2d.fromDegrees(0)), // TODO: Test with rotation after tuning translation.
+                Commands.runOnce(() -> shooter.runShooterOpenLoop(0.2), shooter),
+                Commands.waitSeconds(0.5),
+                Commands.runOnce(() -> shooter.stop(), shooter)
+            );
+            break;
             case "TurnAndShoot_StartRight":
-            command = Autos.turnAndShootTimeBased(robotDrive, shooter, vision, intake);
+            command = Autos.turnAndShoot(robotDrive, shooter, vision, intake);
             break;
             case "ShootAndOutpost_StartRight":
             command = Autos.shootAndOutpostTimeBased(robotDrive, shooter, vision, intake);
@@ -79,8 +88,11 @@ public final class Autos {
             case "ShootAndTrench_StartLeft":
             command = Autos.shootAndTrench(robotDrive, shooter, vision, intake);
             break;
-            case "ShootAndTrenchAndOutpost_StartLeft":
-            command = Autos.shootAndTrenchAndOutpost(robotDrive, shooter, vision, intake);
+            case "QuickTrenchShoot_StartLeft":
+            command = Autos.quickTrenchAndShoot(robotDrive, shooter, vision, intake);
+            break;
+            case "QuickTrenchShoot_StartRight":
+            command = Autos.quickTrenchAndShoot(robotDrive, shooter, vision, intake);
             break;
             default:
             command = Commands.idle();
@@ -161,7 +173,7 @@ public final class Autos {
         return new SequentialCommandGroup(
             // Turn to approx. face Hub and extend intake.
             Commands.parallel(
-                new TurnToAngle(robotDrive, getShootingPose().getRotation(), () -> 0, () -> 0), // TODO: Update angle
+                new TurnToAngle(robotDrive, getShootingPose().getRotation(), () -> 0, () -> 0),
                 intake.extendAuto()
             ).withTimeout(1.5),
             // Shoot.
@@ -213,30 +225,31 @@ public final class Autos {
             // 4. Drive back to trench.
             // 5. Drive thru trench to shooting position.
             // 6. Aim and shoot at Hub.
-            Autos.shootAndTrenchNoLastShot(robotDrive, shooter, vision, intake),
+            turnAndShoot(robotDrive, shooter, vision, intake),
+            Autos.traverseTrenchGetFuelAndReturn(robotDrive, shooter, vision, intake),
             turnAndShoot(robotDrive, shooter, vision, intake)
         );
     }
 
-    private static Command shootAndTrenchNoLastShot(DriveSubsystem robotDrive, ShooterSubsystem shooter, VisionTargeting vision, IntakeSubsystem intake) {
+    private static Command traverseTrenchGetFuelAndReturn(DriveSubsystem robotDrive, ShooterSubsystem shooter, VisionTargeting vision, IntakeSubsystem intake) {
         // Assumes we are starting in line with trench and outpost.
         // FOR INTERMEDIATE USE ONLY!
 
         // If went through right trench, travel left (+) to refuel. Otherwise, travel right (-).
         int yDirection = (m_startingSide == StartSide.kRIGHT) ? 1 : -1;
-        Rotation2d intakeHeading = Rotation2d.fromDegrees(yDirection * 80);
+        Rotation2d intakeHeading = Rotation2d.fromDegrees(yDirection * 100);
         return new SequentialCommandGroup(
-            // Shoot.
-            turnAndShoot(robotDrive, shooter, vision, intake),
             // Go to refuel.
-            new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(FieldConstants.kStartLineToCenterLineMeters, 0), intakeHeading),
+            new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(FieldConstants.kStartLineToCenterLineMeters, 0), Rotation2d.fromDegrees(0)),
+            // TODO: Break up above drive command into two (traverse trench straight on and then a diagonal line while turning and extending intake to face fuel). Use desiredVelocity argument.
             Commands.parallel(
                 new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(0, yDirection * FieldConstants.kEdgeToCenterFuelPickupMeters), intakeHeading),
-                Commands.runOnce(() -> intake.runRoller(), intake)
+                Commands.runOnce(() -> intake.runRoller(), intake),
+                intake.extendAuto()
             ),
             // Travel back.
-            new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(0, -yDirection * FieldConstants.kEdgeToCenterFuelPickupMeters), intakeHeading),
-            new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(-FieldConstants.kStartLineToCenterLineMeters, 0), getShootingPose().getRotation())
+            new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(0, -yDirection * FieldConstants.kEdgeToCenterFuelPickupMeters), Rotation2d.fromDegrees(0)),
+            new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(-FieldConstants.kStartLineToCenterLineMeters, 0), Rotation2d.fromDegrees(0))
         );
     }
 
@@ -253,7 +266,17 @@ public final class Autos {
             // 8. Wait for fueling.
             // 9. Drive to shooting position.
             // 10. Aim and shoot.
-            Autos.shootAndTrenchNoLastShot(robotDrive, shooter, vision, intake),
+            turnAndShoot(robotDrive, shooter, vision, intake),
+            Autos.traverseTrenchGetFuelAndReturn(robotDrive, shooter, vision, intake),
+            Autos.shootAndOutpost(robotDrive, shooter, vision, intake)
+        );
+    }
+
+    public static Command quickTrenchAndShoot(DriveSubsystem robotDrive, ShooterSubsystem shooter, VisionTargeting vision, IntakeSubsystem intake) {
+        // Assumes we are starting in line with trench and outpost.
+        return new SequentialCommandGroup(
+            // Works the same as shootAndTrench, but this auto avoids shooting first in order to try and beat other teams to the midfield first. 
+            Autos.traverseTrenchGetFuelAndReturn(robotDrive, shooter, vision, intake),
             Autos.shootAndOutpost(robotDrive, shooter, vision, intake)
         );
     }
