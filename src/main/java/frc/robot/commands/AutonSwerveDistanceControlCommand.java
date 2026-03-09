@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -18,13 +19,24 @@ public class AutonSwerveDistanceControlCommand extends Command {
     private Rotation2d m_desiredRotation; // desired angle (field relative) at the end of driving. Example -> 0 means we face opponent's driver station.
     private double m_desiredEndVelocityMps; // desired linear velocity (mps) at the end of route. 
     private double startTime;
+    private boolean m_halfSpeed;
     
+
+public AutonSwerveDistanceControlCommand(DriveSubsystem subsystem, Translation2d desiredTranslationDelta, Rotation2d desiredRotation, double desiredEndVelocityMps, boolean halfSpeed) {
+    m_drive = subsystem;
+    m_desiredTranslationDelta = desiredTranslationDelta;
+    m_desiredRotation = desiredRotation;
+    m_desiredEndVelocityMps = desiredEndVelocityMps;
+    m_halfSpeed = halfSpeed; 
+    addRequirements(m_drive);
+}
 
 public AutonSwerveDistanceControlCommand(DriveSubsystem subsystem, Translation2d desiredTranslationDelta, Rotation2d desiredRotation, double desiredEndVelocityMps) {
     m_drive = subsystem;
     m_desiredTranslationDelta = desiredTranslationDelta;
     m_desiredRotation = desiredRotation;
     m_desiredEndVelocityMps = desiredEndVelocityMps;
+    m_halfSpeed = false;
     addRequirements(m_drive);
 }
 
@@ -33,6 +45,7 @@ public AutonSwerveDistanceControlCommand(DriveSubsystem subsystem, Translation2d
     m_desiredTranslationDelta = desiredTranslationDelta;
     m_desiredRotation = desiredRotation;
     m_desiredEndVelocityMps = 0;
+    m_halfSpeed = false;
     addRequirements(m_drive);
 }
 
@@ -51,6 +64,9 @@ public void execute() {
     Pose2d currentPose = m_drive.getPose().relativeTo(m_startingPose);
     // Apply PID controllers to get output.
     ChassisSpeeds newSpeeds = m_drive.m_robotDriveController.calculate(currentPose, new Pose2d(m_desiredTranslationDelta, m_desiredRotation), m_desiredEndVelocityMps, m_desiredRotation);
+    if (m_halfSpeed) {
+        newSpeeds = newSpeeds.times(0.5);
+    }
     // Apply output to drive.
     m_drive.driveRobotRelative(newSpeeds);
 }

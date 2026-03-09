@@ -112,11 +112,13 @@ public class DriveSubsystem extends SubsystemBase {
     );*/
 
     m_thetaController.enableContinuousInput(0, 2 * Math.PI);
+    var thetaRobotController = m_thetaController;
+    thetaRobotController.setP(DriveAutoConstants.kPThetaRobotController);
 
     m_robotDriveController = new HolonomicDriveController(
         m_xController,
         m_yController,
-        m_thetaController
+        thetaRobotController
     );
     // Set controller tolerance.
     m_xController.setTolerance(DriveAutoConstants.kRobotControllerTolerance.getX());

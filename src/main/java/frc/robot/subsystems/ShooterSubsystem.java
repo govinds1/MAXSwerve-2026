@@ -32,12 +32,13 @@ public class ShooterSubsystem extends SubsystemBase{
   private final RelativeEncoder m_encoder;
 
   private final SparkClosedLoopController m_closedLoopController;
-  private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.003, 0.00026, 0); // (0.003, 0.000283, 0);
+  private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.003, 0.000275, 0); // (0.003, 0.000283, 0);
   private double m_desiredRPM = 0;
 
   // Distance (meters) - RPM mapping
   public static final InterpolatingDoubleTreeMap rpmMap = InterpolatingDoubleTreeMap.ofEntries(
     Map.entry(1.0, 13000.0),
+    Map.entry(1.6, 17000.0),
     Map.entry(1.7, 19500.0),
     Map.entry(2.4, 22000.0),
     Map.entry(3.0, 25000.0),

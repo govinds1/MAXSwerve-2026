@@ -108,7 +108,7 @@ public final class Constants {
     public static final int kShootFromHubOverrideButton = 6; //right bumper
 
     public static final double kShooterMaxRPM = 6000; // TODO:
-    public static final double kPController = 0.00007; // 0.000032
+    public static final double kPController = 0.0001; // 0.000032
     public static final double kRPMTolerance = 500;
     
     // Unused parameters -> prototype commands.
@@ -137,8 +137,8 @@ public final class Constants {
     public static final double kIntakeRollerSpeed = 0.7;
     public static final double kIntakeExtenderExtendSpeed = 0.1;
     public static final double kIntakeExtenderRetractSpeed = 0.35;
-    public static final double kIntakeExtendTime = 1.0;
-    public static final double kIntakeRetractTime = 1.5;
+    public static final double kIntakeExtendTime = 0.75;
+    public static final double kIntakeRetractTime = 0.75;
 
     public static final double kIntakeExtenderForwardLimitEncoderUnits = 1000; // TODO: Tune.
 
@@ -151,7 +151,7 @@ public final class Constants {
 
   public static final class ClimberConstants {
     public static final int kClimberMotorCanId = 41;
-    public static final double kClimbSpeed = 0.4;
+    public static final double kClimbSpeed = 0.5;
     public static final double kClimberUpTime = 2.0; // TODO: Update.
     public static final double kClimberDownTime = 2.0; // TODO: Update.
 
@@ -177,8 +177,9 @@ public final class Constants {
     public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI;
 
     public static final double kPXYController = 5; // TODO: Tuned for meters.
-    public static final double kPThetaController = 0.5; // Tuned for radians.
-    public static final Pose2d kRobotControllerTolerance = new Pose2d(0.05, 0.05, new Rotation2d(Units.degreesToRadians(1)));
+    public static final double kPThetaController = 0.4; // Tuned for radians. 0.9
+    public static final double kPThetaRobotController = 20; // Tuned for holonomic robot controller.
+    public static final Pose2d kRobotControllerTolerance = new Pose2d(0.05, 0.05, Rotation2d.fromDegrees(2.5));
 
     // Constraint for the motion profiled robot angle controller
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(

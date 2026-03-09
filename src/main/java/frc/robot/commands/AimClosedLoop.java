@@ -60,6 +60,7 @@ public class AimClosedLoop extends Command {
   @Override
   public void initialize() {
     m_isAimed = false;
+    m_isAdjusted = true; // Override
     m_targetRpm = 18000;
     m_aimedRotation = null;
   }
@@ -107,11 +108,11 @@ public class AimClosedLoop extends Command {
       } else if (!m_isAdjusted) {
         // TODO: TEST THIS! This is extremely rough code, and assumes constant offset no matter where robot is.
         // Limelight's Tx value range is -27 to 27 degrees (for full window, -13.5 to 13.5 for our half window), so should be a small enough number.
-
+        m_isAdjusted = true; // TODO: Temp override.
         if (m_noTarget) {
           // Entered auto vision override.
           m_isAdjusted = true;
-        } else {
+        } else if (!m_isAdjusted){
           if (m_aimedRotation == null) {
             m_aimedRotation = m_drive.getHeadingRotation();
             double currentAngleDegrees = Helpers.modDegrees(m_aimedRotation.getDegrees());
