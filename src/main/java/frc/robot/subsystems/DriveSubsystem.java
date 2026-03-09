@@ -144,7 +144,7 @@ public class DriveSubsystem extends SubsystemBase {
     //localizePose();
 
     SmartDashboard.putNumber("Subsystems/Drive/Odometry/EstimatedPose/X", m_poseEstimator.getEstimatedPosition().getX());
-    SmartDashboard.putNumber("Subsystems/Drive/Odometry/EstimatedPose/Y", m_poseEstimator.getEstimatedPosition().getX());
+    SmartDashboard.putNumber("Subsystems/Drive/Odometry/EstimatedPose/Y", m_poseEstimator.getEstimatedPosition().getY());
     SmartDashboard.putNumber("Subsystems/Drive/Odometry/EstimatedPose/Theta", m_poseEstimator.getEstimatedPosition().getRotation().getDegrees());
   }
 

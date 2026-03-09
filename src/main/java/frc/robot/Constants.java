@@ -176,9 +176,9 @@ public final class Constants {
     public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
     public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI;
 
-    public static final double kPXYController = 0.01; // TODO: Tuned for meters.
+    public static final double kPXYController = 5; // TODO: Tuned for meters.
     public static final double kPThetaController = 0.5; // Tuned for radians.
-    public static final Pose2d kRobotControllerTolerance = new Pose2d(0.1, 0.1, new Rotation2d(Units.degreesToRadians(1)));
+    public static final Pose2d kRobotControllerTolerance = new Pose2d(0.05, 0.05, new Rotation2d(Units.degreesToRadians(1)));
 
     // Constraint for the motion profiled robot angle controller
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(

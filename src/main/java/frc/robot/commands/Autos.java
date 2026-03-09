@@ -61,9 +61,9 @@ public final class Autos {
             break;
             case "Test":
             command = Commands.sequence(
-                new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(1, -2), Rotation2d.fromDegrees(0)), // TODO: Test with rotation after tuning translation.
-                Commands.runOnce(() -> shooter.runShooterOpenLoop(0.2), shooter),
-                Commands.waitSeconds(0.5),
+                new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(2, 1), Rotation2d.fromDegrees(0)), // TODO: Test with rotation after tuning translation.
+                Commands.runOnce(() -> shooter.runShooterRPM(19000), shooter),
+                Commands.waitSeconds(2.5),
                 Commands.runOnce(() -> shooter.stop(), shooter)
             );
             break;
