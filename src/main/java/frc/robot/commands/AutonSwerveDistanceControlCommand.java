@@ -65,7 +65,9 @@ public void execute() {
     // Apply PID controllers to get output.
     ChassisSpeeds newSpeeds = m_drive.m_robotDriveController.calculate(currentPose, new Pose2d(m_desiredTranslationDelta, m_desiredRotation), m_desiredEndVelocityMps, m_desiredRotation);
     if (m_halfSpeed) {
-        newSpeeds = newSpeeds.times(0.5);
+        if (Math.abs(newSpeeds.vxMetersPerSecond) > 1.5 || Math.abs(newSpeeds.vyMetersPerSecond) > 1.5) {
+            newSpeeds = newSpeeds.times(0.5);
+        }
     }
     // Apply output to drive.
     m_drive.driveRobotRelative(newSpeeds);

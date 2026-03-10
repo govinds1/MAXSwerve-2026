@@ -253,16 +253,19 @@ public final class Autos {
         Rotation2d intakeHeading = Rotation2d.fromDegrees(yDirection * 100);
         return new SequentialCommandGroup(
             // Go to refuel.
-            new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(FieldConstants.kStartLineToCenterLineMeters, 0), Rotation2d.fromDegrees(0)),
-            // TODO: Break up above drive command into two (traverse trench straight on and then a diagonal line while turning and extending intake to face fuel). Use desiredVelocity argument.
             Commands.parallel(
-                new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(0, yDirection * FieldConstants.kEdgeToCenterFuelPickupMeters), intakeHeading),
-                Commands.runOnce(() -> intake.runRoller(), intake),
+                new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(FieldConstants.kStartLineToOverCenterLineMeters, 0), intakeHeading, 2.0),
                 intake.extendAuto()
             ),
+            Commands.parallel(
+                new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(0, yDirection * FieldConstants.kEdgeToCenterFuelPickupMeters), intakeHeading, 0, true),
+                Commands.runOnce(() -> intake.runRoller(), intake)
+            ),
+            Commands.waitSeconds(0.5),
             // Travel back.
-            new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(0, -yDirection * FieldConstants.kEdgeToCenterFuelPickupMeters), Rotation2d.fromDegrees(0)),
-            new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(-FieldConstants.kStartLineToCenterLineMeters, 0), Rotation2d.fromDegrees(0))
+            new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(0, -yDirection * FieldConstants.kEdgeToCenterFuelPickupMeters), getShootingPose().getRotation()),
+            Commands.runOnce(() -> intake.stopRoller(), intake),
+            new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(-FieldConstants.kStartLineToOverCenterLineMeters, 0), getShootingPose().getRotation())
         );
     }
 

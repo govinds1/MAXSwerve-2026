@@ -27,6 +27,7 @@ public class AimClosedLoop extends Command {
   
   private final DoubleSupplier m_translationXSupplier;
   private final DoubleSupplier m_translationYSupplier;
+  private final DoubleSupplier m_rotSupplier;
 
   private final DoubleSupplier m_visionOverrideSupplier;
 
@@ -36,8 +37,8 @@ public class AimClosedLoop extends Command {
   private boolean m_isAdjusted;
   private double m_overrideStartTime = 0;
   private boolean m_noTarget = false;
-  private double m_tagToHubOffset = 0;
-  private Rotation2d m_aimedRotation;
+  //private double m_tagToHubOffset = 0;
+  //private Rotation2d m_aimedRotation;
 
   public AimClosedLoop(DriveSubsystem drive, ShooterSubsystem shooter, VisionTargeting vision, 
                           DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier visionOverrideSupplier) {
@@ -46,6 +47,26 @@ public class AimClosedLoop extends Command {
     m_vision = vision;
     m_translationXSupplier = xSupplier;
     m_translationYSupplier = ySupplier;
+    m_rotSupplier = null;
+    m_visionOverrideSupplier = visionOverrideSupplier;
+    m_isAimed = false;
+    m_targetRpm = 18000;
+
+    addRequirements(m_drive, m_shooter);
+
+    SmartDashboard.putNumber("Subsystems/Vision/Auto/RotationSpeed", 0);
+    SmartDashboard.putNumber("Subsystems/Vision/Auto/TargetRPM", 0);
+    SmartDashboard.putBoolean("Subsystems/Vision/Auto/IsAimed", false);
+  }
+
+  public AimClosedLoop(DriveSubsystem drive, ShooterSubsystem shooter, VisionTargeting vision, 
+                          DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier rotSupplier, DoubleSupplier visionOverrideSupplier) {
+    m_drive = drive;
+    m_shooter = shooter;
+    m_vision = vision;
+    m_translationXSupplier = xSupplier;
+    m_translationYSupplier = ySupplier;
+    m_rotSupplier = rotSupplier;
     m_visionOverrideSupplier = visionOverrideSupplier;
     m_isAimed = false;
     m_targetRpm = 18000;
@@ -60,16 +81,15 @@ public class AimClosedLoop extends Command {
   @Override
   public void initialize() {
     m_isAimed = false;
-    m_isAdjusted = true; // Override
+    m_isAdjusted = true; // TODO: Temp override
     m_targetRpm = 18000;
-    m_aimedRotation = null;
+    //m_aimedRotation = null;
   }
 
   @Override
   public void execute() {
-      double translationX = m_translationXSupplier.getAsDouble();
-      double translationY = m_translationYSupplier.getAsDouble();
-      
+      double translationX = 0.0;
+      double translationY = 0.0;
       double rotationSpeed = 0.0;
 
       double visionOverride = m_visionOverrideSupplier.getAsDouble();
@@ -81,6 +101,12 @@ public class AimClosedLoop extends Command {
           // Shoot from Tower
           m_targetRpm = ShooterSubsystem.calculateRPMForDistanceToHUB(2.2);
         }
+        // We're overriding vision, so let driver drive.
+        if (m_rotSupplier != null) {
+          rotationSpeed = m_rotSupplier.getAsDouble();
+        }
+        translationX = m_translationXSupplier.getAsDouble();
+        translationY = m_translationYSupplier.getAsDouble();
       } else if (!m_isAimed) {
         if (m_vision.hasTarget()) {
           rotationSpeed = m_aimPID.calculate(m_vision.getTx(), 0.0);
@@ -106,9 +132,11 @@ public class AimClosedLoop extends Command {
           }
         } 
       } else if (!m_isAdjusted) {
+        m_isAdjusted = true; // TODO: Temp override.
+
         // TODO: TEST THIS! This is extremely rough code, and assumes constant offset no matter where robot is.
         // Limelight's Tx value range is -27 to 27 degrees (for full window, -13.5 to 13.5 for our half window), so should be a small enough number.
-        m_isAdjusted = true; // TODO: Temp override.
+        /*
         if (m_noTarget) {
           // Entered auto vision override.
           m_isAdjusted = true;
@@ -133,6 +161,7 @@ public class AimClosedLoop extends Command {
             m_isAdjusted = false;
           }
         }
+        */
       }
       SmartDashboard.putNumber("Subsystems/Vision/Auto/RotationSpeed", rotationSpeed);
       SmartDashboard.putNumber("Subsystems/Vision/Auto/TargetRPM", m_targetRpm);

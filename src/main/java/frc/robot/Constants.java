@@ -310,7 +310,8 @@ public final class Constants {
     public static final Pose2d kRedCenterShootingPosition = kBlueCenterShootingPosition.rotateAround(kCenterOfField, new Rotation2d(Math.PI));
     public static final Pose2d kRedLeftShootingPosition = kBlueLeftShootingPosition.rotateAround(kCenterOfField, new Rotation2d(Math.PI));
     public static final double kOutpostToStartLineMeters = kBlueRightStart.getTranslation().getDistance(kBlueOutpost);
-    public static final double kStartLineToCenterLineMeters = kCenterXMeters - (kRobotPoseXAtBlueStartLine + (DriveConstants.kFullWidth / 2.0));
+    public static final double kStartLineToOverCenterLineMeters = kCenterXMeters - kRobotPoseXAtBlueStartLine;
+    public static final double kStartLineToCenterLineMeters = kStartLineToOverCenterLineMeters - (DriveConstants.kFullWidth / 2.0);
     public static final double kEdgeToCenterFuelPickupMeters = kCenterYMeters * 0.5;
   }
 }

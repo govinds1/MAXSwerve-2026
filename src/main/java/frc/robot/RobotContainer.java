@@ -51,8 +51,9 @@ public class RobotContainer {
     getDriveSubsystem(), 
     getShooterSubsystem(), 
     getVisionSubsystem(), 
-    () -> -getDriverController().getLeftY() * 0, // TODO: Update to allow driving very slowly while shooting -> at least until we adjust for speeds.
-    () -> -getDriverController().getLeftX() * 0, // TODO: Update to allow driving very slowly while shooting -> at least until we adjust for speeds.
+    () -> -getDriverController().getLeftY() * 0.5,
+    () -> -getDriverController().getLeftX() * 0.5,
+    () -> -getDriverController().getRightX() * 0.75,
     () -> getOperatorController().getWantsVisionOverride()
   );
 
