@@ -1,6 +1,5 @@
 package frc.robot.commands;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -32,21 +31,11 @@ public AutonSwerveDistanceControlCommand(DriveSubsystem subsystem, Translation2d
 }
 
 public AutonSwerveDistanceControlCommand(DriveSubsystem subsystem, Translation2d desiredTranslationDelta, Rotation2d desiredRotation, double desiredEndVelocityMps) {
-    m_drive = subsystem;
-    m_desiredTranslationDelta = desiredTranslationDelta;
-    m_desiredRotation = desiredRotation;
-    m_desiredEndVelocityMps = desiredEndVelocityMps;
-    m_halfSpeed = false;
-    addRequirements(m_drive);
+    this(subsystem, desiredTranslationDelta, desiredRotation, desiredEndVelocityMps, false);
 }
 
 public AutonSwerveDistanceControlCommand(DriveSubsystem subsystem, Translation2d desiredTranslationDelta, Rotation2d desiredRotation) {
-    m_drive = subsystem;
-    m_desiredTranslationDelta = desiredTranslationDelta;
-    m_desiredRotation = desiredRotation;
-    m_desiredEndVelocityMps = 0;
-    m_halfSpeed = false;
-    addRequirements(m_drive);
+    this(subsystem, desiredTranslationDelta, desiredRotation, 0, false);
 }
 
 

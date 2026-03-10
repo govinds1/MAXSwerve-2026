@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.AimClosedLoop;
+import frc.robot.commands.AimClosedLoopAdvanced;
 import frc.robot.commands.Autos;
 import frc.robot.commands.StrafeCenterToTag;
 import frc.robot.commands.TurnToAngle;
@@ -56,6 +57,17 @@ public class RobotContainer {
     () -> -getDriverController().getRightX() * 0.75,
     () -> getOperatorController().getWantsVisionOverride()
   );
+
+  AimClosedLoopAdvanced m_aimWhileMovingCommand = new AimClosedLoopAdvanced(
+    getDriveSubsystem(), 
+    getShooterSubsystem(), 
+    getVisionSubsystem(), 
+    () -> -getDriverController().getLeftY() * 0.5,
+    () -> -getDriverController().getLeftX() * 0.5,
+    () -> -getDriverController().getRightX() * 0.75,
+    () -> getOperatorController().getWantsVisionOverride()
+  );
+
 
   TurnToAngle m_turnAwayCommand = new TurnToAngle(
     getDriveSubsystem(), 
