@@ -29,10 +29,11 @@ public final class Autos {
     throw new UnsupportedOperationException("This is a utility class!");
     }
 
-    public static String[] autoNames = {"DoNothing",  "OnlyShoot", "Test",
-        "TurnAndShoot_StartRight", "ShootAndOutpost_StartRight", "ShootAndTrench_StartRight", "ShootAndTrenchAndOutpost_StartRight", 
-        "TurnAndShoot_StartLeft", "ShootAndOutpost_StartLeft", "ShootAndTrench_StartLeft", "ShootAndTrenchAndOutpost_StartLeft",
-        "QuickTrenchShoot_StartLeft", "QuickTrenchShoot_StartRight"
+    public static String[] autoNames = {"DoNothing",  //"ShootStraight", //"Test", "ShootAndOutpost_StartRight",
+        "ShootPreloads_StartRight", "ShootPreloads_StartLeft", "ShootPreloads_StartCenter",
+        "ShootAndTrench_StartRight", "ShootAndTrench_StartLeft", 
+        "QuickTrenchShoot_StartLeft", "QuickTrenchShoot_StartRight",
+        "ShootAndTrenchAndOutpost_StartRight"
     };
     
     enum StartSide {
@@ -56,7 +57,7 @@ public final class Autos {
             case "DoNothing":
             command = Commands.idle();
             break;
-            case "OnlyShoot":
+            case "ShootStraight":
             command = Autos.AimAndShootCommand(robotDrive, shooter, vision, intake);
             break;
             case "Test":
@@ -80,8 +81,14 @@ public final class Autos {
                 */
             );
             break;
-            case "TurnAndShoot_StartRight":
+            case "ShootPreloads_StartRight":
             command = Autos.turnAndShoot(robotDrive, shooter, vision, intake);
+            break;
+            case "ShootPreloads_StartLeft":
+            command = Autos.turnAndShoot(robotDrive, shooter, vision, intake);
+            break;
+            case "ShootPreloads_StartCenter":
+            command = Autos.turnAndShootDriveControl(robotDrive, shooter, vision, intake);
             break;
             case "ShootAndOutpost_StartRight":
             command = Autos.shootAndOutpostTimeBased(robotDrive, shooter, vision, intake);
@@ -89,17 +96,11 @@ public final class Autos {
             case "ShootAndTrench_StartRight":
             command = Autos.shootAndTrench(robotDrive, shooter, vision, intake);
             break;
-            case "ShootAndTrenchAndOutpost_StartRight":
-            command = Autos.shootAndTrenchAndOutpost(robotDrive, shooter, vision, intake);
-            break;
-            case "TurnAndShoot_StartLeft":
-            command = Autos.turnAndShoot(robotDrive, shooter, vision, intake);
-            break;
-            case "ShootAndOutpost_StartLeft":
-            command = Autos.shootAndOutpostTimeBased(robotDrive, shooter, vision, intake);
-            break;
             case "ShootAndTrench_StartLeft":
             command = Autos.shootAndTrench(robotDrive, shooter, vision, intake);
+            break;
+            case "ShootAndTrenchAndOutpost_StartRight":
+            command = Autos.shootAndTrenchAndOutpost(robotDrive, shooter, vision, intake);
             break;
             case "QuickTrenchShoot_StartLeft":
             command = Autos.quickTrenchAndShoot(robotDrive, shooter, vision, intake);
@@ -189,6 +190,19 @@ public final class Autos {
                 new TurnToAngle(robotDrive, getShootingPose().getRotation(), () -> 0, () -> 0),
                 intake.extendAuto()
             ).withTimeout(1.5),
+            // Shoot.
+            Autos.AimAndShootCommand(robotDrive, shooter, vision, intake)
+        );
+    }
+
+    public static Command turnAndShootDriveControl(DriveSubsystem robotDrive, ShooterSubsystem shooter, VisionTargeting vision, IntakeSubsystem intake) {
+        // Assumes we are starting in line with trench and outpost.
+        return new SequentialCommandGroup(
+            // Turn to approx. face Hub and extend intake.
+            Commands.parallel(
+                new AutonSwerveDistanceControlCommand(robotDrive, getStartingPose().getTranslation().minus(getShootingPose().getTranslation()), getShootingPose().getRotation()),
+                intake.extendAuto()
+            ),
             // Shoot.
             Autos.AimAndShootCommand(robotDrive, shooter, vision, intake)
         );

@@ -73,7 +73,7 @@ public void end(boolean interrupted) {
 // Returns true when the command should end.
 @Override
 public boolean isFinished() {
-    double maxAllowedTime = Math.max(m_desiredTranslationDelta.getNorm(), 20.0); // TODO: For testing, set unlimited time.
+    double maxAllowedTime = Math.max(m_desiredTranslationDelta.getNorm(), 5.0); // TODO: For testing, set unlimited time.
     return ((Timer.getFPGATimestamp() - startTime) > maxAllowedTime) || m_drive.m_robotDriveController.atReference();
 }
 
