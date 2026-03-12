@@ -265,7 +265,7 @@ public final class Autos {
             // Travel back.
             new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(0, -yDirection * FieldConstants.kEdgeToCenterFuelPickupMeters), getShootingPose().getRotation()),
             Commands.runOnce(() -> intake.stopRoller(), intake),
-            new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(-FieldConstants.kStartLineToOverCenterLineMeters, 0), getShootingPose().getRotation())
+            new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(-FieldConstants.kStartLineToOverCenterLineMeters, 0), getShootingPose().getRotation(), 0, true)
         );
     }
 
