@@ -81,6 +81,12 @@ public final class Autos {
                 */
             );
             break;
+            case "TestMovement":
+            command = Commands.sequence(
+                new AutonSwerveDistanceConstantControlCommand(robotDrive, new Translation2d(2, 1), Rotation2d.fromDegrees(45)),
+                new AutonSwerveDistanceTrapezoidalControlCommand(robotDrive, new Translation2d(-2, -1), Rotation2d.fromDegrees(135))
+            );
+            break;
             case "ShootPreloads_StartRight":
             command = Autos.turnAndShoot(robotDrive, shooter, vision, intake);
             break;
