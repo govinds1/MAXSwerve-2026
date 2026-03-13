@@ -134,7 +134,7 @@ public final class Constants {
   public static final class IntakeConstants {
     public static final int kIntakeRollerMotorCanId = 31;
     public static final int kIntakeExtenderMotorCanId = 32;
-    public static final double kIntakeRollerSpeed = 0.8;
+    public static final double kIntakeRollerSpeed = 0.9;
     public static final double kIntakeExtenderExtendSpeed = 0.1;
     public static final double kIntakeExtenderRetractSpeed = 0.35;
     public static final double kIntakeExtendTime = 0.75;
@@ -177,7 +177,7 @@ public final class Constants {
     public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI;
 
     public static final double kPXYController = 5; // TODO: Tuned for meters.
-    public static final double kPThetaController = 0.4; // Tuned for radians. 0.9
+    public static final double kPThetaController = 0.25; // Tuned for radians. 0.9
     public static final double kPThetaRobotController = 20; // Tuned for holonomic robot controller.
     public static final Pose2d kRobotControllerTolerance = new Pose2d(0.05, 0.05, Rotation2d.fromDegrees(2.5));
 

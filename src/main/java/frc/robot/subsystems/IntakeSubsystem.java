@@ -8,6 +8,7 @@ import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -41,12 +42,16 @@ public class IntakeSubsystem extends SubsystemBase {
     m_rollerMotor.set(IntakeConstants.kIntakeRollerSpeed);
   }
 
+  public void runRollerRPM() {
+    m_rollerMotor.getClosedLoopController().setSetpoint(0, ControlType.kVelocity);
+  }
+
   public void stopRoller() {
     m_rollerMotor.stopMotor();
   }
 
   public void reverseRoller() {
-    m_rollerMotor.set(-IntakeConstants.kIntakeRollerSpeed);
+    m_rollerMotor.set(-1.0);
   }
 
   public void extend() {

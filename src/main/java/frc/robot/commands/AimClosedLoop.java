@@ -122,6 +122,10 @@ public class AimClosedLoop extends Command {
             }
           }
         } 
+      } else {
+        //translationX = m_translationXSupplier.getAsDouble();
+        //translationY = m_translationYSupplier.getAsDouble();
+        //rotationSpeed = m_rotSupplier.getAsDouble();
       }
       SmartDashboard.putNumber("Subsystems/Vision/Auto/RotationSpeed", rotationSpeed);
       SmartDashboard.putNumber("Subsystems/Vision/Auto/TargetRPM", m_targetRpm);
@@ -137,7 +141,7 @@ public class AimClosedLoop extends Command {
       // Rev the shooter
       m_shooter.runShooterRPM(m_targetRpm);
 
-      if (m_isAimed && m_shooter.isAtSpeed()) {
+      if ((m_isAimed || visionOverride != 0) && m_shooter.isAtSpeed()) {
         m_shooter.runFeeder(ShooterConstants.kFeederPower);
       } else {
         m_shooter.stopFeeder();

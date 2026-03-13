@@ -29,11 +29,12 @@ public final class Autos {
     throw new UnsupportedOperationException("This is a utility class!");
     }
 
-    public static String[] autoNames = {"DoNothing",  //"ShootStraight", //"Test", "ShootAndOutpost_StartRight",
+    public static String[] autoNames = {"DoNothing",  "ShootStraight",
         "ShootPreloads_StartRight", "ShootPreloads_StartLeft", "ShootPreloads_StartCenter",
         "ShootAndTrench_StartRight", "ShootAndTrench_StartLeft", 
-        "QuickTrenchShoot_StartLeft", "QuickTrenchShoot_StartRight",
-        "ShootAndTrenchAndOutpost_StartRight"
+        "TestMovement"//, "Test", "ShootAndOutpost_StartRight",
+        //"QuickTrenchShoot_StartLeft", "QuickTrenchShoot_StartRight",
+        //"ShootAndTrenchAndOutpost_StartRight"
     };
     
     enum StartSide {
@@ -83,8 +84,10 @@ public final class Autos {
             break;
             case "TestMovement":
             command = Commands.sequence(
-                new AutonSwerveDistanceConstantControlCommand(robotDrive, new Translation2d(2, 1), Rotation2d.fromDegrees(45)),
-                new AutonSwerveDistanceTrapezoidalControlCommand(robotDrive, new Translation2d(-2, -1), Rotation2d.fromDegrees(135))
+                //new AutonSwerveDistanceConstantControlCommand(robotDrive, new Translation2d(2, 1), Rotation2d.fromDegrees(45)),
+                //new AutonSwerveDistanceTrapezoidalControlCommand(robotDrive, new Translation2d(-2, -1), Rotation2d.fromDegrees(135))
+                new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(2,2), Rotation2d.fromDegrees(0)),
+                new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(-2,-2), Rotation2d.fromDegrees(0))
             );
             break;
             case "ShootPreloads_StartRight":
@@ -259,8 +262,9 @@ public final class Autos {
             // 5. Drive thru trench to shooting position.
             // 6. Aim and shoot at Hub.
             turnAndShoot(robotDrive, shooter, vision, intake),
-            Autos.traverseTrenchGetFuelAndReturn(robotDrive, shooter, vision, intake),
-            turnAndShoot(robotDrive, shooter, vision, intake)
+            Autos.traverseTrenchGetFuel(robotDrive, shooter, vision, intake)
+            //Autos.traverseTrenchGetFuelAndReturn(robotDrive, shooter, vision, intake),
+            //turnAndShoot(robotDrive, shooter, vision, intake)
         );
     }
 
@@ -274,7 +278,7 @@ public final class Autos {
         return new SequentialCommandGroup(
             // Go to refuel.
             Commands.parallel(
-                new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(FieldConstants.kStartLineToOverCenterLineMeters, 0), intakeHeading, 2.0),
+                new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(FieldConstants.kStartLineToOverCenterLineMeters, 0), intakeHeading),
                 intake.extendAuto()
             ),
             Commands.parallel(
@@ -286,6 +290,28 @@ public final class Autos {
             new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(0, -yDirection * FieldConstants.kEdgeToCenterFuelPickupMeters), getShootingPose().getRotation()),
             Commands.runOnce(() -> intake.stopRoller(), intake),
             new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(-FieldConstants.kStartLineToOverCenterLineMeters, 0), getShootingPose().getRotation(), 0, true)
+        );
+    }
+
+    private static Command traverseTrenchGetFuel(DriveSubsystem robotDrive, ShooterSubsystem shooter, VisionTargeting vision, IntakeSubsystem intake) {
+        // Assumes we are starting in line with trench and outpost.
+        // FOR INTERMEDIATE USE ONLY!
+
+        // If went through right trench, travel left (+) to refuel. Otherwise, travel right (-).
+        int yDirection = (m_startingSide == StartSide.kRIGHT) ? 1 : -1;
+        Rotation2d intakeHeading = Rotation2d.fromDegrees(yDirection * 100);
+        return new SequentialCommandGroup(
+            // Go to refuel.
+            Commands.parallel(
+                new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(FieldConstants.kStartLineToOverCenterLineMeters, 0), intakeHeading),
+                intake.extendAuto()
+            ),
+            Commands.parallel(
+                new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(0, yDirection * FieldConstants.kEdgeToCenterFuelPickupMeters), intakeHeading, 0, true),
+                Commands.runOnce(() -> intake.runRoller(), intake)
+            ),
+            Commands.runOnce(() -> robotDrive.stop())
+            //new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(0, yDirection * 1.0), intakeHeading, 0, true)
         );
     }
 

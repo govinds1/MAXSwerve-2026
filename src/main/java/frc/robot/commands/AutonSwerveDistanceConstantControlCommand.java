@@ -74,18 +74,18 @@ public void execute() {
 
 public double calcSpeedRamp(double error, double tolerance, double maxPower) {
     double errorAbs = Math.abs(error);
-    if (errorAbs > m_rampDownDistMeters) {
-        // Set speed to max speed.
-        return Math.signum(error) * maxPower;
-    } else if (errorAbs > tolerance) {
+    if (errorAbs < tolerance) {
+        return 0;
+    } else if (errorAbs < m_rampDownDistMeters) {
         // Mimic PID - ramp down to min speed as error gets close to tolerance.
         double distRatio = MathUtil.clamp(errorAbs / m_rampDownDistMeters, 0, 1);
         double power = MathUtil.interpolate(m_powerMin, maxPower, distRatio);
         return Math.signum(error) * power;
-    } else {
-        // Within tolerance, so set to 0.
-        return 0;
+    } else if (errorAbs > m_rampDownDistMeters) {
+        // Set speed to max speed.
+        return Math.signum(error) * maxPower;
     }
+    return 0;
 }
 
 // Called once the command ends or is interrupted.
