@@ -9,17 +9,17 @@ public class AutonSwerveTimeControlCommand extends Command {
 
     private DriveSubsystem m_drive;
     private double m_forwardSpeed;
-    private double m_rightSpeed;
+    private double m_leftSpeed;
     private double m_time;
     private double m_omega;
     private boolean m_fieldRel;
     private double startTime;
     
 
-public AutonSwerveTimeControlCommand(DriveSubsystem subsystem, double forward, double right, double omega, double time, boolean fieldRel) {
+public AutonSwerveTimeControlCommand(DriveSubsystem subsystem, double forward, double left, double omega, double time, boolean fieldRel) {
     m_drive = subsystem;
     m_forwardSpeed = forward;
-    m_rightSpeed = right;
+    m_leftSpeed = left;
     m_omega = omega;
     m_time = time;
     m_fieldRel = fieldRel;
@@ -36,7 +36,7 @@ public void initialize() {
 // Called every time the scheduler runs while the command is scheduled.
 @Override
 public void execute() {
-     m_drive.drive(m_forwardSpeed, -m_rightSpeed, m_omega, m_fieldRel);
+     m_drive.drive(m_forwardSpeed, m_leftSpeed, m_omega, m_fieldRel);
 }
 
 // Called once the command ends or is interrupted.
