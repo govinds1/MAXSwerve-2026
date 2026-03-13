@@ -305,7 +305,7 @@ public final class Constants {
     // Useful distances and poses for Auto.
     public static final Pose2d kBlueRightShootingPosition = new Pose2d(kBlueRightStart.getTranslation(), Rotation2d.fromDegrees(80));
     public static final Pose2d kBlueCenterShootingPosition = new Pose2d(kBlueCenterStart.getTranslation().minus(new Translation2d(Units.inchesToMeters(60), 0)), Rotation2d.fromDegrees(0));
-    public static final Pose2d kBlueLeftShootingPosition = new Pose2d(kBlueLeftStart.getTranslation(), Rotation2d.fromDegrees(280));
+    public static final Pose2d kBlueLeftShootingPosition = new Pose2d(kBlueLeftStart.getTranslation(), Rotation2d.fromDegrees(-80));
     public static final Pose2d kRedRightShootingPosition = kBlueRightShootingPosition.rotateAround(kCenterOfField, new Rotation2d(Math.PI));
     public static final Pose2d kRedCenterShootingPosition = kBlueCenterShootingPosition.rotateAround(kCenterOfField, new Rotation2d(Math.PI));
     public static final Pose2d kRedLeftShootingPosition = kBlueLeftShootingPosition.rotateAround(kCenterOfField, new Rotation2d(Math.PI));

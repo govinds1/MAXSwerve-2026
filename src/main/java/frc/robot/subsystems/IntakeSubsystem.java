@@ -35,7 +35,7 @@ public class IntakeSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Subsytems/Intake/Extender/EncoderValue", m_extenderMotor.getEncoder().getPosition());
-    System.out.printf("Intake Extension Encoder: %s", m_extenderMotor.getEncoder().getPosition());
+    SmartDashboard.putNumber("Subsytems/Intake/Roller/Velocity", m_rollerMotor.getEncoder().getVelocity());
   }
 
   public void runRoller() {

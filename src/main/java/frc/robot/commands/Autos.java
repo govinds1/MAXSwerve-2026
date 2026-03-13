@@ -91,10 +91,12 @@ public final class Autos {
             );
             break;
             case "ShootPreloads_StartRight":
-            command = Autos.turnAndShoot(robotDrive, shooter, vision, intake);
+            //command = Autos.turnAndShoot(robotDrive, shooter, vision, intake);
+            command = Autos.turnAndShootTimeBased(robotDrive, shooter, vision, intake);
             break;
             case "ShootPreloads_StartLeft":
-            command = Autos.turnAndShoot(robotDrive, shooter, vision, intake);
+            //command = Autos.turnAndShoot(robotDrive, shooter, vision, intake);
+            command = Autos.turnAndShootTimeBased(robotDrive, shooter, vision, intake);
             break;
             case "ShootPreloads_StartCenter":
             command = Autos.turnAndShootDriveControl(robotDrive, shooter, vision, intake);
@@ -103,10 +105,12 @@ public final class Autos {
             command = Autos.shootAndOutpostTimeBased(robotDrive, shooter, vision, intake);
             break;
             case "ShootAndTrench_StartRight":
-            command = Autos.shootAndTrench(robotDrive, shooter, vision, intake);
+            //command = Autos.shootAndTrench(robotDrive, shooter, vision, intake);
+            command = Autos.shootAndTrenchTimeBased(robotDrive, shooter, vision, intake);
             break;
             case "ShootAndTrench_StartLeft":
-            command = Autos.shootAndTrench(robotDrive, shooter, vision, intake);
+            //command = Autos.shootAndTrench(robotDrive, shooter, vision, intake);
+            command = Autos.shootAndTrenchTimeBased(robotDrive, shooter, vision, intake);
             break;
             case "ShootAndTrenchAndOutpost_StartRight":
             command = Autos.shootAndTrenchAndOutpost(robotDrive, shooter, vision, intake);
@@ -180,10 +184,11 @@ public final class Autos {
     }
 
     public static Command turnAndShootTimeBased(DriveSubsystem robotDrive, ShooterSubsystem shooter, VisionTargeting vision, IntakeSubsystem intake) {
-        // Assumes we are starting on right side, in line with trench and outpost.
+        // Assumes we are starting in line with trench and outpost.
+        int rotDirection = (m_startingSide == StartSide.kRIGHT) ? 1 : -1;
         return new SequentialCommandGroup(
-            // Drive back and rotate to roughly aim and get away from trench.
-            new AutonSwerveTimeControlCommand(robotDrive, -0.15, 0, 0.15, 2, true), // TODO: Update backwards and rotational speeds and time parameter until in shooting position.
+            // Rotate to roughly aim.
+            new AutonSwerveTimeControlCommand(robotDrive, 0, 0, rotDirection * 0.35, 1.2, true), // TODO: Update backwards and rotational speeds and time parameter until in shooting position.
             // Extend intake.
             intake.extendAuto(),
             // Shoot.
@@ -196,9 +201,10 @@ public final class Autos {
         return new SequentialCommandGroup(
             // Turn to approx. face Hub and extend intake.
             Commands.parallel(
-                new TurnToAngle(robotDrive, getShootingPose().getRotation(), () -> 0, () -> 0),
+                //new TurnToAngle(robotDrive, getShootingPose().getRotation(), () -> 0, () -> 0),
+                new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(0, 0), getShootingPose().getRotation()),
                 intake.extendAuto()
-            ).withTimeout(1.5),
+            ).withTimeout(3), // 1.5
             // Shoot.
             Autos.AimAndShootCommand(robotDrive, shooter, vision, intake)
         );
@@ -265,6 +271,29 @@ public final class Autos {
             Autos.traverseTrenchGetFuel(robotDrive, shooter, vision, intake)
             //Autos.traverseTrenchGetFuelAndReturn(robotDrive, shooter, vision, intake),
             //turnAndShoot(robotDrive, shooter, vision, intake)
+        );
+    }
+
+    private static Command shootAndTrenchTimeBased(DriveSubsystem robotDrive, ShooterSubsystem shooter, VisionTargeting vision, IntakeSubsystem intake) {
+        // Assumes we are starting in line with trench and outpost.
+        // FOR INTERMEDIATE USE ONLY!
+
+        // If went through right trench, travel left (+) to refuel. Otherwise, travel right (-).
+        int yDirection = (m_startingSide == StartSide.kRIGHT) ? 1 : -1;
+        return new SequentialCommandGroup(
+            // Aim and shoot.
+            turnAndShootTimeBased(robotDrive, shooter, vision, intake),
+            // Go to refuel.
+            Commands.parallel(
+                new AutonSwerveTimeControlCommand(robotDrive, 0.5, 0, yDirection * 0.1, 2.0, true),
+                intake.extendAuto()
+            ),
+            Commands.parallel(
+                new AutonSwerveTimeControlCommand(robotDrive, 0, yDirection * 0.3, 0, 2.0, true),
+                Commands.runOnce(() -> intake.runRoller(), intake)
+            ),
+            Commands.runOnce(() -> robotDrive.stop())
+            //new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(0, yDirection * 1.0), intakeHeading, 0, true)
         );
     }
 

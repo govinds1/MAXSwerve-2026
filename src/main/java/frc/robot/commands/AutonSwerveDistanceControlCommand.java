@@ -52,7 +52,7 @@ public void execute() {
     // Get current pose.
     Pose2d currentPose = m_drive.getPose().relativeTo(m_startingPose);
     // Apply PID controllers to get output.
-    ChassisSpeeds newSpeeds = m_drive.m_robotDriveController.calculate(currentPose, new Pose2d(m_desiredTranslationDelta, m_desiredRotation), m_desiredEndVelocityMps, Rotation2d.fromDegrees(0));
+    ChassisSpeeds newSpeeds = m_drive.m_robotDriveController.calculate(currentPose, new Pose2d(m_desiredTranslationDelta, Rotation2d.fromDegrees(0)), 0, m_desiredRotation);
     if (m_halfSpeed) {
         if (Math.abs(newSpeeds.vxMetersPerSecond) > 1.5 || Math.abs(newSpeeds.vyMetersPerSecond) > 1.5) {
             newSpeeds = newSpeeds.times(0.5);
@@ -65,9 +65,9 @@ public void execute() {
 // Called once the command ends or is interrupted.
 @Override
 public void end(boolean interrupted) {
-    if (m_desiredEndVelocityMps == 0) {
+    //if (m_desiredEndVelocityMps == 0) {
         m_drive.drive(0, 0, 0, false);
-    }
+    //}
 }
 
 // Returns true when the command should end.
