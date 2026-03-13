@@ -188,7 +188,7 @@ public final class Autos {
         int rotDirection = (m_startingSide == StartSide.kRIGHT) ? 1 : -1;
         return new SequentialCommandGroup(
             // Rotate to roughly aim.
-            new AutonSwerveTimeControlCommand(robotDrive, 0, 0, rotDirection * 0.35, 1.2, true), // TODO: Update backwards and rotational speeds and time parameter until in shooting position.
+            new AutonSwerveTimeControlCommand(robotDrive, 0, 0, rotDirection * 0.35, 0.75, true),
             // Extend intake.
             intake.extendAuto(),
             // Shoot.
@@ -285,13 +285,12 @@ public final class Autos {
             turnAndShootTimeBased(robotDrive, shooter, vision, intake),
             // Go to refuel.
             Commands.parallel(
-                new AutonSwerveTimeControlCommand(robotDrive, 0.5, 0, yDirection * 0.1, 2.0, true),
+                new AutonSwerveTimeControlCommand(robotDrive, 0.5, 0, 0, 2.0, true),
                 intake.extendAuto()
             ),
-            Commands.parallel(
-                new AutonSwerveTimeControlCommand(robotDrive, 0, yDirection * 0.3, 0, 2.0, true),
-                Commands.runOnce(() -> intake.runRoller(), intake)
-            ),
+            Commands.runOnce(() -> intake.runRoller(), intake),
+            new WaitCommand(0.5),
+            new AutonSwerveTimeControlCommand(robotDrive, 0, yDirection * 0.2, 0, 2.0, true),
             Commands.runOnce(() -> robotDrive.stop())
             //new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(0, yDirection * 1.0), intakeHeading, 0, true)
         );
