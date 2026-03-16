@@ -31,7 +31,7 @@ public class VisionTargeting extends SubsystemBase {
         // Change the camera pose relative to robot center (x forward, y left, z up, degrees)
         LimelightHelpers.setCameraPose_RobotSpace(limelightName, 
             LimelightConstants.kForwardOffsetMeters,
-            LimelightConstants.kSideOffsetMeters,
+            LimelightConstants.kRightOffsetMeters,
             LimelightConstants.kHeightOffsetMeters,
             LimelightConstants.kRollDegrees,
             LimelightConstants.kPitchDegrees,

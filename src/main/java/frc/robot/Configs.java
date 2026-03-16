@@ -112,7 +112,7 @@ public final class Configs {
                 intakeMotorConfig
                         .inverted(false)
                         .idleMode(IdleMode.kCoast)
-                        .smartCurrentLimit(40);
+                        .smartCurrentLimit(60);
                 intakeMotorConfig.closedLoop
                         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
                         .pid(5, 0, 0)

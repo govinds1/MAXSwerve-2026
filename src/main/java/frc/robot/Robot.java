@@ -42,6 +42,8 @@ public class Robot extends TimedRobot {
     //SmartDashboard.putData("Field", m_field);
 
     m_robotContainer.init();
+
+    LimelightHelpers.SetIMUMode("limelight", 0);
   }
 
   /**
@@ -77,8 +79,8 @@ public class Robot extends TimedRobot {
 
     // When disabled, seed the Limelight's internal IMU with the external gyro input. 
     // Setting IMU mode of 1 enables seeding.
-    // TODO:
-    LimelightHelpers.SetIMUMode("limelight", 1); // Seed internal IMU
+    // TODO: Since Limelight is not in landscape mode, can't use internal IMU.
+    //LimelightHelpers.SetIMUMode("limelight", 1); // Seed internal IMU
   }
 
   @Override
@@ -102,7 +104,7 @@ public class Robot extends TimedRobot {
     }
 
     // TODO:
-    LimelightHelpers.SetIMUMode("limelight", 4); // Use internal IMU + external IMU
+    //LimelightHelpers.SetIMUMode("limelight", 4); // Use internal IMU + external IMU
   }
 
   /** This function is called periodically during autonomous. */
@@ -123,7 +125,7 @@ public class Robot extends TimedRobot {
     // If we climbed in auto, drop the climber.
 
     // TODO:
-    LimelightHelpers.SetIMUMode("limelight", 4); // Use internal IMU + external IMU
+    //LimelightHelpers.SetIMUMode("limelight", 4); // Use internal IMU + external IMU
   }
 
   /** This function is called periodically during operator control. */
@@ -139,8 +141,8 @@ public class Robot extends TimedRobot {
 
     // Intake control.
     if (m_robotContainer.getOperatorController().getWantsRunIntakeRoller()) {
-      m_robotContainer.getIntakeSubsystem().runRoller();
-      //m_robotContainer.getIntakeSubsystem().runRollerRPM();
+      //m_robotContainer.getIntakeSubsystem().runRoller();
+      m_robotContainer.getIntakeSubsystem().runRollerRPM();
     } else if (m_robotContainer.getOperatorController().getWantsReverseIntakeRoller()) {
       m_robotContainer.getIntakeSubsystem().reverseRoller();
     } else {

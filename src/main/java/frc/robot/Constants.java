@@ -155,6 +155,9 @@ public final class Constants {
     public static final double kClimberUpTime = 2.0; // TODO: Update.
     public static final double kClimberDownTime = 2.0; // TODO: Update.
 
+    public static final double kClimberUpPosition = 40; // TODO: Update.
+    public static final double kClimberDownPosition = 0;
+
     // TODO: Modify these buttons.
     public static final int kClimberUpButton = 5; // Left bumper
     public static final int kClimberDownButton = 6; // Right bumper 
@@ -195,8 +198,8 @@ public final class Constants {
 
   public static final class LimelightConstants {
     // Camera's pose in robot space.
-    public static final double kForwardOffsetMeters = 0.5;
-    public static final double kSideOffsetMeters = 0.0;
+    public static final double kForwardOffsetMeters = -0.14605; // 0.5
+    public static final double kRightOffsetMeters = -0.28575; // 0.0
     public static final double kHeightOffsetMeters = 0.508;
     public static final double kRollDegrees = 0.0;
     public static final double kPitchDegrees = 30.0;

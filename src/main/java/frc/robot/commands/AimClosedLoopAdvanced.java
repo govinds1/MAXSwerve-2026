@@ -67,6 +67,8 @@ public class AimClosedLoopAdvanced extends Command {
     m_isAimed = false;
     //m_isAdjusted = true; // TODO: Temp override
     m_targetRpm = 18000;
+    m_noTarget = false;
+    m_overrideStartTime = 0;
     //m_aimedRotation = null;
   }
 
@@ -95,9 +97,9 @@ public class AimClosedLoopAdvanced extends Command {
         if (m_vision.hasTarget()) {
           ChassisSpeeds currentSpeeds = m_drive.getRobotRelativeSpeeds();
           // Moving forward/backward, reduce/increase RPM respectively.
-          double rpmOffset = currentSpeeds.vxMetersPerSecond * -500; // TODO: Tune this value!
+          double rpmOffset = currentSpeeds.vxMetersPerSecond * -1000; // TODO: Tune this value!
           // Moving left/right, aim right/left respectively.
-          double aimOffset = currentSpeeds.vyMetersPerSecond * 1.5;  // TODO: Tune this value!
+          double aimOffset = currentSpeeds.vyMetersPerSecond * 2.0;  // TODO: Tune this value!
 
           rotationSpeed = m_aimPID.calculate(m_vision.getTx() + aimOffset, 0.0);
           if (Math.abs(rotationSpeed) < 0.05) {
@@ -119,6 +121,7 @@ public class AimClosedLoopAdvanced extends Command {
             if (Timer.getFPGATimestamp() - m_overrideStartTime > 1) {
               // Set automatic vision override.
               m_visionOverrideSupplier = () -> 3;
+              m_isAimed = true;
             }
           }
         }
@@ -176,7 +179,7 @@ public class AimClosedLoopAdvanced extends Command {
       m_shooter.runShooterRPM(m_targetRpm);
       //m_shooter.runShooterOpenLoop(0.6);
 
-      if (m_isAimed && /* m_isAdjusted && */ m_shooter.isAtSpeed()) {
+      if ((m_isAimed || visionOverride != 0) && /* m_isAdjusted && */ m_shooter.isAtSpeed()) {
         m_shooter.runFeeder(ShooterConstants.kFeederPower);
       } else {
         m_shooter.stopFeeder();
