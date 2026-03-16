@@ -113,6 +113,11 @@ public final class Configs {
                         .inverted(false)
                         .idleMode(IdleMode.kCoast)
                         .smartCurrentLimit(40);
+                intakeMotorConfig.closedLoop
+                        .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+                        .pid(5, 0, 0)
+                        .outputRange(0, 1)
+                        .feedForward.kV(0.00185);
                 extenderMotorConfig
                         .inverted(false)
                         .idleMode(IdleMode.kBrake)

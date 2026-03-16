@@ -140,6 +140,7 @@ public class Robot extends TimedRobot {
     // Intake control.
     if (m_robotContainer.getOperatorController().getWantsRunIntakeRoller()) {
       m_robotContainer.getIntakeSubsystem().runRoller();
+      //m_robotContainer.getIntakeSubsystem().runRollerRPM();
     } else if (m_robotContainer.getOperatorController().getWantsReverseIntakeRoller()) {
       m_robotContainer.getIntakeSubsystem().reverseRoller();
     } else {

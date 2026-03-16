@@ -8,7 +8,9 @@ import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkBase.ControlType;
+import com.revrobotics.spark.SparkClosedLoopController.ArbFFUnits;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -36,6 +38,7 @@ public class IntakeSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Subsytems/Intake/Extender/EncoderValue", m_extenderMotor.getEncoder().getPosition());
     SmartDashboard.putNumber("Subsytems/Intake/Roller/Velocity", m_rollerMotor.getEncoder().getVelocity());
+    SmartDashboard.putNumber("Subsytems/Intake/Roller/Setpoint", m_rollerMotor.getClosedLoopController().getSetpoint());
   }
 
   public void runRoller() {
@@ -43,7 +46,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public void runRollerRPM() {
-    m_rollerMotor.getClosedLoopController().setSetpoint(0, ControlType.kVelocity);
+    m_rollerMotor.getClosedLoopController().setSetpoint(2800, ControlType.kVelocity);
   }
 
   public void stopRoller() {

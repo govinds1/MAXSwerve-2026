@@ -75,7 +75,8 @@ public class AimClosedLoop extends Command {
   @Override
   public void initialize() {
     m_isAimed = false;
-    m_targetRpm = 18000;
+    m_noTarget = false;
+    m_targetRpm = ShooterSubsystem.calculateRPMForDistanceToHUB(1.9);
   }
 
   @Override
@@ -91,7 +92,7 @@ public class AimClosedLoop extends Command {
           m_targetRpm = ShooterSubsystem.calculateRPMForDistanceToHUB(0.8);
         } else {
           // Shoot from Tower
-          m_targetRpm = ShooterSubsystem.calculateRPMForDistanceToHUB(2.2);
+          m_targetRpm = ShooterSubsystem.calculateRPMForDistanceToHUB(2.0);
         }
         // We're overriding vision, so let driver drive.
         if (m_rotSupplier != null) {

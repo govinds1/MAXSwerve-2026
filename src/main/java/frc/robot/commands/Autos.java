@@ -29,7 +29,7 @@ public final class Autos {
     throw new UnsupportedOperationException("This is a utility class!");
     }
 
-    public static String[] autoNames = {"DoNothing",  "ShootStraight",
+    public static String[] autoNames = {"ShootStraight", "DoNothing",
         "ShootPreloads_StartRight", "ShootPreloads_StartLeft", "ShootPreloads_StartCenter",
         "ShootAndTrench_StartRight", "ShootAndTrench_StartLeft", 
         "TestMovement"//, "Test", "ShootAndOutpost_StartRight",
@@ -178,7 +178,11 @@ public final class Autos {
                 intake.retractAuto(),
                 intake.extendAuto(),
                 intake.retractAuto(),
-                intake.extendAuto()
+                intake.extendAuto(),
+                Commands.runOnce(() -> intake.stopRoller()),
+                intake.retractAuto(),
+                intake.extendAuto(),
+                intake.retractAuto()
             )
         ).andThen(Commands.runOnce(() -> intake.stopRoller(), intake));
     }
@@ -288,7 +292,7 @@ public final class Autos {
                 new AutonSwerveTimeControlCommand(robotDrive, 0.5, 0, 0, 2.0, true),
                 intake.extendAuto()
             ),
-            Commands.runOnce(() -> intake.runRoller(), intake),
+            Commands.runOnce(() -> intake.runRollerRPM(), intake),
             new WaitCommand(0.5),
             new AutonSwerveTimeControlCommand(robotDrive, 0, yDirection * 0.2, 0, 2.0, true),
             Commands.runOnce(() -> robotDrive.stop())
@@ -311,7 +315,7 @@ public final class Autos {
             ),
             Commands.parallel(
                 new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(0, yDirection * FieldConstants.kEdgeToCenterFuelPickupMeters), intakeHeading, 0, true),
-                Commands.runOnce(() -> intake.runRoller(), intake)
+                Commands.runOnce(() -> intake.runRollerRPM(), intake)
             ),
             Commands.waitSeconds(0.5),
             // Travel back.
@@ -336,7 +340,7 @@ public final class Autos {
             ),
             Commands.parallel(
                 new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(0, yDirection * FieldConstants.kEdgeToCenterFuelPickupMeters), intakeHeading, 0, true),
-                Commands.runOnce(() -> intake.runRoller(), intake)
+                Commands.runOnce(() -> intake.runRollerRPM(), intake)
             ),
             Commands.runOnce(() -> robotDrive.stop())
             //new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(0, yDirection * 1.0), intakeHeading, 0, true)
