@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.1851069900142646,
-        "y": 4.960114122681883
+        "x": 3.459660714285714,
+        "y": 7.3876607142857145
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.9334937796512244,
-        "y": 4.7851227844911985
+        "x": 3.208047503922674,
+        "y": 7.21266937609503
       },
       "isLocked": false,
       "linkedName": "LShoot"
@@ -55,7 +55,7 @@
   "folder": "LShootTwiceAndClimb",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -36.60707481260748
+    "rotation": -71.56505117707805
   },
   "useDefaultConstraints": true
 }

@@ -32,12 +32,12 @@
     },
     {
       "anchor": {
-        "x": 3.1851069900142646,
-        "y": 4.960114122681883
+        "x": 3.459660714285714,
+        "y": 7.3876607142857145
       },
       "prevControl": {
-        "x": 1.9719635008031073,
-        "y": 4.970037509008651
+        "x": 2.246517225074557,
+        "y": 7.397584100612482
       },
       "nextControl": null,
       "isLocked": false,
@@ -65,7 +65,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -36.60707481260748
+    "rotation": -71.56505117707805
   },
   "reversed": false,
   "folder": "LShootTwiceAndClimb",

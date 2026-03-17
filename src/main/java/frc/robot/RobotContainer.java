@@ -98,7 +98,7 @@ public class RobotContainer {
       )
     );
     // Register Named Commands
-    NamedCommands.registerCommand("Shoot", m_aimCommand);
+    NamedCommands.registerCommand("Shoot", Autos.AimAndShootCommand(getDriveSubsystem(), getShooterSubsystem(), getVisionSubsystem(), getIntakeSubsystem()));
     NamedCommands.registerCommand("ExtendIntake", m_intake.extendAuto());
     NamedCommands.registerCommand("RetractIntake", m_intake.retractAuto());
     NamedCommands.registerCommand("RunIntake", Commands.runOnce(() -> m_intake.runRoller(), m_intake));

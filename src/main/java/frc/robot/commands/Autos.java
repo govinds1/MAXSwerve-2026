@@ -169,7 +169,7 @@ public final class Autos {
         }
     }
 
-    private static Command AimAndShootCommand(DriveSubsystem robotDrive, ShooterSubsystem shooter, VisionTargeting vision, IntakeSubsystem intake) {
+    public static Command AimAndShootCommand(DriveSubsystem robotDrive, ShooterSubsystem shooter, VisionTargeting vision, IntakeSubsystem intake) {
         return Commands.parallel(
             new AimClosedLoop(robotDrive, shooter, vision, () -> 0, () -> 0, () -> 0),
             Commands.repeatingSequence(
