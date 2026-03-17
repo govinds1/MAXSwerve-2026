@@ -76,11 +76,6 @@ public class Robot extends TimedRobot {
     m_robotContainer.getIntakeSubsystem().stop();
     m_robotContainer.getShooterSubsystem().stop();
     m_robotContainer.getClimberSubsystem().stop();
-
-    // When disabled, seed the Limelight's internal IMU with the external gyro input. 
-    // Setting IMU mode of 1 enables seeding.
-    // TODO: Since Limelight is not in landscape mode, can't use internal IMU.
-    //LimelightHelpers.SetIMUMode("limelight", 1); // Seed internal IMU
   }
 
   @Override
@@ -97,14 +92,13 @@ public class Robot extends TimedRobot {
     m_robotContainer.getDriveSubsystem().zeroHeading();
     // Get selected autonomous command.
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    // Reset pose with auto's starting pose.
+    m_robotContainer.getDriveSubsystem().resetPose(Autos.getStartingPose());
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       CommandScheduler.getInstance().schedule(m_autonomousCommand);
     }
-
-    // TODO:
-    //LimelightHelpers.SetIMUMode("limelight", 4); // Use internal IMU + external IMU
   }
 
   /** This function is called periodically during autonomous. */
@@ -123,9 +117,6 @@ public class Robot extends TimedRobot {
 
     // TODO:
     // If we climbed in auto, drop the climber.
-
-    // TODO:
-    //LimelightHelpers.SetIMUMode("limelight", 4); // Use internal IMU + external IMU
   }
 
   /** This function is called periodically during operator control. */

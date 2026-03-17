@@ -38,11 +38,11 @@ public class ClimberSubsystem extends SubsystemBase {
   }
 
   public boolean isRaised() {
-    return m_motor.getEncoder().getPosition() - ClimberConstants.kClimberUpPosition > 0;
+    return Math.abs(m_motor.getEncoder().getPosition() - ClimberConstants.kClimberUpPosition) < 10 || m_motor.getEncoder().getPosition() - ClimberConstants.kClimberUpPosition > 0;
   }
 
   public boolean isLowered() {
-    return m_motor.getEncoder().getPosition() - ClimberConstants.kClimberDownPosition < 0;
+    return Math.abs(m_motor.getEncoder().getPosition() - ClimberConstants.kClimberDownPosition) < 10 || m_motor.getEncoder().getPosition() - ClimberConstants.kClimberDownPosition < 0;
   }
 
   public void stop() {

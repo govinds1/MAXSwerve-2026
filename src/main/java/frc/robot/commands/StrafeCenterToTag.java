@@ -14,9 +14,9 @@ public class StrafeCenterToTag extends Command {
   private final DriveSubsystem m_drive;
   private final VisionTargeting m_vision; 
 
-  private PIDController m_alignPID = new PIDController(0.01, 0, 0); // TODO: Tuned to limelight Tx values.
+  private PIDController m_alignPID = new PIDController(0.03, 0, 0); // TODO: Tuned to limelight Tx values.
 
-  /** Creates a new AlignToTarget. */
+  /** Creates a new StrafeCenterToTag. */
   // This should be used for aligning to tower, trench, and depot. Not for Hub aiming.
   public StrafeCenterToTag(DriveSubsystem drive, VisionTargeting vision) {
     m_drive = drive;

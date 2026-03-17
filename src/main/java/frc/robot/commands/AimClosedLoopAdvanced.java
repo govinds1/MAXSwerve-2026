@@ -7,7 +7,6 @@ package frc.robot.commands;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -86,7 +85,7 @@ public class AimClosedLoopAdvanced extends Command {
         } else if (visionOverride == 2) {
           // Shoot from Tower
           m_targetRpm = ShooterSubsystem.calculateRPMForDistanceToHUB(2.2);
-        } // Any other value, leave m_targetRPM as-is.
+        }
         // We're overriding vision, so let driver drive.
         if (m_rotSupplier != null) {
           rotationSpeed = m_rotSupplier.getAsDouble();
@@ -95,39 +94,31 @@ public class AimClosedLoopAdvanced extends Command {
         translationY = m_translationYSupplier.getAsDouble();
       } else {
         if (m_vision.hasTarget()) {
-          ChassisSpeeds currentSpeeds = m_drive.getRobotRelativeSpeeds();
-          // Moving forward/backward, reduce/increase RPM respectively.
-          double rpmOffset = currentSpeeds.vxMetersPerSecond * -1000; // TODO: Tune this value!
-          // Moving left/right, aim right/left respectively.
-          double aimOffset = currentSpeeds.vyMetersPerSecond * 2.0;  // TODO: Tune this value!
-
-          rotationSpeed = m_aimPID.calculate(m_vision.getTx() + aimOffset, 0.0);
+          //double[] aimInfo = m_vision.getTargetAimInfo(m_drive.getRobotRelativeSpeeds(), m_aimPID);
+          double[] aimInfo = m_vision.getTargetAimInfo_WithHubOffset(m_drive.getRobotRelativeSpeeds(), m_aimPID);
+          rotationSpeed = aimInfo[0];
+          m_targetRpm = aimInfo[1];
           if (Math.abs(rotationSpeed) < 0.05) {
             m_isAimed = true;
             rotationSpeed = 0;
           } else {
             m_isAimed = false;
           }
-          double distance = m_vision.getDistanceToTargetMeters();
-          m_targetRpm = ShooterSubsystem.calculateRPMForDistanceToHUB(distance) + rpmOffset;
           m_noTarget = false;
-          SmartDashboard.putNumber("Subsystems/Vision/Auto/MovementRPMOffset", rpmOffset);
-          SmartDashboard.putNumber("Subsystems/Vision/Auto/MovementAimOffset", aimOffset);
         } else {
           if (!m_noTarget) {
             m_overrideStartTime = Timer.getFPGATimestamp();
             m_noTarget = true;
           } else {
             if (Timer.getFPGATimestamp() - m_overrideStartTime > 1) {
-              // Set automatic vision override.
-              m_visionOverrideSupplier = () -> 3;
+              // Automatic vision override.
               m_isAimed = true;
             }
           }
         }
-        // Allow driving at half speed.
-        translationX = m_translationXSupplier.getAsDouble() * 0.5;
-        translationY = m_translationYSupplier.getAsDouble() * 0.5;
+        // Allow driving.
+        translationX = m_translationXSupplier.getAsDouble() * 0.8;
+        translationY = m_translationYSupplier.getAsDouble() * 0.8;
       }
       /* 
       else if (!m_isAdjusted) {
@@ -168,7 +159,6 @@ public class AimClosedLoopAdvanced extends Command {
       //SmartDashboard.putBoolean("Subsystems/Vision/Auto/IsAdjusted", m_isAdjusted);
       
       // Aim Robot
-      // TODO: Update with drive input when Vision aiming adjusts for robot speeds. See AimAndShootAuto/AimAtHubWhileDriving commands.
       if (translationX == 0 && translationY == 0 && rotationSpeed == 0) {
         m_drive.setX();
       } else {
@@ -177,7 +167,6 @@ public class AimClosedLoopAdvanced extends Command {
 
       // Rev the shooter
       m_shooter.runShooterRPM(m_targetRpm);
-      //m_shooter.runShooterOpenLoop(0.6);
 
       if ((m_isAimed || visionOverride != 0) && /* m_isAdjusted && */ m_shooter.isAtSpeed()) {
         m_shooter.runFeeder(ShooterConstants.kFeederPower);

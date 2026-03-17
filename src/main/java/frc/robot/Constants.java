@@ -190,6 +190,9 @@ public final class Constants {
     
     public static final double kFindHubMaxTime = 4.0;
     public static final double kAimAtHubMaxTime = 5.0;
+
+    public static final double kVelocityXToRPMOffset = -1000;
+    public static final double kVelocityYToAimTxOffset = 2.0;
   }
 
   public static final class NeoMotorConstants {
@@ -266,6 +269,8 @@ public final class Constants {
       new Tag(TagLocation.kTower, Alliance.Blue, 31),
       new Tag(TagLocation.kTower, Alliance.Blue, 32)
     );
+
+    public static final double kTagToHubCenterMeters = Units.inchesToMeters(23.5);
   }
 
   public static final class FieldConstants {

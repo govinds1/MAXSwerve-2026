@@ -67,7 +67,7 @@ public final class Autos {
                 new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(-2, -2.3), Rotation2d.fromDegrees(0)),
                 Commands.runOnce(() -> intake.runRoller(), intake),
                 Commands.waitSeconds(0.35),
-                new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(0.75, -0.75), Rotation2d.fromDegrees(0), 0, true),
+                new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(0.75, -0.75), Rotation2d.fromDegrees(0), true),
                 Commands.waitSeconds(0.5),
                 new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(-0.75, 0.75), Rotation2d.fromDegrees(-25)),
                 Autos.AimAndShootCommand(robotDrive, shooter, vision, intake),
@@ -129,7 +129,7 @@ public final class Autos {
         return command;
     }
 
-    private static Pose2d getStartingPose() {
+    public static Pose2d getStartingPose() {
         // TODO: 
         // When using PathPlanner, use this starting pose to set drive Pose (for estimator). 
         // Enable using different pose for different alliance, so we know starting rotation.
@@ -149,7 +149,7 @@ public final class Autos {
         }
     }
 
-    private static Pose2d getShootingPose() {
+    public static Pose2d getShootingPose() {
         // TODO: 
         // When using PathPlanner, use this starting pose to set drive Pose (for estimator). 
         // Enable using different pose for different alliance, so we know starting rotation.
@@ -171,20 +171,58 @@ public final class Autos {
 
     private static Command AimAndShootCommand(DriveSubsystem robotDrive, ShooterSubsystem shooter, VisionTargeting vision, IntakeSubsystem intake) {
         return Commands.parallel(
-            new AimClosedLoop(robotDrive, shooter, vision, () -> 0, () -> 0, () -> 0).withTimeout(6.0),
+            new AimClosedLoop(robotDrive, shooter, vision, () -> 0, () -> 0, () -> 0),
+            Commands.repeatingSequence(
+                intake.retractAuto(),
+                intake.extendAuto()
+            ),
             Commands.sequence(
-                Commands.runOnce(() -> intake.runRoller()),
-                Commands.waitSeconds(0.5),
-                intake.retractAuto(),
-                intake.extendAuto(),
-                intake.retractAuto(),
-                intake.extendAuto(),
-                Commands.runOnce(() -> intake.stopRoller()),
-                intake.retractAuto(),
-                intake.extendAuto(),
-                intake.retractAuto()
+                Commands.waitSeconds(2.0),
+                Commands.runOnce(() -> intake.runRoller(), intake)
             )
-        ).andThen(Commands.runOnce(() -> intake.stopRoller(), intake));
+        )
+        .withTimeout(6.0) // TODO: Adjust this, can probably be quicker?
+        .andThen(
+            Commands.parallel(
+                intake.extendAuto(),
+                Commands.runOnce(() -> intake.stopRoller(), intake)
+            )
+        );
+    }
+
+    private static Command AimAndShootCommand_WithMovement(DriveSubsystem robotDrive, ShooterSubsystem shooter, VisionTargeting vision, IntakeSubsystem intake, Translation2d translationMovementVector, double time) {
+        return Commands.parallel(
+            new AimClosedLoopAdvanced(robotDrive, shooter, vision, () -> translationMovementVector.getX(), () -> translationMovementVector.getY(), () -> 0),
+            Commands.repeatingSequence(
+                intake.retractAuto(),
+                intake.extendAuto()
+            ),
+            Commands.runOnce(() -> intake.runRoller(), intake)
+        )
+        .withTimeout(time)
+        .andThen(
+            Commands.parallel(
+                intake.extendAuto(),
+                Commands.runOnce(() -> intake.stopRoller(), intake)
+            )
+        );
+    }
+
+    private static Command AimAndShootCommand_WhileIntaking(DriveSubsystem robotDrive, ShooterSubsystem shooter, VisionTargeting vision, IntakeSubsystem intake, Translation2d translationMovementVector, double time) {
+        return Commands.sequence(
+            intake.extendAuto(),    
+            Commands.parallel(
+                new AimClosedLoopAdvanced(robotDrive, shooter, vision, () -> translationMovementVector.getX(), () -> translationMovementVector.getY(), () -> 0),
+                Commands.runOnce(() -> intake.runRoller(), intake)
+            )
+            .withTimeout(time)
+            .andThen(
+                Commands.parallel(
+                    intake.extendAuto(),
+                    Commands.runOnce(() -> intake.stopRoller(), intake)
+                )
+            )
+        );
     }
 
     public static Command turnAndShootTimeBased(DriveSubsystem robotDrive, ShooterSubsystem shooter, VisionTargeting vision, IntakeSubsystem intake) {
@@ -314,14 +352,14 @@ public final class Autos {
                 intake.extendAuto()
             ),
             Commands.parallel(
-                new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(0, yDirection * FieldConstants.kEdgeToCenterFuelPickupMeters), intakeHeading, 0, true),
+                new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(0, yDirection * FieldConstants.kEdgeToCenterFuelPickupMeters), intakeHeading, true),
                 Commands.runOnce(() -> intake.runRollerRPM(), intake)
             ),
             Commands.waitSeconds(0.5),
             // Travel back.
             new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(0, -yDirection * FieldConstants.kEdgeToCenterFuelPickupMeters), getShootingPose().getRotation()),
             Commands.runOnce(() -> intake.stopRoller(), intake),
-            new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(-FieldConstants.kStartLineToOverCenterLineMeters, 0), getShootingPose().getRotation(), 0, true)
+            new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(-FieldConstants.kStartLineToOverCenterLineMeters, 0), getShootingPose().getRotation(), true)
         );
     }
 
@@ -339,7 +377,7 @@ public final class Autos {
                 intake.extendAuto()
             ),
             Commands.parallel(
-                new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(0, yDirection * FieldConstants.kEdgeToCenterFuelPickupMeters), intakeHeading, 0, true),
+                new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(0, yDirection * FieldConstants.kEdgeToCenterFuelPickupMeters), intakeHeading, true),
                 Commands.runOnce(() -> intake.runRollerRPM(), intake)
             ),
             Commands.runOnce(() -> robotDrive.stop())
@@ -371,7 +409,7 @@ public final class Autos {
         return new SequentialCommandGroup(
             // Works the same as shootAndTrench, but this auto avoids shooting first in order to try and beat other teams to the midfield first. 
             Autos.traverseTrenchGetFuelAndReturn(robotDrive, shooter, vision, intake),
-            Autos.shootAndOutpost(robotDrive, shooter, vision, intake)
+            Autos.turnAndShoot(robotDrive, shooter, vision, intake)
         );
     }
 }

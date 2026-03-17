@@ -9,12 +9,15 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Helpers;
 import frc.robot.LimelightHelpers;
 import frc.robot.Constants.AprilTagConstants;
+import frc.robot.Constants.DriveAutoConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.AprilTagConstants.Tag;
 import frc.robot.LimelightHelpers.RawFiducial;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 
@@ -103,6 +106,86 @@ public class VisionTargeting extends SubsystemBase {
         double angleToGoalRadians = Math.toRadians(angleToGoalDegrees);
 
         return (FieldConstants.kHubHeightMeters - LimelightConstants.kHeightOffsetMeters) / Math.tan(angleToGoalRadians);
+    }
+
+    
+    public double[] getTargetAimInfo(ChassisSpeeds currentRobotSpeeds, PIDController aimPID) {
+        double[] aimInfo = new double[2];
+        aimInfo[0] = 0;
+        aimInfo[1] = ShooterSubsystem.calculateRPMForDistanceToHUB(1.9);
+        // Return if we have no target
+        if (!hasTarget()) {
+            return aimInfo;
+        }
+
+        // Moving forward/backward, reduce/increase RPM respectively.
+        double rpmOffset = currentRobotSpeeds.vxMetersPerSecond * DriveAutoConstants.kVelocityXToRPMOffset;
+        // Moving left/right, aim right/left respectively.
+        double aimOffset = currentRobotSpeeds.vyMetersPerSecond * DriveAutoConstants.kVelocityYToAimTxOffset;
+
+        // Compute rotation command from PID controller
+        double rotationSpeed = aimPID.calculate(getTx() + aimOffset, 0.0);
+
+        // Compute RPM from distance
+        double distanceToGoal = getDistanceToTargetMeters();
+        double targetRpm = ShooterSubsystem.calculateRPMForDistanceToHUB(distanceToGoal) + rpmOffset;
+
+        // Return aimInfo.
+        aimInfo[0] = rotationSpeed;
+        aimInfo[1] = targetRpm;
+        return aimInfo;
+    }
+
+    public double[] getTargetAimInfo_WithHubOffset(ChassisSpeeds currentRobotSpeeds, PIDController aimPID) {
+        double[] aimInfo = new double[2];
+        aimInfo[0] = 0;
+        aimInfo[1] = ShooterSubsystem.calculateRPMForDistanceToHUB(1.9);
+        // Return if we have no target
+        if (!hasTarget()) {
+            return aimInfo;
+        }
+
+        // Get the Limelight robot-relative pose of the tag
+        double[] pose = LimelightHelpers.getTargetPose_RobotSpace("limelight");     
+        // Check if we got a valid pose
+        if (pose == null || pose.length < 6) {
+            return aimInfo;
+        }
+        // Pose2d representing tag in robot coordinates
+        Pose2d robotToTag = new Pose2d(
+            pose[0],                  // X meters forward
+            pose[1],                  // Y meters left
+            new Rotation2d(pose[5])   // yaw (rotation around Z)
+        );
+        // Define the transform from the tag to the goal center
+        Transform2d tagToGoal = new Transform2d(
+            new Translation2d(-AprilTagConstants.kTagToHubCenterMeters, 0), // goal behind the tag in tag frame
+            new Rotation2d()                                                  // no additional rotation
+        );
+
+        // Compute the goal pose relative to the robot
+        Pose2d robotToGoal = robotToTag.transformBy(tagToGoal);
+
+        // Compute the angle from the robot to the goal center
+        Rotation2d aimAngle = robotToGoal.getTranslation().getAngle();
+        double     aimError = aimAngle.getRadians(); // radians to feed into PID controller
+
+        // Moving forward/backward, reduce/increase RPM respectively.
+        double rpmOffset = currentRobotSpeeds.vxMetersPerSecond * DriveAutoConstants.kVelocityXToRPMOffset;
+        // Moving left/right, aim right/left respectively.
+        double aimOffset = currentRobotSpeeds.vyMetersPerSecond * Math.toRadians(DriveAutoConstants.kVelocityYToAimTxOffset);
+
+        // Compute rotation command from PID controller
+        double rotationSpeed = aimPID.calculate(Math.toDegrees(aimError + aimOffset), 0);
+        
+        // Compute RPM from distance
+        double distanceToGoal = robotToGoal.getTranslation().getNorm(); // sqrt(X^2 + Y^2)
+        double targetRpm = ShooterSubsystem.calculateRPMForDistanceToHUB(distanceToGoal) + rpmOffset;
+        
+        // Return aimInfo.
+        aimInfo[0] = rotationSpeed;
+        aimInfo[1] = targetRpm;
+        return aimInfo;
     }
 
     public Tag getTagFromFiducial(RawFiducial fid) {

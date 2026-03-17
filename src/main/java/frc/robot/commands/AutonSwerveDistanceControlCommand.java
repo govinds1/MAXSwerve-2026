@@ -16,26 +16,20 @@ public class AutonSwerveDistanceControlCommand extends Command {
     private Pose2d m_startingPose;
     private Translation2d m_desiredTranslationDelta; // desired pose relative to starting pose. Example -> (2, -3) means we move 2 meters forward, 3 meters right
     private Rotation2d m_desiredRotation; // desired angle (field relative) at the end of driving. Example -> 0 means we face opponent's driver station.
-    private double m_desiredEndVelocityMps; // desired linear velocity (mps) at the end of route. 
     private double startTime;
     private boolean m_halfSpeed;
     
 
-public AutonSwerveDistanceControlCommand(DriveSubsystem subsystem, Translation2d desiredTranslationDelta, Rotation2d desiredRotation, double desiredEndVelocityMps, boolean halfSpeed) {
+public AutonSwerveDistanceControlCommand(DriveSubsystem subsystem, Translation2d desiredTranslationDelta, Rotation2d desiredRotation, boolean halfSpeed) {
     m_drive = subsystem;
     m_desiredTranslationDelta = desiredTranslationDelta;
     m_desiredRotation = desiredRotation;
-    m_desiredEndVelocityMps = desiredEndVelocityMps;
     m_halfSpeed = halfSpeed; 
     addRequirements(m_drive);
 }
 
-public AutonSwerveDistanceControlCommand(DriveSubsystem subsystem, Translation2d desiredTranslationDelta, Rotation2d desiredRotation, double desiredEndVelocityMps) {
-    this(subsystem, desiredTranslationDelta, desiredRotation, desiredEndVelocityMps, false);
-}
-
 public AutonSwerveDistanceControlCommand(DriveSubsystem subsystem, Translation2d desiredTranslationDelta, Rotation2d desiredRotation) {
-    this(subsystem, desiredTranslationDelta, desiredRotation, 0, false);
+    this(subsystem, desiredTranslationDelta, desiredRotation, false);
 }
 
 
@@ -65,9 +59,7 @@ public void execute() {
 // Called once the command ends or is interrupted.
 @Override
 public void end(boolean interrupted) {
-    //if (m_desiredEndVelocityMps == 0) {
-        m_drive.drive(0, 0, 0, false);
-    //}
+    m_drive.drive(0, 0, 0, false);
 }
 
 // Returns true when the command should end.
