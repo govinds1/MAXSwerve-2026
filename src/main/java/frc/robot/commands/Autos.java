@@ -4,13 +4,18 @@
 
 package frc.robot.commands;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathPlannerPath;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.Helpers;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -32,7 +37,7 @@ public final class Autos {
     public static String[] autoNames = {"ShootStraight", "DoNothing",
         "ShootPreloads_StartRight", "ShootPreloads_StartLeft", "ShootPreloads_StartCenter",
         "ShootAndTrench_StartRight", "ShootAndTrench_StartLeft", 
-        "TestMovement"//, "Test", "ShootAndOutpost_StartRight",
+        "TestMovement", "TestPathPlanner" //, "Test", "ShootAndOutpost_StartRight",
         //"QuickTrenchShoot_StartLeft", "QuickTrenchShoot_StartRight",
         //"ShootAndTrenchAndOutpost_StartRight"
     };
@@ -90,6 +95,15 @@ public final class Autos {
                 new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(-2,-2), Rotation2d.fromDegrees(0))
             );
             break;
+            case "TestPathPlanner":
+            try {
+                PathPlannerPath testPath = PathPlannerPath.fromPathFile("Test");
+                command = AutoBuilder.followPath(testPath);
+            } catch (Exception e) {
+                DriverStation.reportError("PathPlanner follow path error: " + e.getMessage(), e.getStackTrace());
+                return Commands.none();
+            }
+            break;
             case "ShootPreloads_StartRight":
             //command = Autos.turnAndShoot(robotDrive, shooter, vision, intake);
             command = Autos.turnAndShootTimeBased(robotDrive, shooter, vision, intake);
@@ -135,17 +149,17 @@ public final class Autos {
         // Enable using different pose for different alliance, so we know starting rotation.
         switch (m_startingSide) {
             case kLEFT:
-                //return (Helpers.onRedAlliance()) ? FieldConstants.kRedLeftStart : FieldConstants.kBlueLeftStart;
-                return FieldConstants.kBlueLeftStart;
+                return (Helpers.onRedAlliance()) ? FieldConstants.kRedLeftStart : FieldConstants.kBlueLeftStart;
+                //return FieldConstants.kBlueLeftStart;
             case kCENTER:
-                //return (Helpers.onRedAlliance()) ? FieldConstants.kRedMiddleStart : FieldConstants.kBlueMiddleStart;
-                return FieldConstants.kBlueCenterStart;
+                return (Helpers.onRedAlliance()) ? FieldConstants.kRedCenterStart : FieldConstants.kBlueCenterStart;
+                //return FieldConstants.kBlueCenterStart;
             case kRIGHT:
-                //return (Helpers.onRedAlliance()) ? FieldConstants.kRedRightStart : FieldConstants.kBlueRightStart;
-                return FieldConstants.kBlueRightStart;
+                return (Helpers.onRedAlliance()) ? FieldConstants.kRedRightStart : FieldConstants.kBlueRightStart;
+                //return FieldConstants.kBlueRightStart;
             default:
-                //return (Helpers.onRedAlliance()) ? FieldConstants.kRedRightStart : FieldConstants.kBlueRightStart;
-                return FieldConstants.kBlueRightStart;
+                return (Helpers.onRedAlliance()) ? FieldConstants.kRedRightStart : FieldConstants.kBlueRightStart;
+                //return FieldConstants.kBlueRightStart;
         }
     }
 

@@ -19,7 +19,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "TrenchRunShallow_StartLeft"
+            "pathName": "LShootToStart"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "TrenchRunShallowAndHerd_StartLeft"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
           }
         }
       ]

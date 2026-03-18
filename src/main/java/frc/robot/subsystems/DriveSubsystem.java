@@ -142,7 +142,6 @@ public class DriveSubsystem extends SubsystemBase {
             m_rearRight.getPosition()
         });
     // Update Pose with Limelight if possible.
-    // TODO: Enable when fmap is updated.
     //localizePose();
 
     SmartDashboard.putNumber("Subsystems/Drive/Odometry/EstimatedPose/X", m_poseEstimator.getEstimatedPosition().getX());

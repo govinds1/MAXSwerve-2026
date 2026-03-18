@@ -32,12 +32,12 @@
     },
     {
       "anchor": {
-        "x": 3.459660714285714,
-        "y": 7.3876607142857145
+        "x": 3.907140052356021,
+        "y": 7.418442408376964
       },
       "prevControl": {
-        "x": 2.246517225074557,
-        "y": 7.397584100612482
+        "x": 2.693996563144864,
+        "y": 7.428365794703732
       },
       "nextControl": null,
       "isLocked": false,
@@ -57,15 +57,15 @@
   ],
   "globalConstraints": {
     "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxAcceleration": 11.8,
     "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 720.0,
+    "maxAngularAcceleration": 2430.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -71.56505117707805
+    "rotation": -78.16718583789796
   },
   "reversed": false,
   "folder": "LShootTwiceAndClimb",

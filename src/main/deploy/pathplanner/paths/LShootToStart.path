@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.3099416169784184,
-        "y": 8.088395060471713
+        "x": 3.5397863333805337,
+        "y": 7.469048534512087
       },
       "isLocked": false,
       "linkedName": "LShoot"
     },
     {
       "anchor": {
-        "x": 1.0502282453637657,
-        "y": 6.0
+        "x": 3.595595056559933,
+        "y": 7.4416442531796925
       },
       "prevControl": {
-        "x": 1.3542314450576578,
-        "y": 6.108755782055713
+        "x": 3.8388546455424257,
+        "y": 7.383983414059292
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Depot"
+      "linkedName": "LStart"
     }
   ],
   "rotationTargets": [],
@@ -41,11 +41,11 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": 180.0
+    "velocity": 0.0,
+    "rotation": 0.0
   },
   "reversed": false,
-  "folder": "LShootTwiceAndClimb",
+  "folder": "ShootToStartConnectorPaths",
   "idealStartingState": {
     "velocity": 0,
     "rotation": -78.16718583789796

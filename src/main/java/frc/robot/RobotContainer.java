@@ -8,6 +8,7 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.AimClosedLoop;
 import frc.robot.commands.AimClosedLoopAdvanced;
 import frc.robot.commands.Autos;
+import frc.robot.commands.ClimberCommand;
 import frc.robot.commands.StrafeCenterToTag;
 import frc.robot.commands.TurnToAngle;
 import frc.robot.controllers.DriverController;
@@ -104,14 +105,25 @@ public class RobotContainer {
     NamedCommands.registerCommand("RunIntake", Commands.runOnce(() -> m_intake.runRoller(), m_intake));
     NamedCommands.registerCommand("StopIntake", Commands.runOnce(() -> m_intake.stopRoller(), m_intake));
 
-    NamedCommands.registerCommand("ClimberUp", Commands.runOnce(() -> m_climber.raiseHook(), m_climber));
-    NamedCommands.registerCommand("ClimberDown", Commands.runOnce(() -> m_climber.lowerHook(), m_climber));
+    NamedCommands.registerCommand("ClimberUp", new ClimberCommand(m_climber, true));
+    NamedCommands.registerCommand("ClimberDown", new ClimberCommand(m_climber, false));
 
     NamedCommands.registerCommand("AlignToTag", new StrafeCenterToTag(m_robotDrive, m_vision));
 
     // Register Event Triggers
-    new EventTrigger("RunIntake").whileTrue(Commands.runOnce(() -> m_intake.runRoller(), m_intake));
-    new EventTrigger("StopIntake").whileTrue(Commands.runOnce(() -> m_intake.stopRoller(), m_intake));
+    new EventTrigger("Intake").onTrue(
+      Commands.parallel(
+        m_intake.extendAuto(),
+        Commands.runOnce(() -> m_intake.runRollerRPM(), m_intake)
+      )
+    );
+    new EventTrigger("Intake").onFalse(Commands.runOnce(() -> m_intake.stopRoller(), m_intake));
+    
+    new EventTrigger("ShootStraight").whileTrue(
+      Commands.sequence(
+        m_shooter.ShootStraightCommand(() -> m_vision.getDistanceToTargetMeters())
+      )
+    );
 
     // Build an auto chooser. This will use Commands.none() as the default option.
     //autoChooser = AutoBuilder.buildAutoChooser();

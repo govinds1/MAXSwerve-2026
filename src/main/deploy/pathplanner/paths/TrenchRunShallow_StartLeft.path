@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.459660714285714,
-        "y": 7.3876607142857145
+        "x": 3.595595056559933,
+        "y": 7.4416442531796925
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.570851372011495,
-        "y": 7.447052175391735
+        "x": 4.706785714285714,
+        "y": 7.501035714285713
       },
       "isLocked": false,
-      "linkedName": "LShoot"
+      "linkedName": "LStart"
     },
     {
       "anchor": {
-        "x": 7.168642857139516,
-        "y": 6.820785714289546
+        "x": 6.7206139378422645,
+        "y": 6.982689344119358
       },
       "prevControl": {
-        "x": 6.397595507534804,
-        "y": 7.4419071903694265
+        "x": 5.949566588237553,
+        "y": 7.6038108201992385
       },
       "nextControl": {
-        "x": 7.751714285703042,
-        "y": 6.35108928571736
+        "x": 7.303685366405791,
+        "y": 6.512992915547172
       },
       "isLocked": false,
       "linkedName": "LMidfield"
@@ -80,12 +80,12 @@
     },
     {
       "anchor": {
-        "x": 3.459660714285714,
-        "y": 7.3876607142857145
+        "x": 3.907140052356021,
+        "y": 7.418442408376964
       },
       "prevControl": {
-        "x": 4.237089285710946,
-        "y": 7.366070032538425
+        "x": 4.684568623781253,
+        "y": 7.3968517266296745
       },
       "nextControl": null,
       "isLocked": false,
@@ -140,21 +140,21 @@
   ],
   "globalConstraints": {
     "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxAcceleration": 11.8,
     "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 720.0,
+    "maxAngularAcceleration": 2430.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
     "velocity": 0.0,
-    "rotation": -71.56505117707805
+    "rotation": -78.16718583789796
   },
   "reversed": false,
-  "folder": "QuickTrench_StartLeft",
+  "folder": "QuickTrench",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -71.56505117707805
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }

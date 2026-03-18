@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import java.util.Map;
+import java.util.function.Supplier;
 
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
@@ -20,6 +21,8 @@ import com.revrobotics.spark.config.SparkBaseConfig;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Configs;
 import frc.robot.Constants.ShooterConstants;
@@ -105,6 +108,14 @@ public class ShooterSubsystem extends SubsystemBase{
             ArbFFUnits.kVoltage
         );
     } 
+  }
+
+  public void runShooterRPM(Supplier<Double> distanceToHubSupplier) {
+    runShooterRPM(ShooterSubsystem.calculateRPMForDistanceToHUB(distanceToHubSupplier.get()));
+  }
+
+  public Command ShootStraightCommand(Supplier<Double> distanceToHubSupplier) {
+    return Commands.run(() -> runShooterRPM(distanceToHubSupplier), this);
   }
 
   /**

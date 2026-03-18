@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.907140052356021,
-        "y": 7.418442408376964
+        "x": 3.954626963350785,
+        "y": 0.5921989528795804
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.3099416169784184,
-        "y": 8.088395060471713
+        "x": 3.668216573447047,
+        "y": 0.5470821283279869
       },
       "isLocked": false,
-      "linkedName": "LShoot"
+      "linkedName": "RShoot"
     },
     {
       "anchor": {
-        "x": 1.0502282453637657,
-        "y": 6.0
+        "x": 3.6159796615544932,
+        "y": 0.6006885803637443
       },
       "prevControl": {
-        "x": 1.3542314450576578,
-        "y": 6.108755782055713
+        "x": 3.909760269582898,
+        "y": 0.6625016453464792
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Depot"
+      "linkedName": "RStart"
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 0.0
   },
   "reversed": false,
-  "folder": "LShootTwiceAndClimb",
+  "folder": "ShootToStartConnectorPaths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -78.16718583789796
+    "rotation": 80.39479584498703
   },
   "useDefaultConstraints": true
 }

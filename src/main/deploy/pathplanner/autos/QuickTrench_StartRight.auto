@@ -7,13 +7,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "LStartTrenchRun"
+            "pathName": "TrenchRun_StartRight"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "Shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RShootToStart"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "TrenchRunShallowAndHerd_StartRight"
           }
         }
       ]
