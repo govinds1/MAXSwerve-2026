@@ -89,11 +89,11 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     // Reset gyro for auto.
-    m_robotContainer.getDriveSubsystem().zeroHeading();
+    //m_robotContainer.getDriveSubsystem().zeroHeading();
     // Get selected autonomous command.
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
     // Reset pose with auto's starting pose.
-    m_robotContainer.getDriveSubsystem().resetPose(Autos.getStartingPose());
+    //m_robotContainer.getDriveSubsystem().resetPose(Autos.getStartingPose());
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {

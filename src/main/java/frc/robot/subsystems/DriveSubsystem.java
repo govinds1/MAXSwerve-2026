@@ -4,6 +4,11 @@
 
 package frc.robot.subsystems;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.HolonomicDriveController;
@@ -17,6 +22,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Timer;
@@ -80,14 +86,14 @@ public class DriveSubsystem extends SubsystemBase {
     // From PathPlanner Example:
     // Load RobotConfig.
     try{
-      //DriveConstants.config = RobotConfig.fromGUISettings();
+      DriveConstants.config = RobotConfig.fromGUISettings();
     } catch (Exception e) {
       // Handle exception as needed
-      //e.printStackTrace();
+      e.printStackTrace();
     }
     
     // Configure AutoBuilder last
-    /*AutoBuilder.configure(
+    AutoBuilder.configure(
             this::getPose, // Robot pose supplier
             this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
             this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
@@ -109,7 +115,7 @@ public class DriveSubsystem extends SubsystemBase {
               return false;
             },
             this // Reference to this subsystem to set requirements
-    );*/
+    );
 
     m_thetaController.enableContinuousInput(0, 2 * Math.PI);
     var thetaRobotController = m_thetaController;

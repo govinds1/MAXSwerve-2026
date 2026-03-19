@@ -94,8 +94,8 @@ public class AimClosedLoopAdvanced extends Command {
         translationY = m_translationYSupplier.getAsDouble();
       } else {
         if (m_vision.hasTarget()) {
-          //double[] aimInfo = m_vision.getTargetAimInfo(m_drive.getRobotRelativeSpeeds(), m_aimPID);
-          double[] aimInfo = m_vision.getTargetAimInfo_WithHubOffset(m_drive.getRobotRelativeSpeeds(), m_aimPID);
+          double[] aimInfo = m_vision.getTargetAimInfo(m_drive.getRobotRelativeSpeeds(), m_aimPID);
+          //double[] aimInfo = m_vision.getTargetAimInfo_WithHubOffset(m_drive.getRobotRelativeSpeeds(), m_aimPID);
           rotationSpeed = aimInfo[0];
           m_targetRpm = aimInfo[1];
           if (Math.abs(rotationSpeed) < 0.05) {

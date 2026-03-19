@@ -91,13 +91,13 @@ public final class Autos {
             command = Commands.sequence(
                 //new AutonSwerveDistanceConstantControlCommand(robotDrive, new Translation2d(2, 1), Rotation2d.fromDegrees(45)),
                 //new AutonSwerveDistanceTrapezoidalControlCommand(robotDrive, new Translation2d(-2, -1), Rotation2d.fromDegrees(135))
-                new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(2,2), Rotation2d.fromDegrees(0)),
-                new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(-2,-2), Rotation2d.fromDegrees(0))
+                new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(1,1), Rotation2d.fromDegrees(90)),
+                new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(-1,-1), Rotation2d.fromDegrees(0))
             );
             break;
             case "TestPathPlanner":
             try {
-                PathPlannerPath testPath = PathPlannerPath.fromPathFile("Test");
+                PathPlannerPath testPath = PathPlannerPath.fromPathFile("ShortPath");
                 command = AutoBuilder.followPath(testPath);
             } catch (Exception e) {
                 DriverStation.reportError("PathPlanner follow path error: " + e.getMessage(), e.getStackTrace());
@@ -186,20 +186,19 @@ public final class Autos {
     public static Command AimAndShootCommand(DriveSubsystem robotDrive, ShooterSubsystem shooter, VisionTargeting vision, IntakeSubsystem intake) {
         return Commands.parallel(
             new AimClosedLoop(robotDrive, shooter, vision, () -> 0, () -> 0, () -> 0),
-            Commands.repeatingSequence(
-                intake.retractAuto(),
-                intake.extendAuto()
-            ),
             Commands.sequence(
-                Commands.waitSeconds(2.0),
-                Commands.runOnce(() -> intake.runRoller(), intake)
+                Commands.runOnce(() -> intake.runRoller(), intake),
+                Commands.repeatingSequence(
+                    intake.retractAuto(),
+                    intake.extendAuto()
+                )
             )
         )
         .withTimeout(6.0) // TODO: Adjust this, can probably be quicker?
         .andThen(
-            Commands.parallel(
-                intake.extendAuto(),
-                Commands.runOnce(() -> intake.stopRoller(), intake)
+            Commands.sequence(
+                Commands.runOnce(() -> intake.stopRoller(), intake),
+                intake.extendAuto()
             )
         );
     }

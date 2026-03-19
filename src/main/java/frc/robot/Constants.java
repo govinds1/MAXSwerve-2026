@@ -179,9 +179,9 @@ public final class Constants {
     public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
     public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI;
 
-    public static final double kPXYController = 5; // TODO: Tuned for meters.
-    public static final double kPThetaController = 0.25; // Tuned for radians. 0.9
-    public static final double kPThetaRobotController = 20; // Tuned for holonomic robot controller.
+    public static final double kPXYController = 0.02; // TODO: Tuned for meters.
+    public static final double kPThetaController = 0.45; // Tuned for radians. 0.9
+    public static final double kPThetaRobotController = 10; // Tuned for holonomic robot controller.
     public static final Pose2d kRobotControllerTolerance = new Pose2d(0.05, 0.05, Rotation2d.fromDegrees(2.5));
 
     // Constraint for the motion profiled robot angle controller

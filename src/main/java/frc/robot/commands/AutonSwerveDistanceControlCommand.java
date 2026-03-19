@@ -46,8 +46,9 @@ public void execute() {
     // Get current pose.
     Pose2d currentPose = m_drive.getPose().relativeTo(m_startingPose);
     // Apply PID controllers to get output.
-    ChassisSpeeds newSpeeds = m_drive.m_robotDriveController.calculate(currentPose, new Pose2d(m_desiredTranslationDelta, Rotation2d.fromDegrees(0)), 0, m_desiredRotation);
+    ChassisSpeeds newSpeeds = m_drive.m_robotDriveController.calculate(currentPose, new Pose2d(m_desiredTranslationDelta, m_desiredRotation), 0, Rotation2d.fromDegrees(0));
     if (m_halfSpeed) {
+        
         if (Math.abs(newSpeeds.vxMetersPerSecond) > 1.5 || Math.abs(newSpeeds.vyMetersPerSecond) > 1.5) {
             newSpeeds = newSpeeds.times(0.5);
         }

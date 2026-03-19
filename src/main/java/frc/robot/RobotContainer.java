@@ -123,7 +123,7 @@ public class RobotContainer {
 
     // Register Event Triggers
     new EventTrigger("Intake").onTrue(
-      Commands.parallel(
+      Commands.sequence(
         m_intake.extendAuto(),
         Commands.runOnce(() -> m_intake.runRollerRPM(), m_intake)
       )
