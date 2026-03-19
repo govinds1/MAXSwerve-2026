@@ -7,16 +7,22 @@ package frc.robot.commands;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Helpers;
+import frc.robot.Constants.DriveAutoConstants;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.VisionTargeting;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class AimClosedLoopAdvanced extends Command {
+public class AimClosedLoop_WithPose extends Command {
 
   private final DriveSubsystem m_drive;
   private final ShooterSubsystem m_shooter;
@@ -31,18 +37,13 @@ public class AimClosedLoopAdvanced extends Command {
   private final PIDController m_aimPID = new PIDController(0.03, 0.0, 0); // tuned for Limelight Tx values. (0.05, 0.0, 0.005)
   private double m_targetRpm;
   private boolean m_isAimed; 
-  //private boolean m_isAdjusted;
-  private double m_overrideStartTime = 0;
-  private boolean m_noTarget = false;
-  //private double m_tagToHubOffset = 0;
-  //private Rotation2d m_aimedRotation;
 
-  public AimClosedLoopAdvanced(DriveSubsystem drive, ShooterSubsystem shooter, VisionTargeting vision, 
+  public AimClosedLoop_WithPose(DriveSubsystem drive, ShooterSubsystem shooter, VisionTargeting vision, 
                           DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier visionOverrideSupplier) {
     this(drive, shooter, vision, xSupplier, ySupplier, null, visionOverrideSupplier);
   }
 
-  public AimClosedLoopAdvanced(DriveSubsystem drive, ShooterSubsystem shooter, VisionTargeting vision, 
+  public AimClosedLoop_WithPose(DriveSubsystem drive, ShooterSubsystem shooter, VisionTargeting vision, 
                           DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier rotSupplier, DoubleSupplier visionOverrideSupplier) {
     m_drive = drive;
     m_shooter = shooter;
@@ -64,11 +65,7 @@ public class AimClosedLoopAdvanced extends Command {
   @Override
   public void initialize() {
     m_isAimed = false;
-    //m_isAdjusted = true; // TODO: Temp override
     m_targetRpm = 18000;
-    m_noTarget = false;
-    m_overrideStartTime = 0;
-    //m_aimedRotation = null;
   }
 
   @Override
@@ -78,6 +75,10 @@ public class AimClosedLoopAdvanced extends Command {
       double rotationSpeed = 0.0;
 
       double visionOverride = m_visionOverrideSupplier.getAsDouble();
+      // Allow driving.
+      translationX = m_translationXSupplier.getAsDouble() * 0.8;
+      translationY = m_translationYSupplier.getAsDouble() * 0.8;
+
       if (visionOverride != 0) {
         if (visionOverride == 1) {
           // Shoot from Hub
@@ -93,7 +94,7 @@ public class AimClosedLoopAdvanced extends Command {
         translationX = m_translationXSupplier.getAsDouble();
         translationY = m_translationYSupplier.getAsDouble();
       } else {
-        if (m_vision.hasTarget()) {
+        if (m_vision.canSeeHub()) {
           //double[] aimInfo = m_vision.getTargetAimInfo(m_drive.getRobotRelativeSpeeds(), m_aimPID);
           double[] aimInfo = m_vision.getTargetAimInfo_WithHubOffset(m_drive.getRobotRelativeSpeeds(), m_aimPID);
           rotationSpeed = aimInfo[0];
@@ -103,59 +104,68 @@ public class AimClosedLoopAdvanced extends Command {
           } else {
             m_isAimed = false;
           }
-          m_noTarget = false;
         } else {
-          if (!m_noTarget) {
-            m_overrideStartTime = Timer.getFPGATimestamp();
-            m_noTarget = true;
+          // Can't see hub, aim at where hub should be.
+          Pose2d currentPose = m_drive.getPose();
+          Translation2d target = Translation2d.kZero;
+          Rotation2d angleToTarget = Rotation2d.k180deg;
+          if (!Helpers.onRedAlliance()) {
+            // Aim for blue targets.
+            if (currentPose.getX() + 0.5 > FieldConstants.kBlueHub.getX()) {
+              // In midfield, outside shooting zone, aim at alliance zone if hub isn't blocking.
+              if (currentPose.getY() > FieldConstants.kBlueHub.getY()) {
+                // Aim at left (field-relative) target.
+                target = FieldConstants.kBlueLeftPassTarget;
+              } else {
+                // Aim at right (field-relative) target.
+                target = FieldConstants.kBlueRightPassTarget;
+              }
+            } else {
+              // In alliance zone, aim at hub.
+              target = FieldConstants.kBlueHub;
+            }
           } else {
-            if (Timer.getFPGATimestamp() - m_overrideStartTime > 1) {
-              // Automatic vision override.
-              m_isAimed = true;
+            // Aim for red targets.
+            if (currentPose.getX() - 0.5 < FieldConstants.kRedHub.getX()) {
+              // In midfield, outside shooting zone, aim at alliance zone if hub isn't blocking.
+              if (currentPose.getY() > FieldConstants.kRedHub.getY()) {
+                // Aim at left (field-relative) target.
+                target = FieldConstants.kRedLeftPassTarget;
+              } else {
+                // Aim at right (field-relative) target.
+                target = FieldConstants.kRedRightPassTarget;
+              }
+            } else {
+              // In alliance zone, aim at hub.
+              target = FieldConstants.kRedHub;
             }
           }
-        }
-        // Allow driving.
-        translationX = m_translationXSupplier.getAsDouble() * 0.8;
-        translationY = m_translationYSupplier.getAsDouble() * 0.8;
-      }
-      /* 
-      else if (!m_isAdjusted) {
-        m_isAdjusted = true; // TODO: Temp override.
+          Translation2d toTarget = target.minus(currentPose.getTranslation());
+          angleToTarget = toTarget.getAngle();
+          
+          ChassisSpeeds currentRobotSpeeds = m_drive.getRobotRelativeSpeeds();
+          double aimOffset = currentRobotSpeeds.vyMetersPerSecond * DriveAutoConstants.kVelocityYToAimTxOffset;
+          double rpmOffset = currentRobotSpeeds.vxMetersPerSecond * DriveAutoConstants.kVelocityXToRPMOffset;
 
-        // TODO: TEST THIS! This is extremely rough code, and assumes constant offset no matter where robot is.
-        // Limelight's Tx value range is -27 to 27 degrees (for full window, -13.5 to 13.5 for our half window), so should be a small enough number.
-        
-        if (m_noTarget) {
-          // Entered auto vision override.
-          m_isAdjusted = true;
-        } else if (!m_isAdjusted){
-          if (m_aimedRotation == null) {
-            m_aimedRotation = m_drive.getHeadingRotation();
-            double currentAngleDegrees = Helpers.modDegrees(m_aimedRotation.getDegrees());
-            if (currentAngleDegrees < 45) {
-              //m_tagToHubOffset = ((currentAngleDegrees - 0) / 45) * 1.5; 
-              m_tagToHubOffset = MathUtil.inverseInterpolate(0, 45, currentAngleDegrees) * -3; // Range of 0 to -3 for angle of 0 to 45
-            } else if (currentAngleDegrees > 315) {
-              //m_tagToHubOffset = ((360 - currentAngleDegrees) / 45) * 1.5; 
-              m_tagToHubOffset = MathUtil.inverseInterpolate(360, 315, currentAngleDegrees) * 3; // Range of 0 to 3 for angle of 360 to 315
-            }
-          }
-          rotationSpeed = TurnToAngle.getRotSpeed(m_drive.getHeadingRotation().getRadians(), m_aimedRotation.plus(Rotation2d.fromDegrees(m_tagToHubOffset)).getRadians(), m_drive.m_thetaController);
-          if (m_drive.m_thetaController.atSetpoint()) {
-            m_isAdjusted = true;
-            rotationSpeed = 0;
+          // Compute rotation command from PID controller
+          Rotation2d aimError = angleToTarget.minus(currentPose.getRotation());
+          rotationSpeed = m_aimPID.calculate(Math.toDegrees(aimError.getDegrees() + aimOffset), 0);
+          
+          // Compute RPM from distance
+          m_targetRpm = ShooterSubsystem.calculateRPMForDistanceToHUB(toTarget.getNorm()) + rpmOffset;
+
+          // If we're close enough to angle target, indicate that we're aimed.
+          if (Math.abs(rotationSpeed) < 0.05) {
+            m_isAimed = true;
           } else {
-            // Redundnant for now, since we do not allow shooting on the move.
-            m_isAdjusted = false;
+            m_isAimed = false;
           }
         }
-      }*/
+      }
 
       SmartDashboard.putNumber("Subsystems/Vision/Auto/RotationSpeed", rotationSpeed);
       SmartDashboard.putNumber("Subsystems/Vision/Auto/TargetRPM", m_targetRpm);
       SmartDashboard.putBoolean("Subsystems/Vision/Auto/IsAimed", m_isAimed);
-      //SmartDashboard.putBoolean("Subsystems/Vision/Auto/IsAdjusted", m_isAdjusted);
       
       // Aim Robot
       if (translationX == 0 && translationY == 0 && rotationSpeed == 0) {
@@ -167,7 +177,7 @@ public class AimClosedLoopAdvanced extends Command {
       // Rev the shooter
       m_shooter.runShooterRPM(m_targetRpm);
 
-      if ((m_isAimed || visionOverride != 0) && /* m_isAdjusted && */ m_shooter.isAtSpeed()) {
+      if ((m_isAimed || visionOverride != 0) && m_shooter.isAtSpeed()) {
         m_shooter.runFeeder(ShooterConstants.kFeederPower);
       } else {
         m_shooter.stopFeeder();

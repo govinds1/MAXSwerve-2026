@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Helpers;
@@ -28,7 +29,7 @@ public class VisionTargeting extends SubsystemBase {
 
     public VisionTargeting() {
         // Set a custom crop window for improved performance (-1 to 1 for each value)
-        LimelightHelpers.setCropWindow(limelightName, -0.5, 0.5, -0.5, 0.5);
+        LimelightHelpers.setCropWindow(limelightName, -0.75, 0.75, -0.1, 0.9);
 
 
         // Change the camera pose relative to robot center (x forward, y left, z up, degrees)
@@ -91,6 +92,26 @@ public class VisionTargeting extends SubsystemBase {
         }
         
         return 0.0;
+    }
+
+    public boolean canSeeHub() {
+        if (!hasTarget()) return false;
+
+        // Get april tags in view.
+        LimelightHelpers.RawFiducial[] fiducials = LimelightHelpers.getRawFiducials(limelightName);
+        // Loop through each tag.
+        for (LimelightHelpers.RawFiducial fiducial : fiducials) {
+            Tag tagInView = AprilTagConstants.tags.get(fiducial.id);
+            // Check if tag is on our alliance side.
+            if (!((tagInView.getAlliance() == Alliance.Red && Helpers.onRedAlliance()) || (tagInView.getAlliance() == Alliance.Blue && !Helpers.onRedAlliance()))) {
+                continue;
+            }
+            // Check if tag is located on hub in a scoring spot.
+            if (AprilTagConstants.isHubScoringTagLocation(tagInView.getLocation())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public double getDistanceToTargetMeters() {

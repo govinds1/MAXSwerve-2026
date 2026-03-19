@@ -7,6 +7,7 @@ package frc.robot;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.AimClosedLoop;
 import frc.robot.commands.AimClosedLoopAdvanced;
+import frc.robot.commands.AimClosedLoop_WithPose;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ClimberCommand;
 import frc.robot.commands.StrafeCenterToTag;
@@ -60,6 +61,16 @@ public class RobotContainer {
   );
 
   AimClosedLoopAdvanced m_aimWhileMovingCommand = new AimClosedLoopAdvanced(
+    getDriveSubsystem(), 
+    getShooterSubsystem(), 
+    getVisionSubsystem(), 
+    () -> -getDriverController().getLeftY() * 0.5,
+    () -> -getDriverController().getLeftX() * 0.5,
+    () -> -getDriverController().getRightX() * 0.75,
+    () -> getOperatorController().getWantsVisionOverride()
+  );
+
+  AimClosedLoop_WithPose m_aimWithPoseCommand = new AimClosedLoop_WithPose(
     getDriveSubsystem(), 
     getShooterSubsystem(), 
     getVisionSubsystem(), 
@@ -138,6 +149,7 @@ public class RobotContainer {
     // Shooter Triggers
     //getOperatorController().runShooter.whileTrue(m_aimCommand);
     getOperatorController().runShooter.whileTrue(m_aimWhileMovingCommand);
+    //getOperatorController().runShooter.whileTrue(m_aimWithPoseCommand);
     //getOperatorController().runShooter.onTrue(Commands.runOnce(() -> m_shooter.runShooterRPM(18000)));
     //getOperatorController().runShooter.onFalse(Commands.runOnce(() -> m_shooter.stop(), m_shooter));
 

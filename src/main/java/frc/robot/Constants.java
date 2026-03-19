@@ -271,6 +271,10 @@ public final class Constants {
     );
 
     public static final double kTagToHubCenterMeters = Units.inchesToMeters(23.5);
+
+    public static final boolean isHubScoringTagLocation(TagLocation location) {
+      return (location == TagLocation.kHubClose) || (location == TagLocation.kHubLeft) || (location == TagLocation.kHubRight);
+    }
   }
 
   public static final class FieldConstants {
@@ -297,6 +301,11 @@ public final class Constants {
     public static final Translation2d kRedTower = kBlueTower.rotateAround(kCenterOfField, new Rotation2d(Math.PI));
     public static final Translation2d kRedLeftTrench = kBlueLeftTrench.rotateAround(kCenterOfField, new Rotation2d(Math.PI));
     public static final Translation2d kRedRightTrench = kBlueRightTrench.rotateAround(kCenterOfField, new Rotation2d(Math.PI));
+    
+    public static final Translation2d kBlueLeftPassTarget = kBlueHub.plus(new Translation2d(Units.inchesToMeters(-61), Units.inchesToMeters(75))); // 'above' hub
+    public static final Translation2d kBlueRightPassTarget = kBlueHub.plus(new Translation2d(Units.inchesToMeters(-61), Units.inchesToMeters(-75)));      // 'below' hub
+    public static final Translation2d kRedLeftPassTarget = kBlueRightPassTarget.rotateAround(kCenterOfField, new Rotation2d(Math.PI));                    // 'above' hub
+    public static final Translation2d kRedRightPassTarget = kBlueLeftPassTarget.rotateAround(kCenterOfField, new Rotation2d(Math.PI));                    // 'below' hub
 
     public static final double kHubHeightMeters = 1.83;
 
