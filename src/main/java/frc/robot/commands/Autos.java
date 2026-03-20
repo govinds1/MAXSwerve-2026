@@ -198,7 +198,7 @@ public final class Autos {
         .andThen(
             Commands.sequence(
                 Commands.runOnce(() -> intake.stopRoller(), intake),
-                intake.extendAuto()
+                intake.retractAuto()
             )
         );
     }

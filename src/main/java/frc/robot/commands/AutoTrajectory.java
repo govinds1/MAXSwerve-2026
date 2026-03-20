@@ -24,8 +24,8 @@ public class AutoTrajectory extends Command{
         // Create config for trajectory
         TrajectoryConfig config =
             new TrajectoryConfig(
-                    DriveAutoConstants.kMaxSpeedMetersPerSecond,
-                    DriveAutoConstants.kMaxAccelerationMetersPerSecondSquared)
+                    DriveConstants.kMaxSpeedMetersPerSecond,
+                    DriveConstants.kMaxAccelerationMetersPerSecondSquared)
                 // Add kinematics to ensure max speed is actually obeyed
                 .setKinematics(DriveConstants.kDriveKinematics);
     

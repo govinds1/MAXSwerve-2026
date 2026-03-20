@@ -8,40 +8,50 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.1217200565599335,
-        "y": 7.36066211032255
+        "x": 2.5850535714285714,
+        "y": 7.322875
       },
       "isLocked": false,
       "linkedName": "LStart"
     },
     {
       "anchor": {
-        "x": 1.7582051282051285,
-        "y": 3.905797720797721
+        "x": 2.487875,
+        "y": 4.051196428571429
       },
       "prevControl": {
-        "x": 3.6207944139220736,
-        "y": 4.067762006514578
+        "x": 3.374348042106687,
+        "y": 3.6885483658914207
+      },
+      "nextControl": {
+        "x": 1.775232142857143,
+        "y": 4.342732142857143
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 3.595595056559933,
+        "y": 7.4416442531796925
+      },
+      "prevControl": {
+        "x": 2.131553571428571,
+        "y": 7.241892857142857
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "LStart"
     }
   ],
-  "rotationTargets": [],
-  "constraintZones": [],
-  "pointTowardsZones": [
+  "rotationTargets": [
     {
-      "fieldPosition": {
-        "x": 4.625594,
-        "y": 4.035
-      },
-      "rotationOffset": 10.0,
-      "minWaypointRelativePos": 0.39743589743589547,
-      "maxWaypointRelativePos": 0.5474833808167143,
-      "name": "AimAtHub"
+      "waypointRelativePos": 1.0,
+      "rotationDegrees": 180.0
     }
   ],
+  "constraintZones": [],
+  "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 4.8,
@@ -53,7 +63,7 @@
   },
   "goalEndState": {
     "velocity": 0.0,
-    "rotation": -90.0
+    "rotation": 0.0
   },
   "reversed": false,
   "folder": null,
