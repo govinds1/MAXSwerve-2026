@@ -115,7 +115,19 @@ public class ShooterSubsystem extends SubsystemBase{
   }
 
   public Command ShootStraightCommand(Supplier<Double> distanceToHubSupplier) {
-    return Commands.run(() -> runShooterRPM(distanceToHubSupplier), this);
+    return Commands.run(
+      () -> runShooterAuto(distanceToHubSupplier),
+      this
+    ).finallyDo(() -> stop());
+  }
+
+  public void runShooterAuto(Supplier<Double> distanceToHubSupplier) {
+    runShooterRPM(distanceToHubSupplier);
+    if (isAtSpeed()) {
+      runFeeder(ShooterConstants.kFeederPower);
+    } else {
+      runFeeder(-0.1);
+    }
   }
 
   /**

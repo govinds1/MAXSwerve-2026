@@ -132,7 +132,7 @@ public class RobotContainer {
     
     new EventTrigger("ShootStraight").whileTrue(
       Commands.sequence(
-        m_shooter.ShootStraightCommand(() -> m_vision.getDistanceToTargetMeters())
+        Autos.ShootNoAimCommand(m_shooter, m_vision, m_intake)
       )
     );
 

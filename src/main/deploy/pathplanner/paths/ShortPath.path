@@ -29,7 +29,21 @@
     }
   ],
   "rotationTargets": [],
-  "constraintZones": [],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0.30405405405405406,
+      "maxWaypointRelativePos": 0.7027027027027047,
+      "constraints": {
+        "maxVelocity": 3.0,
+        "maxAcceleration": 6.0,
+        "maxAngularVelocity": 720.0,
+        "maxAngularAcceleration": 2430.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
   "pointTowardsZones": [
     {
       "fieldPosition": {
@@ -37,12 +51,19 @@
         "y": 4.035
       },
       "rotationOffset": 10.0,
-      "minWaypointRelativePos": 0.39743589743589547,
-      "maxWaypointRelativePos": 0.5474833808167143,
+      "minWaypointRelativePos": 0.30067567567567566,
+      "maxWaypointRelativePos": 0.695945945945946,
       "name": "AimAtHub"
     }
   ],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "ShootStraight",
+      "waypointRelativePos": 0.304054054054054,
+      "endWaypointRelativePos": 0.7027027027027051,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 4.8,
     "maxAcceleration": 11.8,
