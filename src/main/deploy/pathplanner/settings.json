@@ -9,8 +9,8 @@
     "QuickTrenchAndHerd"
   ],
   "autoFolders": [],
-  "defaultMaxVel": 4.8,
-  "defaultMaxAccel": 11.8,
+  "defaultMaxVel": 3.0,
+  "defaultMaxAccel": 2.0,
   "defaultMaxAngVel": 720.0,
   "defaultMaxAngAccel": 2430.0,
   "defaultNominalVoltage": 12.0,

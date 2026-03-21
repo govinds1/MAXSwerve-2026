@@ -43,7 +43,7 @@ public class ShooterSubsystem extends SubsystemBase{
     Map.entry(1.0, 13000.0),
     Map.entry(1.6, 17000.0),
     Map.entry(1.7, 19500.0),
-    Map.entry(2.4, 23000.0),
+    Map.entry(2.4, 22000.0),
     Map.entry(3.0, 25000.0),
     Map.entry(5.0, 31000.0)
     //Map.entry(1.0, 2000.0),

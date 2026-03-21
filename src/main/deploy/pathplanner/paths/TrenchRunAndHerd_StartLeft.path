@@ -96,12 +96,12 @@
     },
     {
       "anchor": {
-        "x": 3.907140052356021,
-        "y": 7.418442408376964
+        "x": 3.357083333333334,
+        "y": 7.4588603988603985
       },
       "prevControl": {
-        "x": 4.874322895254455,
-        "y": 7.5076215882572095
+        "x": 4.3242661762317685,
+        "y": 7.548039578740644
       },
       "nextControl": null,
       "isLocked": false,
@@ -159,8 +159,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 4.8,
-    "maxAcceleration": 11.8,
+    "maxVelocity": 3.0,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 720.0,
     "maxAngularAcceleration": 2430.0,
     "nominalVoltage": 12.0,
@@ -168,7 +168,7 @@
   },
   "goalEndState": {
     "velocity": 0.0,
-    "rotation": -78.16718583789796
+    "rotation": -63.48615979284246
   },
   "reversed": false,
   "folder": "QuickTrenchAndHerd",

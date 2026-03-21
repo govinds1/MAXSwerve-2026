@@ -96,13 +96,32 @@ public final class Autos {
             );
             break;
             case "TestPathPlanner":
+            Command pathCommand = Commands.none();
+            Command secondPathCommand = Commands.none();
             try {
-                PathPlannerPath testPath = PathPlannerPath.fromPathFile("ShortPath");
-                command = AutoBuilder.followPath(testPath);
+                PathPlannerPath testPath = PathPlannerPath.fromPathFile("Test");
+                PathPlannerPath secondPath = PathPlannerPath.fromPathFile("SecondRun");
+                pathCommand = AutoBuilder.followPath(testPath);
+                secondPathCommand = AutoBuilder.followPath(secondPath);
             } catch (Exception e) {
                 DriverStation.reportError("PathPlanner follow path error: " + e.getMessage(), e.getStackTrace());
-                return Commands.none();
+                pathCommand = Commands.none();
+                secondPathCommand = Commands.none();
             }
+            command = Commands.sequence(
+                Commands.sequence(
+                    intake.extendAuto(),
+                    Commands.runOnce(() -> intake.runRollerRPM(), intake)
+                ),
+                pathCommand,
+                Autos.AimAndShootCommand(robotDrive, shooter, vision, intake),
+                Commands.sequence(
+                    intake.extendAuto(),
+                    Commands.runOnce(() -> intake.runRollerRPM(), intake)
+                ),
+                secondPathCommand,
+                Autos.AimAndShootCommand(robotDrive, shooter, vision, intake)
+            );
             break;
             case "ShootPreloads_StartRight":
             //command = Autos.turnAndShoot(robotDrive, shooter, vision, intake);
@@ -185,9 +204,9 @@ public final class Autos {
 
     public static Command AimAndShootCommand(DriveSubsystem robotDrive, ShooterSubsystem shooter, VisionTargeting vision, IntakeSubsystem intake) {
         return Commands.parallel(
-            new AimClosedLoop(robotDrive, shooter, vision, () -> 0, () -> 0, () -> 0),
+            new AimClosedLoopAdvanced(robotDrive, shooter, vision, () -> 0, () -> 0, () -> 0),
             Commands.sequence(
-                Commands.runOnce(() -> intake.runRoller(), intake),
+                Commands.runOnce(() -> intake.runRollerRPM(), intake),
                 Commands.repeatingSequence(
                     intake.retractAuto(),
                     intake.extendAuto()

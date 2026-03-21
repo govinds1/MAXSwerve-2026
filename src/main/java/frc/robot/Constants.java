@@ -32,8 +32,8 @@ public final class Constants {
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
-    public static final double kMaxSpeedMetersPerSecond = 4.8;
-    public static final double kMaxAccelerationMetersPerSecondSquared = 11.8;
+    public static final double kMaxSpeedMetersPerSecond = 3;
+    public static final double kMaxAccelerationMetersPerSecondSquared = 2; // 11.8
     public static final double kMaxAngularSpeedRadiansPerSecond = 2 * Math.PI; // radians per second
     public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Units.degreesToRadians(2430);
 
@@ -181,10 +181,10 @@ public final class Constants {
     //public static final double kMaxAngularSpeedRadiansPerSecond = Units.degreesToRadians(540);
     //public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Units.degreesToRadians(2430);
 
-    public static final double kPXYController = 0.02; // TODO: Tuned for meters.
-    public static final double kPThetaController = 0.45; // Tuned for radians. 0.9
+    public static final double kPXYController = 0.025; // TODO: Tuned for meters.
+    public static final double kPThetaController = 0.9; // Tuned for radians. 0.9
     public static final double kPThetaRobotController = 10; // Tuned for holonomic robot controller.
-    public static final Pose2d kRobotControllerTolerance = new Pose2d(0.05, 0.05, Rotation2d.fromDegrees(2.5));
+    public static final Pose2d kRobotControllerTolerance = new Pose2d(0.05, 0.05, Rotation2d.fromDegrees(0.5));
 
     // Constraint for the motion profiled robot angle controller
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
