@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -37,10 +38,12 @@ public final class Autos {
     public static String[] autoNames = {"ShootStraight", "DoNothing",
         "ShootPreloads_StartRight", "ShootPreloads_StartLeft", "ShootPreloads_StartCenter",
         "ShootAndTrench_StartRight", "ShootAndTrench_StartLeft", 
-        "TestMovement", "TestPathPlanner" //, "Test", "ShootAndOutpost_StartRight",
+        "TestMovement", "TestPathPlanner", "TestPathPlannerAuto" //, "Test", "ShootAndOutpost_StartRight",
         //"QuickTrenchShoot_StartLeft", "QuickTrenchShoot_StartRight",
         //"ShootAndTrenchAndOutpost_StartRight"
     };
+
+    private static Command pathPlannerAutoTest = new PathPlannerAuto("TestPathPlanner");
     
     enum StartSide {
         kLEFT, kCENTER, kRIGHT
@@ -122,6 +125,9 @@ public final class Autos {
                 secondPathCommand,
                 Autos.AimAndShootCommand(robotDrive, shooter, vision, intake)
             );
+            break;
+            case "TestPathPlannerAuto":
+            command = Autos.pathPlannerAutoTest;
             break;
             case "ShootPreloads_StartRight":
             //command = Autos.turnAndShoot(robotDrive, shooter, vision, intake);

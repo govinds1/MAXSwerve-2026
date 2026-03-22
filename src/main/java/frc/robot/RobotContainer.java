@@ -111,9 +111,8 @@ public class RobotContainer {
     );
     // Register Named Commands
     NamedCommands.registerCommand("Shoot", Autos.AimAndShootCommand(getDriveSubsystem(), getShooterSubsystem(), getVisionSubsystem(), getIntakeSubsystem()));
-    NamedCommands.registerCommand("ExtendIntake", m_intake.extendAuto());
+    NamedCommands.registerCommand("RunIntake", m_intake.extendAuto(true));
     NamedCommands.registerCommand("RetractIntake", m_intake.retractAuto());
-    NamedCommands.registerCommand("RunIntake", Commands.runOnce(() -> m_intake.runRoller(), m_intake));
     NamedCommands.registerCommand("StopIntake", Commands.runOnce(() -> m_intake.stopRoller(), m_intake));
 
     NamedCommands.registerCommand("ClimberUp", new ClimberCommand(m_climber, true));
@@ -122,12 +121,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("AlignToTag", new StrafeCenterToTag(m_robotDrive, m_vision));
 
     // Register Event Triggers
-    new EventTrigger("Intake").onTrue(
-      Commands.sequence(
-        m_intake.extendAuto(),
-        Commands.runOnce(() -> m_intake.runRollerRPM(), m_intake)
-      )
-    );
+    new EventTrigger("Intake").onTrue(m_intake.extendAuto(true));
     new EventTrigger("Intake").onFalse(Commands.runOnce(() -> m_intake.stopRoller(), m_intake));
     
     new EventTrigger("ShootStraight").whileTrue(

@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.954626963350785,
-        "y": 0.5921989528795804
+        "x": 3.6702142857142857,
+        "y": 0.63375
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.668216573447047,
-        "y": 0.5470821283279869
+        "x": 3.3838038958105474,
+        "y": 0.5886331754484065
       },
       "isLocked": false,
       "linkedName": "RShoot"
@@ -48,7 +48,7 @@
   "folder": "ShootToStartConnectorPaths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 80.39479584498703
+    "rotation": 73.49563861824502
   },
   "useDefaultConstraints": true
 }

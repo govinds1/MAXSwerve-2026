@@ -96,12 +96,12 @@
     },
     {
       "anchor": {
-        "x": 3.954626963350785,
-        "y": 0.5921989528795804
+        "x": 3.6702142857142857,
+        "y": 0.63375
       },
       "prevControl": {
-        "x": 4.347445183483908,
-        "y": 0.6242749816624151
+        "x": 4.063032505847408,
+        "y": 0.6658260287828348
       },
       "nextControl": null,
       "isLocked": false,
@@ -146,7 +146,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 80.39479584498703
+    "rotation": 73.49563861824502
   },
   "reversed": false,
   "folder": "QuickTrenchAndHerd",

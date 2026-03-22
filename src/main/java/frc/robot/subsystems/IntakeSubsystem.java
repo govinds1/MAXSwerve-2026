@@ -67,6 +67,16 @@ public class IntakeSubsystem extends SubsystemBase {
     m_extenderMotor.stopMotor();
   }
 
+  public Command extendAuto(boolean andRun) {
+    Command runIntakeCommand = (andRun) ? Commands.runOnce(() -> runRollerRPM()) : Commands.none();
+    return Commands.sequence(
+      Commands.runOnce(() -> this.extend(), this),
+      runIntakeCommand,
+      Commands.waitSeconds(IntakeConstants.kIntakeExtendTime),
+      Commands.runOnce(() -> this.stopExtender(), this)
+    );
+  }
+
   public Command extendAuto() {
     return Commands.sequence(
       Commands.runOnce(() -> this.extend(), this),
