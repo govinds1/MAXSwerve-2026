@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants.DriveAutoConstants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.commands.TurnToAngle;
 import frc.robot.Helpers;
 import frc.robot.controllers.DriverController;
 import frc.robot.LimelightHelpers;
@@ -58,6 +59,9 @@ public class DriveSubsystem extends SubsystemBase {
   // The gyro sensor
   private final ADIS16470_IMU m_gyro = new ADIS16470_IMU();
 
+  private double m_lastRot = 0;
+  private Rotation2d m_angleToHold = null;
+
   // Odometry class for tracking robot pose
   SwerveDrivePoseEstimator m_poseEstimator = new SwerveDrivePoseEstimator(
       DriveConstants.kDriveKinematics,
@@ -71,15 +75,15 @@ public class DriveSubsystem extends SubsystemBase {
       new Pose2d()
     );
 
-    // PID Controllers
-    public PIDController m_xController = new PIDController(DriveAutoConstants.kPXYController, 0, 0);
-    public PIDController m_yController = new PIDController(DriveAutoConstants.kPXYController, 0, 0);
-    public ProfiledPIDController m_thetaController = new ProfiledPIDController(
-      DriveAutoConstants.kPThetaController,
-      0, 0,
-      DriveAutoConstants.kThetaControllerConstraints
-    );
-    public HolonomicDriveController m_robotDriveController;
+  // PID Controllers
+  public PIDController m_xController = new PIDController(DriveAutoConstants.kPXYController, 0, 0);
+  public PIDController m_yController = new PIDController(DriveAutoConstants.kPXYController, 0, 0);
+  public ProfiledPIDController m_thetaController = new ProfiledPIDController(
+    DriveAutoConstants.kPThetaController,
+    0, 0,
+    DriveAutoConstants.kThetaControllerConstraints
+  );
+  public HolonomicDriveController m_robotDriveController;
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
@@ -289,10 +293,24 @@ public class DriveSubsystem extends SubsystemBase {
    *                      field.
    */
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
+    double adjustedRot = rot;
+    if (rot == 0) {
+      // Try to maintain current gyro angle - do not allow any drift.
+      if (m_lastRot != 0 || m_angleToHold == null) {
+        // Just stopped rotating, set angle to hold.
+        m_angleToHold = getHeadingRotation();
+      }
+      // Apply pid control to get new rot speed.
+      // TODO: Scale this correction slightly by translation speed? Scale the clamp?
+      adjustedRot = TurnToAngle.getRotSpeed(getHeadingRotation().getRadians(), m_angleToHold.getRadians(), m_thetaController);
+      adjustedRot = MathUtil.clamp(adjustedRot, -0.2, 0.2);
+    }
+    m_lastRot = rot;
+
     // Convert the commanded speeds into the correct units for the drivetrain
     double xSpeedDelivered = (xSpeed * DriveConstants.kMaxSpeedMetersPerSecond);
     double ySpeedDelivered = (ySpeed * DriveConstants.kMaxSpeedMetersPerSecond);
-    double rotDelivered = (rot * DriveConstants.kMaxAngularSpeedRadiansPerSecond);
+    double rotDelivered = (adjustedRot * DriveConstants.kMaxAngularSpeedRadiansPerSecond);
 
     // Calculate robot relative ChassisSpeeds
     ChassisSpeeds newSpeeds;

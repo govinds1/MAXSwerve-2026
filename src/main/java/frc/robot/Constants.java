@@ -184,7 +184,7 @@ public final class Constants {
     public static final double kPXYController = 0.025; // TODO: Tuned for meters.
     public static final double kPThetaController = 0.9; // Tuned for radians. 0.9
     public static final double kPThetaRobotController = 10; // Tuned for holonomic robot controller.
-    public static final Pose2d kRobotControllerTolerance = new Pose2d(0.05, 0.05, Rotation2d.fromDegrees(0.5));
+    public static final Pose2d kRobotControllerTolerance = new Pose2d(0.025, 0.025, Rotation2d.fromDegrees(0.5));
 
     // Constraint for the motion profiled robot angle controller
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
