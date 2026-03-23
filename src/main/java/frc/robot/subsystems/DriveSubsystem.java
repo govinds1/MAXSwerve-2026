@@ -294,7 +294,7 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
     double adjustedRot = rot;
-    if (rot == 0) {
+    if (rot == 0 && false) {
       // Try to maintain current gyro angle - do not allow any drift.
       if (m_lastRot != 0 || m_angleToHold == null) {
         // Just stopped rotating, set angle to hold.
