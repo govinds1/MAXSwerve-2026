@@ -133,9 +133,6 @@ public class RobotContainer {
     // Build an auto chooser. This will use Commands.none() as the default option.
     //autoChooser = AutoBuilder.buildAutoChooser();
 
-    // Another option that allows you to specify the default auto by its name
-    // autoChooser = AutoBuilder.buildAutoChooser("My Default Auto");
-
     //SmartDashboard.putData("Auto Chooser", autoChooser);
   }
 
@@ -187,7 +184,7 @@ public class RobotContainer {
    * 
    */
   public void init() {
-
+    SmartDashboard.putStringArray("Auto List", Autos.autoNames);
   }
 
   /**

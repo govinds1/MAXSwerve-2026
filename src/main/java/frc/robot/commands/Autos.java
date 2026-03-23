@@ -112,17 +112,17 @@ public final class Autos {
                 secondPathCommand = Commands.none();
             }
             command = Commands.sequence(
-                Commands.sequence(
+                Commands.parallel(
+                    pathCommand,
                     intake.extendAuto(),
                     Commands.runOnce(() -> intake.runRollerRPM(), intake)
                 ),
-                pathCommand,
                 Autos.AimAndShootCommand(robotDrive, shooter, vision, intake),
-                Commands.sequence(
+                Commands.parallel(
+                    secondPathCommand,
                     intake.extendAuto(),
                     Commands.runOnce(() -> intake.runRollerRPM(), intake)
                 ),
-                secondPathCommand,
                 Autos.AimAndShootCommand(robotDrive, shooter, vision, intake)
             );
             break;

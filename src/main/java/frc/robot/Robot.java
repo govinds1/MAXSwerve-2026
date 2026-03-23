@@ -4,12 +4,12 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.commands.FollowPathCommand;
+
 //import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.commands.Autos;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -36,14 +36,15 @@ public class Robot extends TimedRobot {
 
     //CameraServer.startAutomaticCapture();   //This image is upside down.  Using the Thread with rotated Image to adjust
 
-    SmartDashboard.putStringArray("Auto List", Autos.autoNames);
-
     // Set up the Field2d object for simulation
     //SmartDashboard.putData("Field", m_field);
 
     m_robotContainer.init();
 
     LimelightHelpers.SetIMUMode("limelight", 0);
+
+    // Warm up path following.
+    FollowPathCommand.warmupCommand().schedule();
   }
 
   /**
