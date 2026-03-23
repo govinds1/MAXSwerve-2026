@@ -139,8 +139,8 @@ public final class Constants {
     public static final double kIntakeRollerSpeed = 0.9;
     public static final double kIntakeExtenderExtendSpeed = 0.1;
     public static final double kIntakeExtenderRetractSpeed = 0.35;
-    public static final double kIntakeExtendTime = 0.75;
-    public static final double kIntakeRetractTime = 0.75;
+    public static final double kIntakeExtendTime = 0.5;
+    public static final double kIntakeRetractTime = 0.5;
 
     public static final double kIntakeExtenderForwardLimitEncoderUnits = 1000; // TODO: Tune.
 
@@ -181,7 +181,7 @@ public final class Constants {
     //public static final double kMaxAngularSpeedRadiansPerSecond = Units.degreesToRadians(540);
     //public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Units.degreesToRadians(2430);
 
-    public static final double kPXYController = 0.025; // TODO: Tuned for meters.
+    public static final double kPXYController = 0.03; // TODO: Tuned for meters. 0.025
     public static final double kPThetaController = 0.9; // Tuned for radians. 0.9
     public static final double kPThetaRobotController = 10; // Tuned for holonomic robot controller.
     public static final Pose2d kRobotControllerTolerance = new Pose2d(0.025, 0.025, Rotation2d.fromDegrees(0.5));

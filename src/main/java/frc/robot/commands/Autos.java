@@ -43,7 +43,7 @@ public final class Autos {
         //"ShootAndTrenchAndOutpost_StartRight"
     };
 
-    private static Command pathPlannerAutoTest = new PathPlannerAuto("TestPathPlanner");
+    //private static Command pathPlannerAutoTest = new PathPlannerAuto("TestPathPlanner");
     
     enum StartSide {
         kLEFT, kCENTER, kRIGHT
@@ -94,40 +94,45 @@ public final class Autos {
             command = Commands.sequence(
                 //new AutonSwerveDistanceConstantControlCommand(robotDrive, new Translation2d(2, 1), Rotation2d.fromDegrees(45)),
                 //new AutonSwerveDistanceTrapezoidalControlCommand(robotDrive, new Translation2d(-2, -1), Rotation2d.fromDegrees(135))
-                new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(1,1), Rotation2d.fromDegrees(90)),
-                new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(-1,-1), Rotation2d.fromDegrees(0))
+                //new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(1,1), Rotation2d.fromDegrees(90)),
+                //new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(-1,-1), Rotation2d.fromDegrees(0))
+                
+                //intake.extendAuto(),
+                //Commands.runOnce(() -> intake.runRollerRPM(), intake)
             );
             break;
             case "TestPathPlanner":
             Command pathCommand = Commands.none();
             Command secondPathCommand = Commands.none();
             try {
-                PathPlannerPath testPath = PathPlannerPath.fromPathFile("Test");
-                PathPlannerPath secondPath = PathPlannerPath.fromPathFile("SecondRun");
+                //PathPlannerPath testPath = PathPlannerPath.fromPathFile("TestSpeedyRun2");
+                PathPlannerPath testPath = PathPlannerPath.fromPathFile("TrenchRun");
+                PathPlannerPath secondPath = PathPlannerPath.fromPathFile("TestSpeedyRun2Swing");
                 pathCommand = AutoBuilder.followPath(testPath);
-                secondPathCommand = AutoBuilder.followPath(secondPath);
+                //secondPathCommand = AutoBuilder.followPath(secondPath);
             } catch (Exception e) {
                 DriverStation.reportError("PathPlanner follow path error: " + e.getMessage(), e.getStackTrace());
                 pathCommand = Commands.none();
                 secondPathCommand = Commands.none();
             }
             command = Commands.sequence(
-                Commands.parallel(
-                    pathCommand,
+                Commands.sequence(
                     intake.extendAuto(),
                     Commands.runOnce(() -> intake.runRollerRPM(), intake)
                 ),
+                pathCommand,
                 Autos.AimAndShootCommand(robotDrive, shooter, vision, intake),
-                Commands.parallel(
-                    secondPathCommand,
+                Commands.sequence(
                     intake.extendAuto(),
                     Commands.runOnce(() -> intake.runRollerRPM(), intake)
                 ),
+                //secondPathCommand,
                 Autos.AimAndShootCommand(robotDrive, shooter, vision, intake)
             );
             break;
             case "TestPathPlannerAuto":
-            command = Autos.pathPlannerAutoTest;
+            //command = Autos.pathPlannerAutoTest;
+            command = Commands.none();
             break;
             case "ShootPreloads_StartRight":
             //command = Autos.turnAndShoot(robotDrive, shooter, vision, intake);
