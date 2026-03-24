@@ -106,10 +106,10 @@ public final class Autos {
             Command secondPathCommand = Commands.none();
             try {
                 //PathPlannerPath testPath = PathPlannerPath.fromPathFile("TestSpeedyRun2");
-                PathPlannerPath testPath = PathPlannerPath.fromPathFile("TrenchRun");
-                PathPlannerPath secondPath = PathPlannerPath.fromPathFile("TestSpeedyRun2Swing");
+                PathPlannerPath testPath = PathPlannerPath.fromPathFile("QuickTrenchRunSweep");
+                PathPlannerPath secondPath = PathPlannerPath.fromPathFile("QuickTrenchSecondShallowRun");
                 pathCommand = AutoBuilder.followPath(testPath);
-                //secondPathCommand = AutoBuilder.followPath(secondPath);
+                secondPathCommand = AutoBuilder.followPath(secondPath);
             } catch (Exception e) {
                 DriverStation.reportError("PathPlanner follow path error: " + e.getMessage(), e.getStackTrace());
                 pathCommand = Commands.none();
@@ -126,7 +126,7 @@ public final class Autos {
                     intake.extendAuto(),
                     Commands.runOnce(() -> intake.runRollerRPM(), intake)
                 ),
-                //secondPathCommand,
+                secondPathCommand,
                 Autos.AimAndShootCommand(robotDrive, shooter, vision, intake)
             );
             break;

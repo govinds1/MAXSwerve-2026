@@ -5,9 +5,22 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "TrenchRun_StartLeft"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "QuickTrenchRunSweep"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "RunIntake"
+                }
+              }
+            ]
           }
         },
         {
@@ -17,15 +30,22 @@
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "LShootToStart"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "TrenchRunShallowAndHerd_StartLeft"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "QuickTrenchSecondShallowRun"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "RunIntake"
+                }
+              }
+            ]
           }
         },
         {
