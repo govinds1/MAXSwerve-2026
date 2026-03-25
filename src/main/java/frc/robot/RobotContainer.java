@@ -20,8 +20,10 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.VisionTargeting;
 
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.events.EventTrigger;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -130,6 +132,11 @@ public class RobotContainer {
       )
     );
 
+    // Add PathPlannerAuto commands to storage container.
+    for (String ppAutoName : Autos.ppAutoNames) {
+      Autos.PPAutos.put(ppAutoName, AutoBuilder.buildAuto(ppAutoName));
+    }
+
     // Build an auto chooser. This will use Commands.none() as the default option.
     //autoChooser = AutoBuilder.buildAutoChooser();
 
@@ -184,7 +191,14 @@ public class RobotContainer {
    * 
    */
   public void init() {
-    SmartDashboard.putStringArray("Auto List", Autos.autoNames);
+    // Copy all auto names into single list.
+    if (Autos.autoNames == null) Autos.autoNames = new String[0];
+    if (Autos.ppAutoNames == null) Autos.ppAutoNames = new String[0];
+    String[] autoList = new String[Autos.autoNames.length + Autos.ppAutoNames.length];
+    System.arraycopy(Autos.autoNames, 0, autoList, 0, Autos.autoNames.length);
+    System.arraycopy(Autos.ppAutoNames, 0, autoList, Autos.autoNames.length, Autos.ppAutoNames.length);
+    // Push to dashboard drop-down.
+    SmartDashboard.putStringArray("Auto List", autoList);
   }
 
   /**

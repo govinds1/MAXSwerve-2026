@@ -44,7 +44,7 @@ public class Robot extends TimedRobot {
     LimelightHelpers.SetIMUMode("limelight", 0);
 
     // Warm up path following.
-    FollowPathCommand.warmupCommand().schedule();
+    CommandScheduler.getInstance().schedule(FollowPathCommand.warmupCommand());
   }
 
   /**

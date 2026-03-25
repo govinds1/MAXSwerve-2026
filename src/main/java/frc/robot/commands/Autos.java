@@ -4,6 +4,8 @@
 
 package frc.robot.commands;
 
+import java.util.HashMap;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
@@ -38,13 +40,14 @@ public final class Autos {
     public static String[] autoNames = {"ShootStraight", "DoNothing",
         "ShootPreloads_StartRight", "ShootPreloads_StartLeft", "ShootPreloads_StartCenter",
         "ShootAndTrench_StartRight", "ShootAndTrench_StartLeft", 
-        "TestMovement", "TestPathPlanner", "TestPathPlannerAuto" //, "Test", "ShootAndOutpost_StartRight",
+        "TestMovement", "TestPathPlanner" //, "Test", "ShootAndOutpost_StartRight",
         //"QuickTrenchShoot_StartLeft", "QuickTrenchShoot_StartRight",
         //"ShootAndTrenchAndOutpost_StartRight"
     };
+    public static String[] ppAutoNames = {"QuickTrench_StartLeft"};
 
-    //private static Command pathPlannerAutoTest = new PathPlannerAuto("TestPathPlanner");
-    
+    public static HashMap<String, Command> PPAutos = new HashMap<>(); // TODO: Should use AutoBuilder.getAllAutoNames() instead...
+
     enum StartSide {
         kLEFT, kCENTER, kRIGHT
     }
@@ -166,7 +169,8 @@ public final class Autos {
             command = Autos.quickTrenchAndShoot(robotDrive, shooter, vision, intake);
             break;
             default:
-            command = Commands.idle();
+            // Return PP auto, or none.
+            command = PPAutos.getOrDefault(selectedAutoName, Commands.idle());
             break;
         }
         
