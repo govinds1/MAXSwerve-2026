@@ -152,7 +152,9 @@ public class DriveSubsystem extends SubsystemBase {
             m_rearRight.getPosition()
         });
     // Update Pose with Limelight if possible.
-    //localizePose();
+    if (DriverStation.isTeleopEnabled()) {
+      localizePose();
+    }
 
     SmartDashboard.putNumber("Subsystems/Drive/Odometry/EstimatedPose/X", m_poseEstimator.getEstimatedPosition().getX());
     SmartDashboard.putNumber("Subsystems/Drive/Odometry/EstimatedPose/Y", m_poseEstimator.getEstimatedPosition().getY());
@@ -195,7 +197,7 @@ public class DriveSubsystem extends SubsystemBase {
     LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
     
     // if our angular velocity is greater than 360 degrees per second, ignore vision updates
-    boolean doRejectUpdate = true;
+    boolean doRejectUpdate = false;
     if(Math.abs(getTurnRate()) > 360)
     {
       doRejectUpdate = true;
