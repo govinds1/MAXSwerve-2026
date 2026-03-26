@@ -4,10 +4,11 @@
 
 package frc.robot.commands;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -37,16 +38,15 @@ public final class Autos {
     throw new UnsupportedOperationException("This is a utility class!");
     }
 
-    public static String[] autoNames = {"ShootStraight", "DoNothing",
+    public static ArrayList<String> autoNames = new ArrayList<>(Arrays.asList("ShootStraight", "DoNothing",
         "ShootPreloads_StartRight", "ShootPreloads_StartLeft", "ShootPreloads_StartCenter",
         "ShootAndTrench_StartRight", "ShootAndTrench_StartLeft", 
         "TestMovement", "TestPathPlanner" //, "Test", "ShootAndOutpost_StartRight",
         //"QuickTrenchShoot_StartLeft", "QuickTrenchShoot_StartRight",
         //"ShootAndTrenchAndOutpost_StartRight"
-    };
-    public static String[] ppAutoNames = {"QuickTrench_StartLeft"};
+    ));
 
-    public static HashMap<String, Command> PPAutos = new HashMap<>(); // TODO: Should use AutoBuilder.getAllAutoNames() instead...
+    public static HashMap<String, Command> PPAutos = new HashMap<>();
 
     enum StartSide {
         kLEFT, kCENTER, kRIGHT

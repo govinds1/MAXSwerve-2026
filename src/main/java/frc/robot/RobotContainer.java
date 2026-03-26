@@ -20,6 +20,8 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.VisionTargeting;
 
+import java.util.List;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.events.EventTrigger;
@@ -133,9 +135,15 @@ public class RobotContainer {
     );
 
     // Add PathPlannerAuto commands to storage container.
-    for (String ppAutoName : Autos.ppAutoNames) {
-      Autos.PPAutos.put(ppAutoName, AutoBuilder.buildAuto(ppAutoName));
+    List<String> ppAutoNames = AutoBuilder.getAllAutoNames();
+    if (ppAutoNames != null) {
+      for (String ppAutoName : ppAutoNames) {
+        Autos.PPAutos.put(ppAutoName, AutoBuilder.buildAuto(ppAutoName));
+      }
+      Autos.autoNames.addAll(ppAutoNames);
     }
+    // Push to dashboard drop-down.
+    SmartDashboard.putStringArray("Auto List", Autos.autoNames.toArray(String[]::new));
 
     // Build an auto chooser. This will use Commands.none() as the default option.
     //autoChooser = AutoBuilder.buildAutoChooser();
@@ -190,16 +198,7 @@ public class RobotContainer {
    * Use this to initialize subsystems as needed. Should be called on Robot Init!
    * 
    */
-  public void init() {
-    // Copy all auto names into single list.
-    if (Autos.autoNames == null) Autos.autoNames = new String[0];
-    if (Autos.ppAutoNames == null) Autos.ppAutoNames = new String[0];
-    String[] autoList = new String[Autos.autoNames.length + Autos.ppAutoNames.length];
-    System.arraycopy(Autos.autoNames, 0, autoList, 0, Autos.autoNames.length);
-    System.arraycopy(Autos.ppAutoNames, 0, autoList, Autos.autoNames.length, Autos.ppAutoNames.length);
-    // Push to dashboard drop-down.
-    SmartDashboard.putStringArray("Auto List", autoList);
-  }
+  public void init() {}
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -208,7 +207,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // Grab selected auto from SmartDashboard drop down menu
-    String selectedAutoName = SmartDashboard.getString("Auto Selector", Autos.autoNames[0]);
+    String selectedAutoName = SmartDashboard.getString("Auto Selector", Autos.autoNames.get(0));
     return Autos.getSelectedAuto(selectedAutoName, m_robotDrive, m_shooter, m_vision, m_intake);
 
     // Grab selected auto from SmartDashboard chooser.

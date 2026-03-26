@@ -3,6 +3,7 @@
   "robotLength": 0.838,
   "holonomicMode": true,
   "pathFolders": [
+    "Old",
     "QuickTrench",
     "QuickTrenchAndHerd",
     "ShootToStartConnectorPaths"
