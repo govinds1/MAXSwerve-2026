@@ -27,6 +27,9 @@ public class VisionTargeting extends SubsystemBase {
     //private TagLocation m_seekingLocation;
     private final String limelightName = "limelight";
 
+    private double lastHeartbeat = 0;
+    private boolean isAlive = true;
+
     public VisionTargeting() {
         // Set a custom crop window for improved performance (-1 to 1 for each value)
         LimelightHelpers.setCropWindow(limelightName, -0.75, 0.75, -0.1, 0.9);
@@ -56,6 +59,21 @@ public class VisionTargeting extends SubsystemBase {
         SmartDashboard.putNumber("Subsystems/Vision/TX (Aiming)", getTx());
         SmartDashboard.putNumber("Subsystems/Vision/TY", getTy());
         SmartDashboard.putNumber("Subsystems/Vision/Calculated Distance (m)", getDistanceToTargetMeters());
+
+        double heartbeat = LimelightHelpers.getLimelightNTDouble(limelightName, "hb");
+        if (heartbeat == lastHeartbeat) {
+            isAlive = false;
+        } else {
+            isAlive = true;
+        }
+        lastHeartbeat = heartbeat;
+
+        SmartDashboard.putBoolean("Subsystems/Vision/IsAlive", isLimelightAlive());
+        SmartDashboard.putNumber("Subsystems/Vision/Heartbeat", heartbeat);
+    }
+
+    public boolean isLimelightAlive() {
+        return isAlive;
     }
 
     public boolean hasTarget() {

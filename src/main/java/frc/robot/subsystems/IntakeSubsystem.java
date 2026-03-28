@@ -71,8 +71,8 @@ public class IntakeSubsystem extends SubsystemBase {
     Command runIntakeCommand = (andRun) ? Commands.runOnce(() -> runRollerRPM()) : Commands.none();
     return Commands.sequence(
       Commands.runOnce(() -> this.extend(), this),
-      runIntakeCommand,
       Commands.waitSeconds(IntakeConstants.kIntakeExtendTime),
+      runIntakeCommand,
       Commands.runOnce(() -> this.stopExtender(), this)
     );
   }

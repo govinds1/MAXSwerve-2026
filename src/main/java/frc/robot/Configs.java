@@ -82,6 +82,7 @@ public final class Configs {
                 shooterMotorConfig.closedLoop
                         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
                         .pid(ShooterConstants.kPController, 0, 0)
+                        //.pid(0, 0, 0)
                         .outputRange(0, 1);
                         //.feedForward.kV(0.00007);
 
@@ -115,7 +116,7 @@ public final class Configs {
                         .smartCurrentLimit(60);
                 intakeMotorConfig.closedLoop
                         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-                        .pid(0.001, 0, 0)
+                        .pid(0.0005, 0, 0)
                         .outputRange(0, 1)
                         .feedForward.kV(0.00185);
                 extenderMotorConfig

@@ -21,6 +21,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
@@ -82,6 +83,11 @@ public class DriveSubsystem extends SubsystemBase {
     DriveAutoConstants.kPThetaController,
     0, 0,
     DriveAutoConstants.kThetaControllerConstraints
+  );
+  public ProfiledPIDController m_headingHoldController = new ProfiledPIDController(
+    0.1,
+    0, 0,
+    new TrapezoidProfile.Constraints(Math.PI, Math.PI)
   );
   public HolonomicDriveController m_robotDriveController;
 
@@ -153,7 +159,7 @@ public class DriveSubsystem extends SubsystemBase {
         });
     // Update Pose with Limelight if possible.
     if (DriverStation.isTeleopEnabled()) {
-      localizePose();
+      //localizePose();
     }
 
     SmartDashboard.putNumber("Subsystems/Drive/Odometry/EstimatedPose/X", m_poseEstimator.getEstimatedPosition().getX());
@@ -304,7 +310,7 @@ public class DriveSubsystem extends SubsystemBase {
       }
       // Apply pid control to get new rot speed.
       // TODO: Scale this correction slightly by translation speed? Scale the clamp?
-      adjustedRot = TurnToAngle.getRotSpeed(getHeadingRotation().getRadians(), m_angleToHold.getRadians(), m_thetaController);
+      adjustedRot = TurnToAngle.getRotSpeed(getHeadingRotation().getRadians(), m_angleToHold.getRadians(), m_headingHoldController);
       adjustedRot = MathUtil.clamp(adjustedRot, -0.2, 0.2);
     }
     m_lastRot = rot;

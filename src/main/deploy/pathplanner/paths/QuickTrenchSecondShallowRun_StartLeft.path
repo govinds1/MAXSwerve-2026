@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.41584964645576,
-        "y": 7.441148332555996
+        "x": 5.182065527065527,
+        "y": 7.717264957264957
       },
       "isLocked": false,
       "linkedName": "LShoot"
@@ -84,8 +84,8 @@
         "y": 7.407179487179487
       },
       "prevControl": {
-        "x": 3.5582972370654744,
-        "y": 7.518546814385283
+        "x": 4.419772079772079,
+        "y": 7.575142450142451
       },
       "nextControl": null,
       "isLocked": false,
@@ -107,11 +107,11 @@
     },
     {
       "waypointRelativePos": 3.7566844919786084,
-      "rotationDegrees": 0.0
+      "rotationDegrees": -37.229922679093676
     },
     {
       "waypointRelativePos": 4.732620320855615,
-      "rotationDegrees": 0.0
+      "rotationDegrees": -32.12966091974371
     }
   ],
   "constraintZones": [
@@ -130,10 +130,10 @@
     },
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 3.305084745762712,
-      "maxWaypointRelativePos": 4.1694915254237275,
+      "minWaypointRelativePos": 3.40310600945307,
+      "maxWaypointRelativePos": 4.172856178257922,
       "constraints": {
-        "maxVelocity": 2.0,
+        "maxVelocity": 1.0,
         "maxAcceleration": 3.0,
         "maxAngularVelocity": 720.0,
         "maxAngularAcceleration": 2430.0,

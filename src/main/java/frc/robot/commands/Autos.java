@@ -42,7 +42,7 @@ public final class Autos {
         "ShootPreloads_StartRight", "ShootPreloads_StartLeft", "ShootPreloads_StartCenter",
         "ShootAndTrench_StartRight", "ShootAndTrench_StartLeft", 
         "TestMovement", "TestPathPlanner" //, "Test", "ShootAndOutpost_StartRight",
-        //"QuickTrenchShoot_StartLeft", "QuickTrenchShoot_StartRight",
+        // "QuickTrenchShoot_StartLeft"//, "QuickTrenchShoot_StartRight"
         //"ShootAndTrenchAndOutpost_StartRight"
     ));
 
@@ -105,32 +105,16 @@ public final class Autos {
             );
             break;
             case "TestPathPlanner":
-            Command pathCommand = Commands.none();
-            Command secondPathCommand = Commands.none();
+            Command testPathCommand = Commands.none();
             try {
-                //PathPlannerPath testPath = PathPlannerPath.fromPathFile("TestSpeedyRun2");
-                PathPlannerPath testPath = PathPlannerPath.fromPathFile("QuickTrenchRunSweep");
-                PathPlannerPath secondPath = PathPlannerPath.fromPathFile("QuickTrenchSecondShallowRun");
-                pathCommand = AutoBuilder.followPath(testPath);
-                secondPathCommand = AutoBuilder.followPath(secondPath);
+                PathPlannerPath testPath = PathPlannerPath.fromPathFile("TestPath");
+                testPathCommand = AutoBuilder.followPath(testPath);
             } catch (Exception e) {
                 DriverStation.reportError("PathPlanner follow path error: " + e.getMessage(), e.getStackTrace());
-                pathCommand = Commands.none();
-                secondPathCommand = Commands.none();
+                testPathCommand = Commands.none();
             }
             command = Commands.sequence(
-                Commands.sequence(
-                    intake.extendAuto(),
-                    Commands.runOnce(() -> intake.runRollerRPM(), intake)
-                ),
-                pathCommand,
-                Autos.AimAndShootCommand(robotDrive, shooter, vision, intake),
-                Commands.sequence(
-                    intake.extendAuto(),
-                    Commands.runOnce(() -> intake.runRollerRPM(), intake)
-                ),
-                secondPathCommand,
-                Autos.AimAndShootCommand(robotDrive, shooter, vision, intake)
+                testPathCommand
             );
             break;
             case "TestPathPlannerAuto":
@@ -163,7 +147,34 @@ public final class Autos {
             command = Autos.shootAndTrenchAndOutpost(robotDrive, shooter, vision, intake);
             break;
             case "QuickTrenchShoot_StartLeft":
-            command = Autos.quickTrenchAndShoot(robotDrive, shooter, vision, intake);
+            //command = Autos.quickTrenchAndShoot(robotDrive, shooter, vision, intake);
+            Command pathCommand = Commands.none();
+            Command secondPathCommand = Commands.none();
+            try {
+                //PathPlannerPath testPath = PathPlannerPath.fromPathFile("TestSpeedyRun2");
+                PathPlannerPath testPath = PathPlannerPath.fromPathFile("QuickTrenchRunSweep_StartLeft");
+                PathPlannerPath secondPath = PathPlannerPath.fromPathFile("QuickTrenchSecondShallowRun_StartLeft");
+                pathCommand = AutoBuilder.followPath(testPath);
+                secondPathCommand = AutoBuilder.followPath(secondPath);
+            } catch (Exception e) {
+                DriverStation.reportError("PathPlanner follow path error: " + e.getMessage(), e.getStackTrace());
+                pathCommand = Commands.none();
+                secondPathCommand = Commands.none();
+            }
+            command = Commands.sequence(
+                Commands.sequence(
+                    intake.extendAuto(),
+                    Commands.runOnce(() -> intake.runRollerRPM(), intake)
+                ),
+                pathCommand,
+                Autos.AimAndShootCommand(robotDrive, shooter, vision, intake),
+                Commands.sequence(
+                    intake.extendAuto(),
+                    Commands.runOnce(() -> intake.runRollerRPM(), intake)
+                ),
+                secondPathCommand,
+                Autos.AimAndShootCommand(robotDrive, shooter, vision, intake)
+            );
             break;
             case "QuickTrenchShoot_StartRight":
             command = Autos.quickTrenchAndShoot(robotDrive, shooter, vision, intake);

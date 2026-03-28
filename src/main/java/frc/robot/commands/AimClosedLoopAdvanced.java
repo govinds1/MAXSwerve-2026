@@ -65,7 +65,7 @@ public class AimClosedLoopAdvanced extends Command {
   public void initialize() {
     m_isAimed = false;
     //m_isAdjusted = true; // TODO: Temp override
-    m_targetRpm = 18000;
+    m_targetRpm = ShooterSubsystem.calculateRPMForDistanceToHUB(1.75);
     m_noTarget = false;
     m_overrideStartTime = 0;
     //m_aimedRotation = null;
@@ -93,12 +93,12 @@ public class AimClosedLoopAdvanced extends Command {
         translationX = m_translationXSupplier.getAsDouble();
         translationY = m_translationYSupplier.getAsDouble();
       } else {
-        if (m_vision.hasTarget()) {
+        if (m_vision.hasTarget() && m_vision.isLimelightAlive()) {
           double[] aimInfo = m_vision.getTargetAimInfo(m_drive.getRobotRelativeSpeeds(), m_aimPID);
           //double[] aimInfo = m_vision.getTargetAimInfo_WithHubOffset(m_drive.getRobotRelativeSpeeds(), m_aimPID);
           rotationSpeed = aimInfo[0];
           m_targetRpm = aimInfo[1];
-          if (Math.abs(rotationSpeed) < 0.05) {
+          if (Math.abs(rotationSpeed) < 0.085) {
             m_isAimed = true;
           } else {
             m_isAimed = false;
@@ -170,7 +170,8 @@ public class AimClosedLoopAdvanced extends Command {
       if ((m_isAimed || visionOverride != 0) && /* m_isAdjusted && */ m_shooter.isAtSpeed()) {
         m_shooter.runFeeder(ShooterConstants.kFeederPower);
       } else {
-        m_shooter.stopFeeder();
+        //m_shooter.stopFeeder();
+        m_shooter.runFeeder(-0.1);
       }
   }
 

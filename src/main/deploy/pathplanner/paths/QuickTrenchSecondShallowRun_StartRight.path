@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.163465291104537,
-        "y": 0.5745999470427503
+        "x": 6.0864814814814805,
+        "y": 0.41733618233618364
       },
       "isLocked": false,
       "linkedName": "RShoot"
@@ -20,12 +20,12 @@
         "y": 0.63375
       },
       "prevControl": {
-        "x": 5.692579814209381,
-        "y": 0.5481888758742337
+        "x": 5.479230769230769,
+        "y": 0.5077777777777783
       },
       "nextControl": {
-        "x": 6.796125000000144,
-        "y": 0.9094954285714287
+        "x": 6.810466594056733,
+        "y": 0.8610657919485631
       },
       "isLocked": false,
       "linkedName": null
@@ -84,8 +84,8 @@
         "y": 0.63375
       },
       "prevControl": {
-        "x": 3.9941428571428563,
-        "y": 0.6661428571428576
+        "x": 3.9804843304843303,
+        "y": 0.5206980056980068
       },
       "nextControl": null,
       "isLocked": false,
@@ -110,8 +110,8 @@
       "rotationDegrees": 0.0
     },
     {
-      "waypointRelativePos": 4.732620320855615,
-      "rotationDegrees": 0.0
+      "waypointRelativePos": 4.445628997867808,
+      "rotationDegrees": 20.0
     }
   ],
   "constraintZones": [
