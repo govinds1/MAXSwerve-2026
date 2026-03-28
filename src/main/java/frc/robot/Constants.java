@@ -140,7 +140,8 @@ public final class Constants {
     public static final double kIntakeExtenderExtendSpeed = 0.1;
     public static final double kIntakeExtenderRetractSpeed = 0.35;
     public static final double kIntakeExtendTime = 0.75;
-    public static final double kIntakeRetractTime = 0.5;
+    public static final double kIntakeRetractTime = 0.75;
+    public static final double kIntakeAgitateTime = 0.25;
 
     public static final double kIntakeExtenderForwardLimitEncoderUnits = 1000; // TODO: Tune.
 

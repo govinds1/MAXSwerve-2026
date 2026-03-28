@@ -302,7 +302,7 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
     double adjustedRot = rot;
-    if (rot == 0 && false) {
+    if (rot == 0) {
       // Try to maintain current gyro angle - do not allow any drift.
       if (m_lastRot != 0 || m_angleToHold == null) {
         // Just stopped rotating, set angle to hold.
@@ -411,6 +411,7 @@ public class DriveSubsystem extends SubsystemBase {
   /** Zeroes the heading of the robot. */
   public void zeroHeading() {
     m_gyro.reset();
+    m_angleToHold = getHeadingRotation();
   }
 
   /**

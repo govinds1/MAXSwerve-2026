@@ -1,0 +1,175 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 3.334472934472934,
+        "y": 7.407179487179487
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 5.155602409638554,
+        "y": 7.619289156626506
+      },
+      "isLocked": false,
+      "linkedName": "LShoot"
+    },
+    {
+      "anchor": {
+        "x": 5.759553571428428,
+        "y": 7.355267857135074
+      },
+      "prevControl": {
+        "x": 5.476194362572593,
+        "y": 7.493916407844916
+      },
+      "nextControl": {
+        "x": 7.319289156626505,
+        "y": 6.592084337349397
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 6.871253012048193,
+        "y": 3.4449036144578313
+      },
+      "prevControl": {
+        "x": 5.692398835581627,
+        "y": 4.011803886135572
+      },
+      "nextControl": {
+        "x": 7.253139489419148,
+        "y": 3.2612578743031415
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.800108433734941,
+        "y": 4.646951807228915
+      },
+      "prevControl": {
+        "x": 7.953031906285405,
+        "y": 3.732085797587664
+      },
+      "nextControl": {
+        "x": 7.421906655610447,
+        "y": 6.909547246773375
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.330216867469881,
+        "y": 7.43625
+      },
+      "prevControl": {
+        "x": 7.801895265821575,
+        "y": 7.244585695365937
+      },
+      "nextControl": {
+        "x": 7.091612502497414,
+        "y": 7.5332057644677235
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.759553571428428,
+        "y": 7.43625
+      },
+      "prevControl": {
+        "x": 6.006362542293491,
+        "y": 7.396433773401687
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.3,
+      "rotationDegrees": -90.0
+    },
+    {
+      "waypointRelativePos": 1.657754010695187,
+      "rotationDegrees": -90.0
+    },
+    {
+      "waypointRelativePos": 2.9545454545454546,
+      "rotationDegrees": 90.0
+    },
+    {
+      "waypointRelativePos": 3.7551867219916946,
+      "rotationDegrees": 0.0
+    }
+  ],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 3.40310600945307,
+      "maxWaypointRelativePos": 4,
+      "constraints": {
+        "maxVelocity": 2.0,
+        "maxAcceleration": 3.0,
+        "maxAngularVelocity": 720.0,
+        "maxAngularAcceleration": 2430.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    },
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 1.64406779661017,
+      "maxWaypointRelativePos": 4,
+      "constraints": {
+        "maxVelocity": 3.0,
+        "maxAcceleration": 3.0,
+        "maxAngularVelocity": 720.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    },
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0,
+      "maxWaypointRelativePos": 4.5,
+      "constraints": {
+        "maxVelocity": 4.8,
+        "maxAcceleration": 3.0,
+        "maxAngularVelocity": 720.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 2.0,
+    "maxAngularVelocity": 720.0,
+    "maxAngularAcceleration": 2430.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "reversed": false,
+  "folder": "QuickTrench",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -63.48615979284246
+  },
+  "useDefaultConstraints": true
+}

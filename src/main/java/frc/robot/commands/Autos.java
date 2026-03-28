@@ -229,7 +229,16 @@ public final class Autos {
     }
 
     public static Command AimAndShootCommand(DriveSubsystem robotDrive, ShooterSubsystem shooter, VisionTargeting vision, IntakeSubsystem intake) {
-        return Commands.parallel(
+        return Commands.race(
+            new AimClosedLoopAdvanced(robotDrive, shooter, vision, () -> 0, () -> 0, () -> 0),
+            Commands.sequence(
+                Commands.runOnce(() -> intake.runRollerRPM(), intake),
+                intake.agitateAuto().withTimeout(6.0), // TODO: Adjust this, can probably be quicker?
+                Commands.runOnce(() -> intake.stopRoller(), intake),
+                intake.retractAuto()
+            )
+        );
+        /*return Commands.parallel(
             new AimClosedLoopAdvanced(robotDrive, shooter, vision, () -> 0, () -> 0, () -> 0),
             Commands.sequence(
                 Commands.runOnce(() -> intake.runRollerRPM(), intake),
@@ -245,7 +254,7 @@ public final class Autos {
                 Commands.runOnce(() -> intake.stopRoller(), intake),
                 intake.retractAuto()
             )
-        );
+        );*/
     }
 
     public static Command ShootNoAimCommand(ShooterSubsystem shooter, VisionTargeting vision, IntakeSubsystem intake) {
