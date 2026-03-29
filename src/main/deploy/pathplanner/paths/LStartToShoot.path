@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.334472934472934,
-        "y": 7.407179487179487
-      },
-      "prevControl": null,
-      "nextControl": {
-        "x": 3.584472934472934,
-        "y": 7.407179487179487
-      },
-      "isLocked": false,
-      "linkedName": "LShoot"
-    },
-    {
-      "anchor": {
         "x": 3.595595056559933,
         "y": 7.4416442531796925
       },
+      "prevControl": null,
+      "nextControl": {
+        "x": 3.9152690680867153,
+        "y": 7.468541518508114
+      },
+      "isLocked": false,
+      "linkedName": "LStart"
+    },
+    {
+      "anchor": {
+        "x": 3.334472934472934,
+        "y": 7.407179487179487
+      },
       "prevControl": {
-        "x": 3.345595056559933,
-        "y": 7.4416442531796925
+        "x": 3.0462926707117974,
+        "y": 7.416560970311803
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "LStart"
+      "linkedName": "LShoot"
     }
   ],
   "rotationTargets": [],
@@ -36,9 +36,9 @@
       "maxWaypointRelativePos": 1.0,
       "constraints": {
         "maxVelocity": 3.0,
-        "maxAcceleration": 2.0,
-        "maxAngularVelocity": 720.0,
-        "maxAngularAcceleration": 720.0,
+        "maxAcceleration": 3.0,
+        "maxAngularVelocity": 360.0,
+        "maxAngularAcceleration": 360.0,
         "nominalVoltage": 12.0,
         "unlimited": false
       }
@@ -56,13 +56,13 @@
   },
   "goalEndState": {
     "velocity": 0.0,
-    "rotation": 0.0
+    "rotation": -63.48615979284246
   },
   "reversed": false,
   "folder": "ShootStartConnectorPaths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -63.48615979284246
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }

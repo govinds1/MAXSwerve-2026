@@ -7,7 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "EventIntake QuickTrenchRunSweep_StartLeft"
+            "pathName": "LStartToShoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
           }
         },
         {
@@ -19,13 +25,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "EventIntake QuickTrenchSecondShallowRun_StartLeft"
+            "pathName": "TrenchRunSweepSecond_StartLeft"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "RunIntake"
+            "name": "Shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "QuickTrenchSecondDeepRun_StartLeft"
           }
         }
       ]

@@ -45,7 +45,7 @@
     "rotation": 0.0
   },
   "reversed": false,
-  "folder": "ShootToStartConnectorPaths",
+  "folder": "ShootStartConnectorPaths",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 73.49563861824502
