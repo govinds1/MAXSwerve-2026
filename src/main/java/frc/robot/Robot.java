@@ -65,6 +65,8 @@ public class Robot extends TimedRobot {
       CommandScheduler.getInstance().run();
     }
 
+    m_robotContainer.periodic();
+
     // Update Robot Simulation
     //updateSim();
   }

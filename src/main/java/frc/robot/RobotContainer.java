@@ -28,6 +28,8 @@ import com.pathplanner.lib.events.EventTrigger;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -51,6 +53,8 @@ public class RobotContainer {
   private final DriverController m_driverController = new DriverController(OperatorConstants.kDriverControllerPort);
   // The operator's controller
   private final OperatorController m_operatorController = new OperatorController(OperatorConstants.kOperatorControllerPort);
+
+  private final PowerDistribution m_pdh = new PowerDistribution(0, ModuleType.kRev);
 
   //private final SendableChooser<Command> autoChooser;
 
@@ -162,6 +166,14 @@ public class RobotContainer {
     // Turn to Angle Triggers
     //getDriverController().turnAway.onTrue(m_turnAwayCommand.withTimeout(1.5));
     //getDriverController().turnTowards.onTrue(m_turnTowardsCommand.withTimeout(1.5));
+
+    getDriverController().resetLL.onTrue(
+      Commands.sequence(
+        Commands.runOnce(() -> m_pdh.setSwitchableChannel(false)),
+        Commands.waitSeconds(2),
+        Commands.runOnce(() -> m_pdh.setSwitchableChannel(true))
+      )
+    );
   }
 
   // GETTERS //
@@ -199,6 +211,10 @@ public class RobotContainer {
    * 
    */
   public void init() {}
+
+  public void periodic() {
+    SmartDashboard.putBoolean("Subsystems/Vision/PDHSwitchableChannel", m_pdh.getSwitchableChannel());
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

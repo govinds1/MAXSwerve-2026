@@ -173,7 +173,7 @@ public final class Constants {
 
     public static final int kResetGyroButton = 8; // Start button
     public static final int kHalfSpeedAxis = 2; // Left trigger
-    public static final int kAimAndDriveButton = 1; // A button
+    public static final int[] kResetPDHSwitchableChannel = {1, 3}; // A and X buttons
   }
 
   public static final class DriveAutoConstants {
