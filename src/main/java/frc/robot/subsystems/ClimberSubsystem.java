@@ -42,6 +42,7 @@ public class ClimberSubsystem extends SubsystemBase {
   }
 
   public boolean isLowered() {
+    // TODO: Use Limit Switch to "home".
     return Math.abs(m_motor.getEncoder().getPosition() - ClimberConstants.kClimberDownPosition) < 10 || m_motor.getEncoder().getPosition() - ClimberConstants.kClimberDownPosition < 0;
   }
 
