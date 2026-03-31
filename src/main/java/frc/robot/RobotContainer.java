@@ -54,7 +54,7 @@ public class RobotContainer {
   // The operator's controller
   private final OperatorController m_operatorController = new OperatorController(OperatorConstants.kOperatorControllerPort);
 
-  private final PowerDistribution m_pdh = new PowerDistribution(0, ModuleType.kRev);
+  //private final PowerDistribution m_pdh = new PowerDistribution(0, ModuleType.kRev);
 
   //private final SendableChooser<Command> autoChooser;
 
@@ -167,13 +167,13 @@ public class RobotContainer {
     //getDriverController().turnAway.onTrue(m_turnAwayCommand.withTimeout(1.5));
     //getDriverController().turnTowards.onTrue(m_turnTowardsCommand.withTimeout(1.5));
 
-    getDriverController().resetLL.onTrue(
+    /*getDriverController().resetLL.onTrue(
       Commands.sequence(
         Commands.runOnce(() -> m_pdh.setSwitchableChannel(false)),
         Commands.waitSeconds(2),
         Commands.runOnce(() -> m_pdh.setSwitchableChannel(true))
       )
-    );
+    );*/
   }
 
   // GETTERS //
@@ -213,7 +213,7 @@ public class RobotContainer {
   public void init() {}
 
   public void periodic() {
-    SmartDashboard.putBoolean("Subsystems/Vision/PDHSwitchableChannel", m_pdh.getSwitchableChannel());
+    //SmartDashboard.putBoolean("Subsystems/Vision/PDHSwitchableChannel", m_pdh.getSwitchableChannel());
   }
 
   /**

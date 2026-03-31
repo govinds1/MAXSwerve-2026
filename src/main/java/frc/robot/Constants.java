@@ -154,7 +154,7 @@ public final class Constants {
 
   public static final class ClimberConstants {
     public static final int kClimberMotorCanId = 41;
-    public static final double kClimbSpeed = 0.5;
+    public static final double kClimbSpeed = 0.7;
     public static final double kClimberUpTime = 2.0; // TODO: Update.
     public static final double kClimberDownTime = 2.0; // TODO: Update.
 
