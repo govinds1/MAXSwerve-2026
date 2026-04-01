@@ -131,6 +131,8 @@ public class DriveSubsystem extends SubsystemBase {
     var thetaRobotController = m_thetaController;
     thetaRobotController.setP(DriveAutoConstants.kPThetaRobotController);
 
+    m_headingHoldController.enableContinuousInput(0, 2 * Math.PI);
+
     m_robotDriveController = new HolonomicDriveController(
         m_xController,
         m_yController,
@@ -411,6 +413,7 @@ public class DriveSubsystem extends SubsystemBase {
   /** Zeroes the heading of the robot. */
   public void zeroHeading() {
     m_gyro.reset();
+    m_headingHoldController.reset(0);
     m_angleToHold = Rotation2d.kZero;
   }
 

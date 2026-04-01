@@ -52,7 +52,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public void reverseRoller() {
-    m_rollerMotor.set(-1.0);
+    m_rollerMotor.set(-IntakeConstants.kIntakeRollerSpeed);
   }
 
   public void extend() {
