@@ -13,7 +13,7 @@
         {
           "type": "named",
           "data": {
-            "name": "RunIntake"
+            "name": "Shoot"
           }
         },
         {
@@ -25,7 +25,7 @@
         {
           "type": "named",
           "data": {
-            "name": "RunIntake"
+            "name": "Shoot"
           }
         }
       ]
