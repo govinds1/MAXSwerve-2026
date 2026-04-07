@@ -16,20 +16,34 @@
     },
     {
       "anchor": {
-        "x": 1.9533928571428572,
-        "y": 4.342732142857143
+        "x": 1.2083571428571427,
+        "y": 5.103964285714286
       },
       "prevControl": {
-        "x": 2.2449285714285714,
-        "y": 4.326535714285714
+        "x": 1.4836964285714285,
+        "y": 5.006785714285715
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "CShootLeft"
+      "linkedName": "ClimbEntrance"
     }
   ],
   "rotationTargets": [],
-  "constraintZones": [],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0,
+      "maxWaypointRelativePos": 1.0,
+      "constraints": {
+        "maxVelocity": 1.5,
+        "maxAcceleration": 1.0,
+        "maxAngularVelocity": 720.0,
+        "maxAngularAcceleration": 2430.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -42,7 +56,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -9.4623222080256
+    "rotation": -16.99082329198615
   },
   "reversed": false,
   "folder": "CenterStarts",

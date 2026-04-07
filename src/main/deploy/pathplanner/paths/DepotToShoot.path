@@ -3,16 +3,32 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.540642857142857,
-        "y": 3.9864107142857144
+        "x": 1.0139999999999998,
+        "y": 5.929982142857143
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.0223571428571425,
-        "y": 4.26175
+        "x": 1.3217321428571425,
+        "y": 6.091946428571429
       },
       "isLocked": false,
-      "linkedName": "CStart"
+      "linkedName": "Depot"
+    },
+    {
+      "anchor": {
+        "x": 2.3745,
+        "y": 5.897589285714286
+      },
+      "prevControl": {
+        "x": 2.1501484371873474,
+        "y": 6.207408110550806
+      },
+      "nextControl": {
+        "x": 2.714625,
+        "y": 5.427892857142857
+      },
+      "isLocked": false,
+      "linkedName": null
     },
     {
       "anchor": {
@@ -20,15 +36,20 @@
         "y": 4.342732142857143
       },
       "prevControl": {
-        "x": 2.2449285714285714,
-        "y": 4.326535714285714
+        "x": 2.2031404260515246,
+        "y": 4.331500409944967
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "CShootLeft"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.48663101604278014,
+      "rotationDegrees": 180.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -48,7 +69,7 @@
   "folder": "CenterStarts",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }

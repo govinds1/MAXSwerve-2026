@@ -15,12 +15,16 @@ public class DriverController extends GenericHID {
   public Trigger turnAway;
   public Trigger turnTowards;
   public Trigger resetLL;
+  public Trigger raiseHook;
+  public Trigger lowerHook;
   
   public DriverController(int port) {
     super(port);
     turnAway = new Trigger(this::getWantsTurnAwayDS);
     turnTowards = new Trigger(this::getWantsTurnTowardsDS);
     resetLL = new Trigger(this::getWantsResetLL);
+    raiseHook = new Trigger(this::getClimberUp);
+    lowerHook = new Trigger(this::getClimberDown);
   }
 
   // Axis
@@ -66,7 +70,6 @@ public class DriverController extends GenericHID {
   }
 
   // Climber
-  // TODO: Modify these once climber controls are set.
   public boolean getClimberUp() {
     return this.getRawButton(ClimberConstants.kClimberUpButton);
   }

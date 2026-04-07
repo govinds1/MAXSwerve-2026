@@ -98,7 +98,7 @@ public final class Configs {
 
         static {
                 climberMotorConfig
-                        .inverted(false)
+                        .inverted(true)
                         .idleMode(IdleMode.kBrake)
                         .smartCurrentLimit(60);
         }

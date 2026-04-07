@@ -158,7 +158,7 @@ public final class Constants {
     public static final double kClimberUpTime = 2.0; // TODO: Update.
     public static final double kClimberDownTime = 2.0; // TODO: Update.
 
-    public static final double kClimberUpPosition = 140; // TODO: Update.
+    public static final double kClimberUpPosition = 185; // TODO: Update.
     public static final double kClimberDownPosition = 0;
 
     // TODO: Modify these buttons.

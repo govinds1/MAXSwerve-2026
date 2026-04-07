@@ -123,8 +123,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("RetractIntake", m_intake.retractAuto());
     NamedCommands.registerCommand("StopIntake", Commands.runOnce(() -> m_intake.stopRoller(), m_intake));
 
-    NamedCommands.registerCommand("ClimberUp", new ClimberCommand(m_climber, true));
-    NamedCommands.registerCommand("ClimberDown", new ClimberCommand(m_climber, false));
+    NamedCommands.registerCommand("RaiseClimb", new ClimberCommand(m_climber, true));
+    NamedCommands.registerCommand("LowerClimb", new ClimberCommand(m_climber, false));
 
     NamedCommands.registerCommand("AlignToTag", new StrafeCenterToTag(m_robotDrive, m_vision));
 
@@ -162,6 +162,10 @@ public class RobotContainer {
     //getOperatorController().runShooter.whileTrue(m_aimWithPoseCommand);
     //getOperatorController().runShooter.onTrue(Commands.runOnce(() -> m_shooter.runShooterRPM(18000)));
     //getOperatorController().runShooter.onFalse(Commands.runOnce(() -> m_shooter.stop(), m_shooter));
+
+
+    getDriverController().raiseHook.onTrue(new ClimberCommand(m_climber, true));
+    getDriverController().lowerHook.onTrue(new ClimberCommand(m_climber, false));
 
     // Turn to Angle Triggers
     //getDriverController().turnAway.onTrue(m_turnAwayCommand.withTimeout(1.5));

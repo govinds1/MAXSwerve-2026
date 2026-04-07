@@ -9,6 +9,7 @@ import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Configs;
@@ -17,11 +18,11 @@ import frc.robot.Constants.ClimberConstants;
 public class ClimberSubsystem extends SubsystemBase {
 
   private SparkMax m_motor = new SparkMax(ClimberConstants.kClimberMotorCanId, MotorType.kBrushless);
+  private DigitalInput m_limitSwitch = new DigitalInput(0);
 
   /** Creates a new ClimberSubsystem. */
   public ClimberSubsystem() {
     m_motor.configure(Configs.Climber.climberMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    m_motor.getEncoder().setPosition(0);
   }
 
   @Override
@@ -31,10 +32,15 @@ public class ClimberSubsystem extends SubsystemBase {
     SmartDashboard.putBoolean("Subsystems/Climber/IsRaised", isRaised());
     SmartDashboard.putBoolean("Subsystems/Climber/IsLowered", isLowered());
     SmartDashboard.putNumber("Subsystems/Climber/Current", m_motor.getOutputCurrent());
+    SmartDashboard.putBoolean("Subsystems/Climber/LimitSwitch", m_limitSwitch.get());
+
+    if (isLowered()) {
+      m_motor.getEncoder().setPosition(0);
+    }
   }
 
   public void raiseHook() {
-    if (isRaised() && false) {
+    if (isRaised()) {
       m_motor.stopMotor();
     } else {
       m_motor.set(ClimberConstants.kClimbSpeed);
@@ -42,15 +48,20 @@ public class ClimberSubsystem extends SubsystemBase {
   }
 
   public void lowerHook() {
-    m_motor.set(-ClimberConstants.kClimbSpeed);
+    if (isLowered()) {
+      m_motor.stopMotor();
+    } else {
+      m_motor.set(-ClimberConstants.kClimbSpeed);
+    }
   }
 
   public boolean isRaised() {
-    return Math.abs(m_motor.getEncoder().getPosition() - ClimberConstants.kClimberUpPosition) < 5 || m_motor.getEncoder().getPosition() - ClimberConstants.kClimberUpPosition > 0;
+    return Math.abs(m_motor.getEncoder().getPosition() - ClimberConstants.kClimberUpPosition) < 2 || m_motor.getEncoder().getPosition() - ClimberConstants.kClimberUpPosition > 0;
   }
 
   public boolean isLowered() {
-    return Math.abs(m_motor.getEncoder().getPosition() - ClimberConstants.kClimberDownPosition) < 10 || m_motor.getEncoder().getPosition() - ClimberConstants.kClimberDownPosition < 0;
+    return !m_limitSwitch.get();
+    //return Math.abs(m_motor.getEncoder().getPosition() - ClimberConstants.kClimberDownPosition) < 10 || m_motor.getEncoder().getPosition() - ClimberConstants.kClimberDownPosition < 0;
   }
 
   public void stop() {
