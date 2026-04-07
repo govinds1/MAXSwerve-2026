@@ -52,7 +52,7 @@ public class AimClosedLoopAdvanced extends Command {
     m_rotSupplier = rotSupplier;
     m_visionOverrideSupplier = visionOverrideSupplier;
     m_isAimed = false;
-    m_targetRpm = ShooterSubsystem.calculateRPMForDistanceToHUB(2.2);
+    m_targetRpm = ShooterSubsystem.calculateRPMForDistanceToHUB(1.75);
 
     addRequirements(m_drive, m_shooter);
 
@@ -81,10 +81,10 @@ public class AimClosedLoopAdvanced extends Command {
       if (visionOverride != 0) {
         if (visionOverride == 1) {
           // Shoot from Hub
-          m_targetRpm = ShooterSubsystem.calculateRPMForDistanceToHUB(0.8);
+          m_targetRpm = ShooterSubsystem.calculateRPMForDistanceToHUB(1.5);
         } else if (visionOverride == 2) {
           // Shoot from Tower
-          m_targetRpm = ShooterSubsystem.calculateRPMForDistanceToHUB(2.2);
+          m_targetRpm = ShooterSubsystem.calculateRPMForDistanceToHUB(1.75);
         }
         // We're overriding vision, so let driver drive.
         if (m_rotSupplier != null) {
@@ -98,7 +98,7 @@ public class AimClosedLoopAdvanced extends Command {
           //double[] aimInfo = m_vision.getTargetAimInfo_WithHubOffset(m_drive.getRobotRelativeSpeeds(), m_aimPID);
           rotationSpeed = aimInfo[0];
           m_targetRpm = aimInfo[1];
-          if (Math.abs(rotationSpeed) < 0.085) {
+          if (Math.abs(rotationSpeed) < 0.05) {
             m_isAimed = true;
           } else {
             m_isAimed = false;

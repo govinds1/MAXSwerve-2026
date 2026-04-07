@@ -110,8 +110,8 @@ public final class Constants {
     public static final int kShootFromHubOverrideButton = 6; //right bumper
 
     public static final double kShooterMaxRPM = 6000; // TODO:
-    public static final double kPController = 0.00008; // 0.0001
-    public static final double kRPMTolerance = 500;
+    public static final double kPController = 0.00007; // 0.0001
+    public static final double kRPMTolerance = 750;
     
     // Unused parameters -> prototype commands.
     public static final double kBallRadiusMeters = 0.15;
@@ -137,11 +137,11 @@ public final class Constants {
     public static final int kIntakeRollerMotorCanId = 31;
     public static final int kIntakeExtenderMotorCanId = 32;
     public static final double kIntakeRollerSpeed = 0.9;
-    public static final double kIntakeExtenderExtendSpeed = 0.1;
+    public static final double kIntakeExtenderExtendSpeed = 0.17;
     public static final double kIntakeExtenderRetractSpeed = 0.35;
     public static final double kIntakeExtendTime = 0.75;
     public static final double kIntakeRetractTime = 0.75;
-    public static final double kIntakeAgitateTime = 0.25;
+    public static final double kIntakeAgitateTime = 0.35;
 
     public static final double kIntakeExtenderForwardLimitEncoderUnits = 1000; // TODO: Tune.
 
@@ -158,7 +158,7 @@ public final class Constants {
     public static final double kClimberUpTime = 2.0; // TODO: Update.
     public static final double kClimberDownTime = 2.0; // TODO: Update.
 
-    public static final double kClimberUpPosition = 40; // TODO: Update.
+    public static final double kClimberUpPosition = 140; // TODO: Update.
     public static final double kClimberDownPosition = 0;
 
     // TODO: Modify these buttons.

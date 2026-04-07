@@ -21,16 +21,24 @@ public class ClimberSubsystem extends SubsystemBase {
   /** Creates a new ClimberSubsystem. */
   public ClimberSubsystem() {
     m_motor.configure(Configs.Climber.climberMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    m_motor.getEncoder().setPosition(0);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Subsystems/Climber/Encoder/Position", m_motor.getEncoder().getPosition());
+    SmartDashboard.putBoolean("Subsystems/Climber/IsRaised", isRaised());
+    SmartDashboard.putBoolean("Subsystems/Climber/IsLowered", isLowered());
+    SmartDashboard.putNumber("Subsystems/Climber/Current", m_motor.getOutputCurrent());
   }
 
   public void raiseHook() {
-    m_motor.set(ClimberConstants.kClimbSpeed);
+    if (isRaised() && false) {
+      m_motor.stopMotor();
+    } else {
+      m_motor.set(ClimberConstants.kClimbSpeed);
+    }
   }
 
   public void lowerHook() {
@@ -38,11 +46,10 @@ public class ClimberSubsystem extends SubsystemBase {
   }
 
   public boolean isRaised() {
-    return Math.abs(m_motor.getEncoder().getPosition() - ClimberConstants.kClimberUpPosition) < 10 || m_motor.getEncoder().getPosition() - ClimberConstants.kClimberUpPosition > 0;
+    return Math.abs(m_motor.getEncoder().getPosition() - ClimberConstants.kClimberUpPosition) < 5 || m_motor.getEncoder().getPosition() - ClimberConstants.kClimberUpPosition > 0;
   }
 
   public boolean isLowered() {
-    // TODO: Use Limit Switch to "home".
     return Math.abs(m_motor.getEncoder().getPosition() - ClimberConstants.kClimberDownPosition) < 10 || m_motor.getEncoder().getPosition() - ClimberConstants.kClimberDownPosition < 0;
   }
 

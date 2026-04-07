@@ -5,22 +5,15 @@
     "data": {
       "commands": [
         {
-          "type": "parallel",
+          "type": "named",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "QuickTrenchRunSweep_StartRight"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "RunIntake"
-                }
-              }
-            ]
+            "name": "RunIntake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "QuickTrenchRunSweep_StartRight"
           }
         },
         {
@@ -30,22 +23,15 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "named",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "QuickTrenchSecondShallowRun_StartRight"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "RunIntake"
-                }
-              }
-            ]
+            "name": "RunIntake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "QuickTrenchSecondShallowRun_StartRight"
           }
         },
         {

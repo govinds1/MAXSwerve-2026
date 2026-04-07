@@ -44,7 +44,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public void runRollerRPM() {
-    m_rollerMotor.getClosedLoopController().setSetpoint(2600, ControlType.kVelocity);
+    m_rollerMotor.getClosedLoopController().setSetpoint(2700, ControlType.kVelocity);
   }
 
   public void stopRoller() {

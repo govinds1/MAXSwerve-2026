@@ -38,10 +38,10 @@ public final class Autos {
     throw new UnsupportedOperationException("This is a utility class!");
     }
 
-    public static ArrayList<String> autoNames = new ArrayList<>(Arrays.asList("ShootStraight", "DoNothing",
-        "ShootPreloads_StartRight", "ShootPreloads_StartLeft", "ShootPreloads_StartCenter",
-        "ShootAndTrench_StartRight", "ShootAndTrench_StartLeft", 
-        "TestMovement", "TestPathPlanner" //, "Test", "ShootAndOutpost_StartRight",
+    public static ArrayList<String> autoNames = new ArrayList<>(Arrays.asList("ShootStraight", "DoNothing"
+        //"ShootPreloads_StartRight", "ShootPreloads_StartLeft", "ShootPreloads_StartCenter",
+        //"ShootAndTrench_StartRight", "ShootAndTrench_StartLeft", 
+        //"TestMovement", "TestPathPlanner" //, "Test", "ShootAndOutpost_StartRight",
         // "QuickTrenchShoot_StartLeft"//, "QuickTrenchShoot_StartRight"
         //"ShootAndTrenchAndOutpost_StartRight"
     ));

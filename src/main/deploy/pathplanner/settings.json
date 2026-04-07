@@ -3,6 +3,7 @@
   "robotLength": 0.838,
   "holonomicMode": true,
   "pathFolders": [
+    "CenterStarts",
     "Old",
     "QuickTrench",
     "QuickTrenchAndHerd",
