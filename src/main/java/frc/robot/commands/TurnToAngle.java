@@ -33,7 +33,12 @@ public class TurnToAngle extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    if (Helpers.onRedAlliance()) {
+      // Flip angle.
+      m_targetAngle.rotateBy(Rotation2d.k180deg);
+    }
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override

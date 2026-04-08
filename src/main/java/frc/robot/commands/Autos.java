@@ -258,19 +258,11 @@ public final class Autos {
     }
 
     public static Command ShootNoAimCommand(ShooterSubsystem shooter, VisionTargeting vision, IntakeSubsystem intake) {
-        return Commands.parallel(
+        return Commands.race(
             shooter.ShootStraightCommand(() -> vision.getDistanceToTargetMeters()),
             Commands.sequence(
-                Commands.runOnce(() -> intake.runRoller(), intake),
-                Commands.repeatingSequence(
-                    intake.retractAuto(),
-                    intake.extendAuto()
-                )
-            )
-        )
-        .withTimeout(5.0) // TODO: Adjust this, can probably be quicker?
-        .andThen(
-            Commands.sequence(
+                Commands.runOnce(() -> intake.runRollerRPM(), intake),
+                intake.agitateAuto().withTimeout(6.0), // TODO: Adjust this, can probably be quicker?
                 Commands.runOnce(() -> intake.stopRoller(), intake),
                 intake.retractAuto()
             )

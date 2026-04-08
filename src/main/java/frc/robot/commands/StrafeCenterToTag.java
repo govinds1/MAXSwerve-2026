@@ -13,19 +13,27 @@ import frc.robot.subsystems.VisionTargeting;
 public class StrafeCenterToTag extends Command {
   private final DriveSubsystem m_drive;
   private final VisionTargeting m_vision; 
+  private final double m_targetDistance;
 
   private PIDController m_alignPID = new PIDController(0.03, 0, 0); // TODO: Tuned to limelight Tx values.
+  private PIDController m_distancePID = new PIDController(0.03, 0, 0); // TODO: 
 
   /** Creates a new StrafeCenterToTag. */
   // This should be used for aligning to tower, trench, and depot. Not for Hub aiming.
-  public StrafeCenterToTag(DriveSubsystem drive, VisionTargeting vision) {
+  public StrafeCenterToTag(DriveSubsystem drive, VisionTargeting vision, double targetDistance) {
     m_drive = drive;
     m_vision = vision;
+    m_targetDistance = targetDistance;
 
     m_alignPID.setTolerance(0.3); // TODO: Adjust.
+    m_distancePID.setTolerance(0.02); // TODO: Adjust.
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_drive, m_vision);
+  }
+
+  public StrafeCenterToTag(DriveSubsystem drive, VisionTargeting vision) {
+    this(drive, vision, -1);
   }
 
   // Called when the command is initially scheduled.
@@ -36,7 +44,11 @@ public class StrafeCenterToTag extends Command {
   @Override
   public void execute() {
     double translationY = m_alignPID.calculate(m_vision.getTx(), 0.0);
-    m_drive.drive(0, translationY, 0, false);
+    double translationX = 0;
+    if (m_targetDistance > 0) {
+      translationX = -m_distancePID.calculate(m_vision.getDistanceToTargetMeters(), m_targetDistance); // Negate value, i.e. increasing distance means moving backwards.
+    }
+    m_drive.drive(translationX, translationY, 0, false);
   }
 
   // Called once the command ends or is interrupted.
@@ -49,6 +61,6 @@ public class StrafeCenterToTag extends Command {
   @Override
   public boolean isFinished() {
     // End if aligning is complete, or if timeout reached.
-    return m_alignPID.atSetpoint();
+    return m_alignPID.atSetpoint() && m_distancePID.atSetpoint();
   }
 }

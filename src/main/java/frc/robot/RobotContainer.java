@@ -6,9 +6,12 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.AimClosedLoopAdvanced;
+import frc.robot.commands.AutonSwerveDistanceConstantControlCommand;
+import frc.robot.commands.AutonSwerveTimeControlCommand;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ClimberCommand;
 import frc.robot.commands.StrafeCenterToTag;
+import frc.robot.commands.TurnToAngle;
 import frc.robot.controllers.DriverController;
 import frc.robot.controllers.OperatorController;
 import frc.robot.subsystems.ClimberSubsystem;
@@ -22,6 +25,9 @@ import java.util.List;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -54,6 +60,53 @@ public class RobotContainer {
     () -> -getDriverController().getLeftX() * 0.5,
     () -> -getDriverController().getRightX() * 0.75,
     () -> getOperatorController().getWantsVisionOverride()
+  );
+
+  Command m_alignForClimbDistanceCommand = Commands.sequence(
+    // NOTE: Assumes we are close to climb entrance point and facing the correct way (away from driver station)
+    // Drive back until we're confident we're at the back wall, then drive forward the correct distance.
+    Commands.parallel(
+      new ClimberCommand(m_climber, true),
+      Commands.sequence(
+        new AutonSwerveTimeControlCommand(m_robotDrive, -0.25, 0, 0, 2.0, true),
+        new AutonSwerveDistanceConstantControlCommand(m_robotDrive, new Translation2d(Units.inchesToMeters(25.06), 0), new Rotation2d(0), true)
+      )
+    ),
+    new AutonSwerveTimeControlCommand(m_robotDrive, 0, -0.1, 0, 1.0, true),
+    new ClimberCommand(m_climber, false)
+  );
+
+  Command m_alignForClimbTimeCommand = Commands.sequence(
+    // NOTE: Assumes we are close to climb entrance point and facing the correct way (away from driver station)
+    // Drive right to hit tower, back until we're confident we're at the back wall, then drive forward until hook hits the bar.
+    new AutonSwerveTimeControlCommand(m_robotDrive, 0, -0.2, 0, 1.5, true),
+    Commands.parallel(
+      Commands.sequence(
+        Commands.waitSeconds(0.25),
+        new ClimberCommand(m_climber, true)
+      ),
+      Commands.sequence(
+        new AutonSwerveTimeControlCommand(m_robotDrive, -0.25, 0, 0, 2.0, true),
+        new AutonSwerveTimeControlCommand(m_robotDrive, 0.25, 0, 0, 1.5, true)
+      )
+    ),
+    new AutonSwerveTimeControlCommand(m_robotDrive, 0, -0.1, 0, 1.0, true),
+    new ClimberCommand(m_climber, false)
+  );
+
+  Command m_alignForClimbVisionCommand = Commands.sequence(
+    // NOTE: Assumes we are in front of tower. This will try to climb on the right (facing driver station)
+    // Aligns with AprilTag first, then uses distance control to strafe to climb bar.
+    Commands.parallel(
+      new ClimberCommand(m_climber, true),
+      Commands.sequence(
+        new TurnToAngle(m_robotDrive, new Rotation2d(Math.PI), () -> 0, () -> 0),
+        new StrafeCenterToTag(m_robotDrive, m_vision, 1.0) // Distance here may not actually be meters... check dashboard in teleop.
+      )
+    ),
+    new AutonSwerveDistanceConstantControlCommand(m_robotDrive, new Translation2d(0, 33.5), new Rotation2d(Math.PI), true),
+    new AutonSwerveTimeControlCommand(m_robotDrive, -0.1, 0, 0, 1.5, true),
+    new ClimberCommand(m_climber, false)
   );
 
   /**
