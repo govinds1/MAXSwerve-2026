@@ -3,53 +3,48 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.0139999999999998,
-        "y": 5.929982142857143
+        "x": 3.540642857142857,
+        "y": 3.9864107142857144
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.1759642857142854,
-        "y": 6.804589285714286
+        "x": 2.7333572727998794,
+        "y": 3.9386624572968967
       },
       "isLocked": false,
-      "linkedName": "Depot"
+      "linkedName": "CStart"
     },
     {
       "anchor": {
-        "x": 2.3745,
-        "y": 5.897589285714286
+        "x": 1.7266428571428567,
+        "y": 4.666660714285715
       },
       "prevControl": {
-        "x": 1.8562142857142856,
-        "y": 6.545446428571429
+        "x": 2.9422743390704658,
+        "y": 4.003781358489556
       },
       "nextControl": {
-        "x": 2.7367691362483813,
-        "y": 5.444752865403809
+        "x": 0.7449116919207528,
+        "y": 5.201995091555647
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.9533928571428572,
-        "y": 4.342732142857143
+        "x": 1.0139999999999998,
+        "y": 5.929982142857143
       },
       "prevControl": {
-        "x": 2.2031404260515246,
-        "y": 4.331500409944967
+        "x": 1.07558509362705,
+        "y": 5.6481634402486876
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "CShootLeft"
+      "linkedName": "Depot"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.48663101604278014,
-      "rotationDegrees": 161.97875215111844
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [
     {
       "name": "Constraints Zone",
@@ -58,7 +53,7 @@
       "constraints": {
         "maxVelocity": 3.0,
         "maxAcceleration": 2.0,
-        "maxAngularVelocity": 720.0,
+        "maxAngularVelocity": 360.0,
         "maxAngularAcceleration": 360.0,
         "nominalVoltage": 12.0,
         "unlimited": false
@@ -66,7 +61,19 @@
     }
   ],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "RunIntake",
+      "waypointRelativePos": 0.9898305084745782,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "RunIntake"
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 2.0,
@@ -77,13 +84,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -9.4623222080256
+    "rotation": 180.0
   },
   "reversed": false,
   "folder": "CenterStarts",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }

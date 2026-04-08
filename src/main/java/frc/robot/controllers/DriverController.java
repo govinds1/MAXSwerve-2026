@@ -14,7 +14,6 @@ public class DriverController extends GenericHID {
   SlewRateLimiter limiterY = new SlewRateLimiter(2.0);
   public Trigger turnAway;
   public Trigger turnTowards;
-  public Trigger resetLL;
   public Trigger raiseHook;
   public Trigger lowerHook;
   
@@ -22,7 +21,6 @@ public class DriverController extends GenericHID {
     super(port);
     turnAway = new Trigger(this::getWantsTurnAwayDS);
     turnTowards = new Trigger(this::getWantsTurnTowardsDS);
-    resetLL = new Trigger(this::getWantsResetLL);
     raiseHook = new Trigger(this::getClimberUp);
     lowerHook = new Trigger(this::getClimberDown);
   }
@@ -55,10 +53,6 @@ public class DriverController extends GenericHID {
 
   public boolean getWantsTurnTowardsDS() {
     return this.getPOV() == 180;
-  }
-
-  public boolean getWantsResetLL() {
-    return this.getRawButton(OperatorConstants.kResetPDHSwitchableChannel[0]) && this.getRawButton(OperatorConstants.kResetPDHSwitchableChannel[1]);
   }
 
   private double smoothDriveInput(double value, SlewRateLimiter limiter) {

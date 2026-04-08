@@ -8,20 +8,36 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.714625,
-        "y": 4.537089285714286
+        "x": 1.6803363733732302,
+        "y": 4.7764354224900805
       },
       "isLocked": false,
       "linkedName": "CShootLeft"
     },
     {
       "anchor": {
-        "x": 1.2083571428571427,
-        "y": 5.103964285714286
+        "x": 1.0712712819753691,
+        "y": 4.982731663124841
       },
       "prevControl": {
-        "x": 1.9371964285714283,
-        "y": 5.62225
+        "x": 1.3210653431357786,
+        "y": 4.9928769580436505
+      },
+      "nextControl": {
+        "x": 0.8214772208149597,
+        "y": 4.972586368206031
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 0.5309716041224275,
+        "y": 4.658551856413076
+      },
+      "prevControl": {
+        "x": 0.7131568184086692,
+        "y": 4.829749250363673
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,7 +58,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -16.99082329198615
+    "rotation": 0.0
   },
   "reversed": false,
   "folder": "CenterStarts",
