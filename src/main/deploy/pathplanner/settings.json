@@ -9,7 +9,9 @@
     "QuickTrenchAndHerd",
     "ShootStartConnectorPaths"
   ],
-  "autoFolders": [],
+  "autoFolders": [
+    "Disabled"
+  ],
   "defaultMaxVel": 3.0,
   "defaultMaxAccel": 2.0,
   "defaultMaxAngVel": 720.0,

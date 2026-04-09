@@ -152,6 +152,10 @@ public class RobotContainer {
     List<String> ppAutoNames = AutoBuilder.getAllAutoNames();
     if (ppAutoNames != null) {
       for (String ppAutoName : ppAutoNames) {
+        if (ppAutoName.contains("DISABLED")) {
+          // Ignore.
+          continue;
+        }
         Autos.PPAutos.put(ppAutoName, AutoBuilder.buildAuto(ppAutoName));
       }
       Autos.autoNames.addAll(ppAutoNames);
