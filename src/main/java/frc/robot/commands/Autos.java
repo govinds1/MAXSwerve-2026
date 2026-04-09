@@ -233,7 +233,7 @@ public final class Autos {
             new AimClosedLoopAdvanced(robotDrive, shooter, vision, () -> 0, () -> 0, () -> 0),
             Commands.sequence(
                 Commands.runOnce(() -> intake.runRollerRPM(), intake),
-                intake.agitateAuto().withTimeout(6.0), // TODO: Adjust this, can probably be quicker?
+                intake.agitateAuto().withTimeout(4.5), // TODO: Adjust this, can probably be quicker?
                 Commands.runOnce(() -> intake.stopRoller(), intake),
                 intake.retractAuto()
             )
