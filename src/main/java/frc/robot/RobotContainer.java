@@ -79,8 +79,9 @@ public class RobotContainer {
   Command m_alignForClimbTimeCommand = Commands.sequence(
     // NOTE: Assumes we are close to climb entrance point and facing the correct way (away from driver station)
     // Drive right to hit tower, back until we're confident we're at the back wall, then drive forward until hook hits the bar.
-    new AutonSwerveTimeControlCommand(m_robotDrive, 0, -0.2, 0, 1.5, true),
-    Commands.parallel(
+    new AutonSwerveTimeControlCommand(m_robotDrive, 0, -0.06, 0, 0.75, true),
+    new AutonSwerveTimeControlCommand(m_robotDrive, -0.1, 0, 0, 1.5, true),
+    /*Commands.parallel(
       Commands.sequence(
         Commands.waitSeconds(0.25),
         new ClimberCommand(m_climber, true)
@@ -89,8 +90,9 @@ public class RobotContainer {
         new AutonSwerveTimeControlCommand(m_robotDrive, -0.25, 0, 0, 2.0, true),
         new AutonSwerveTimeControlCommand(m_robotDrive, 0.25, 0, 0, 1.5, true)
       )
-    ),
-    new AutonSwerveTimeControlCommand(m_robotDrive, 0, -0.1, 0, 1.0, true),
+    ),*/
+    new AutonSwerveTimeControlCommand(m_robotDrive, 0.06, 0, 0, 0.025, true),
+    new AutonSwerveTimeControlCommand(m_robotDrive, 0, -0.06, 0, 1, true),
     new ClimberCommand(m_climber, false)
   );
 
@@ -133,6 +135,7 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("RaiseClimb", new ClimberCommand(m_climber, true));
     NamedCommands.registerCommand("LowerClimb", new ClimberCommand(m_climber, false));
+    NamedCommands.registerCommand("DoClimb", m_alignForClimbTimeCommand);
 
     NamedCommands.registerCommand("AlignToTag", new StrafeCenterToTag(m_robotDrive, m_vision));
 

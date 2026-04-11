@@ -60,8 +60,7 @@ public class ClimberSubsystem extends SubsystemBase {
   }
 
   public boolean isLowered() {
-    return !m_limitSwitch.get();
-    //return Math.abs(m_motor.getEncoder().getPosition() - ClimberConstants.kClimberDownPosition) < 10 || m_motor.getEncoder().getPosition() - ClimberConstants.kClimberDownPosition < 0;
+    return !m_limitSwitch.get(); //|| m_motor.getEncoder().getPosition() < 5;
   }
 
   public void stop() {
