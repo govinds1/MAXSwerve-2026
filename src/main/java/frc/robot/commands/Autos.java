@@ -72,27 +72,6 @@ public final class Autos {
             case "ShootStraight":
             command = Autos.AimAndShootCommand(robotDrive, shooter, vision, intake);
             break;
-            case "Test":
-            command = Commands.sequence(
-                //new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(-1, -2.25), Rotation2d.fromDegrees(-30)), // TODO: Test with rotation after tuning translation.
-                new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(-2, -2.3), Rotation2d.fromDegrees(0)),
-                Commands.runOnce(() -> intake.runRoller(), intake),
-                Commands.waitSeconds(0.35),
-                new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(0.75, -0.75), Rotation2d.fromDegrees(0), true),
-                Commands.waitSeconds(0.5),
-                new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(-0.75, 0.75), Rotation2d.fromDegrees(-25)),
-                Autos.AimAndShootCommand(robotDrive, shooter, vision, intake),
-                new AutonSwerveDistanceControlCommand(robotDrive, new Translation2d(1.5, 2.3), Rotation2d.fromDegrees(0))
-                //new TurnToAngle(robotDrive, Rotation2d.fromDegrees(-45), () -> 0, () -> 0),
-                //new AimClosedLoop(robotDrive, shooter, vision, () -> 0, () -> 0, () -> 0).withTimeout(6.0)
-                //new TurnToAngle(robotDrive, Rotation2d.fromDegrees(180), () -> 0, () -> 0),
-                /*
-                Commands.runOnce(() -> shooter.runShooterOpenLoop(0.2), shooter),
-                Commands.waitSeconds(0.5),
-                Commands.runOnce(() -> shooter.stop(), shooter)
-                */
-            );
-            break;
             case "TestMovement":
             command = Commands.sequence(
                 //new AutonSwerveDistanceConstantControlCommand(robotDrive, new Translation2d(2, 1), Rotation2d.fromDegrees(45)),
@@ -255,6 +234,18 @@ public final class Autos {
                 intake.retractAuto()
             )
         );*/
+    }
+
+    public static Command AimAndShootCommand(DriveSubsystem robotDrive, ShooterSubsystem shooter, VisionTargeting vision, IntakeSubsystem intake, double timeout) {
+        return Commands.race(
+            new AimClosedLoopAdvanced(robotDrive, shooter, vision, () -> 0, () -> 0, () -> 0),
+            Commands.sequence(
+                Commands.runOnce(() -> intake.runRollerRPM(), intake),
+                intake.agitateAuto().withTimeout(timeout),
+                Commands.runOnce(() -> intake.stopRoller(), intake),
+                intake.retractAuto()
+            )
+        );
     }
 
     public static Command ShootNoAimCommand(ShooterSubsystem shooter, VisionTargeting vision, IntakeSubsystem intake) {

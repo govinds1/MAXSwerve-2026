@@ -160,7 +160,7 @@
     "rotation": -20.32313682966291
   },
   "reversed": false,
-  "folder": "QuickTrench",
+  "folder": null,
   "idealStartingState": {
     "velocity": 0,
     "rotation": -63.48615979284246

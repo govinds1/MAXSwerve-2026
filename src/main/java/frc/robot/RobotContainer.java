@@ -75,18 +75,7 @@ public class RobotContainer {
     // NOTE: Assumes we are close to climb entrance point and facing the correct way (away from driver station)
     // Drive right to hit tower, back until we're confident we're at the back wall, then drive forward until hook hits the bar.
     new AutonSwerveTimeControlCommand(m_robotDrive, 0, -0.06, 0, 0.75, true),
-    new AutonSwerveTimeControlCommand(m_robotDrive, -0.1, 0, 0, 1.5, true),
-    /*Commands.parallel(
-      Commands.sequence(
-        Commands.waitSeconds(0.25),
-        new ClimberCommand(m_climber, true)
-      ),
-      Commands.sequence(
-        new AutonSwerveTimeControlCommand(m_robotDrive, -0.25, 0, 0, 2.0, true),
-        new AutonSwerveTimeControlCommand(m_robotDrive, 0.25, 0, 0, 1.5, true)
-      )
-    ),*/
-    //new AutonSwerveTimeControlCommand(m_robotDrive, 0.06, 0, 0, 0.025, true),
+    new AutonSwerveTimeControlCommand(m_robotDrive, -0.06, 0, 0, 1, true),
     new AutonSwerveTimeControlCommand(m_robotDrive, 0, -0.06, 0, 1, true),
     new ClimberCommand(m_climber, false)
   );
@@ -122,6 +111,7 @@ public class RobotContainer {
     );
     // Register Named Commands
     NamedCommands.registerCommand("Shoot", Autos.AimAndShootCommand(getDriveSubsystem(), getShooterSubsystem(), getVisionSubsystem(), getIntakeSubsystem()));
+    NamedCommands.registerCommand("ShootQuick", Autos.AimAndShootCommand(getDriveSubsystem(), getShooterSubsystem(), getVisionSubsystem(), getIntakeSubsystem(), 2.5));
     NamedCommands.registerCommand("ShootStraight", Autos.ShootNoAimCommand(m_shooter, m_vision, m_intake));
     NamedCommands.registerCommand("RunIntake", m_intake.extendAuto(true));
     NamedCommands.registerCommand("RetractIntake", m_intake.retractAuto());
@@ -150,10 +140,6 @@ public class RobotContainer {
     List<String> ppAutoNames = AutoBuilder.getAllAutoNames();
     if (ppAutoNames != null) {
       for (String ppAutoName : ppAutoNames) {
-        if (ppAutoName.contains("DISABLED")) {
-          // Ignore.
-          continue;
-        }
         Autos.PPAutos.put(ppAutoName, AutoBuilder.buildAuto(ppAutoName));
       }
       Autos.autoNames.addAll(ppAutoNames);

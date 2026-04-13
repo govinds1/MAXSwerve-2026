@@ -5,22 +5,9 @@
     "data": {
       "commands": [
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "RunIntake"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "QuickTrenchRunSweep_StartLeft"
-                }
-              }
-            ]
+            "pathName": "EventIntake QuickTrenchRunSweep_StartLeft"
           }
         },
         {
@@ -30,22 +17,9 @@
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "RunIntake"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "QuickTrenchSecondShallowRun_StartLeft"
-                }
-              }
-            ]
+            "pathName": "EventIntake QuickTrenchSecondShallowRun_StartLeft"
           }
         },
         {
