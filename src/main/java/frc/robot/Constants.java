@@ -164,6 +164,8 @@ public final class Constants {
     // TODO: Modify these buttons.
     public static final int kClimberUpButton = 5; // Left bumper
     public static final int kClimberDownButton = 6; // Right bumper 
+    public static final int kClimberUpAxis = 2; // Left trigger
+    public static final int kClimberDownAxis = 3; // Right trigger 
   }
 
   public static final class OperatorConstants {

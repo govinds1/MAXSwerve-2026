@@ -39,9 +39,9 @@ public class DriverController extends GenericHID {
   public double getRightX() {
   return smoothDriveInput(getRawAxis(4), null);
   }
-  public boolean getWantsHalfSpeedMode() {
+  /*public boolean getWantsHalfSpeedMode() {
     return getRawAxis(OperatorConstants.kHalfSpeedAxis) >= 0.5;
-  }
+  }*/
   
   public boolean getWantsGyroReset() {
     return this.getRawButton(OperatorConstants.kResetGyroButton);
@@ -70,6 +70,14 @@ public class DriverController extends GenericHID {
 
   public boolean getClimberDown() {
     return this.getRawButton(ClimberConstants.kClimberDownButton);
+  }
+
+  public boolean getClimberUpManual() {
+    return this.getRawAxis(ClimberConstants.kClimberUpAxis) > 0.5;
+  }
+
+  public boolean getClimberDownManual() {
+    return this.getRawAxis(ClimberConstants.kClimberDownAxis) > 0.5;
   }
 
   public void outputTelemetry() {

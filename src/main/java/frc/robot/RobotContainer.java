@@ -158,8 +158,8 @@ public class RobotContainer {
     getOperatorController().runShooter.whileTrue(m_aimWhileMovingCommand);
 
     // Climber Triggers
-    getDriverController().raiseHook.onTrue(new ClimberCommand(m_climber, true));
-    getDriverController().lowerHook.onTrue(new ClimberCommand(m_climber, false));
+    getDriverController().raiseHook.onTrue(new ClimberCommand(m_climber, true).withTimeout(5.0));
+    getDriverController().lowerHook.onTrue(new ClimberCommand(m_climber, false).withTimeout(5.0));
   }
 
   // GETTERS //
