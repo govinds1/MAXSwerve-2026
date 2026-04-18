@@ -136,7 +136,7 @@ public final class Constants {
   public static final class IntakeConstants {
     public static final int kIntakeRollerMotorCanId = 31;
     public static final int kIntakeExtenderMotorCanId = 32;
-    public static final double kIntakeRollerSpeed = 0.9;
+    public static final double kIntakeRollerSpeed = 0.75;
     public static final double kIntakeExtenderExtendSpeed = 0.17;
     public static final double kIntakeExtenderRetractSpeed = 0.35;
     public static final double kIntakeExtendTime = 0.75;

@@ -74,10 +74,11 @@ public class RobotContainer {
   Command m_alignForClimbTimeCommand = Commands.sequence(
     // NOTE: Assumes we are close to climb entrance point and facing the correct way (away from driver station)
     // Drive right to hit tower, back until we're confident we're at the back wall, then drive forward until hook hits the bar.
-    new AutonSwerveTimeControlCommand(m_robotDrive, 0, -0.06, 0, 0.75, true),
-    new AutonSwerveTimeControlCommand(m_robotDrive, -0.06, 0, 0, 1, true),
+    new AutonSwerveTimeControlCommand(m_robotDrive, 0, -0.06, 0, 1.4, true),
+    //new AutonSwerveTimeControlCommand(m_robotDrive, 0, 0.06, 0, 0.1, true),
+    new AutonSwerveTimeControlCommand(m_robotDrive, -0.06, 0, 0, 3.8, true),
     new AutonSwerveTimeControlCommand(m_robotDrive, 0, -0.06, 0, 1, true),
-    new ClimberCommand(m_climber, false)
+    new ClimberCommand(m_climber, false).withTimeout(4.5)
   );
 
   /*Command m_alignForClimbVisionCommand = Commands.sequence(
@@ -111,15 +112,15 @@ public class RobotContainer {
     );
     // Register Named Commands
     NamedCommands.registerCommand("Shoot", Autos.AimAndShootCommand(getDriveSubsystem(), getShooterSubsystem(), getVisionSubsystem(), getIntakeSubsystem()));
-    NamedCommands.registerCommand("ShootQuick", Autos.AimAndShootCommand(getDriveSubsystem(), getShooterSubsystem(), getVisionSubsystem(), getIntakeSubsystem(), 2.5));
+    NamedCommands.registerCommand("ShootQuick", Autos.AimAndShootCommand(getDriveSubsystem(), getShooterSubsystem(), getVisionSubsystem(), getIntakeSubsystem(), 3));
     NamedCommands.registerCommand("ShootStraight", Autos.ShootNoAimCommand(m_shooter, m_vision, m_intake));
     NamedCommands.registerCommand("RunIntake", m_intake.extendAuto(true));
     NamedCommands.registerCommand("RetractIntake", m_intake.retractAuto());
     NamedCommands.registerCommand("StopIntake", Commands.runOnce(() -> m_intake.stopRoller(), m_intake));
     NamedCommands.registerCommand("Intake", m_intake.extendAuto(true).finallyDo(() -> m_intake.stopRoller()));
 
-    NamedCommands.registerCommand("RaiseClimb", new ClimberCommand(m_climber, true));
-    NamedCommands.registerCommand("LowerClimb", new ClimberCommand(m_climber, false));
+    NamedCommands.registerCommand("RaiseClimb", new ClimberCommand(m_climber, true).withTimeout(5));
+    NamedCommands.registerCommand("LowerClimb", new ClimberCommand(m_climber, false).withTimeout(5));
     NamedCommands.registerCommand("DoClimb", m_alignForClimbTimeCommand);
 
     NamedCommands.registerCommand("AlignToTag", new StrafeCenterToTag(m_robotDrive, m_vision));

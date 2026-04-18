@@ -36,7 +36,7 @@ public class ClimberSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Subsystems/Climber/Current", m_motor.getOutputCurrent());
     SmartDashboard.putBoolean("Subsystems/Climber/LimitSwitch", m_limitSwitch.get());
 
-    if (!m_limitSwitch.get()) {
+    /*if (!m_limitSwitch.get()) {
       if (m_limitSwitchHitStartTime == -1) {
         m_limitSwitchHitStartTime = Timer.getFPGATimestamp();
       } else if (Timer.getFPGATimestamp() - m_limitSwitchHitStartTime > 2.0) {
@@ -44,6 +44,9 @@ public class ClimberSubsystem extends SubsystemBase {
       }
     } else {
       m_limitSwitchHitStartTime = -1;
+    }*/
+    if (m_limitSwitch.get()) {
+      m_motor.getEncoder().setPosition(0);
     }
   }
 
@@ -57,7 +60,7 @@ public class ClimberSubsystem extends SubsystemBase {
 
   public void lowerHook(boolean override) {
     // Override soft encoder limit in isLowered if override is true. ALWAYS stop if hitting limit switch, do not allow manual override.
-    if ((isLowered() && !override) || !m_limitSwitch.get()) {
+    if ((isLowered() && !override)) {// || m_limitSwitch.get()) {
       m_motor.stopMotor();
     } else {
       m_motor.set(-ClimberConstants.kClimbSpeed);
@@ -77,7 +80,7 @@ public class ClimberSubsystem extends SubsystemBase {
   }
 
   public boolean isLowered() {
-    return !m_limitSwitch.get() || m_motor.getEncoder().getPosition() < 0;
+    return m_limitSwitch.get(); //|| m_motor.getEncoder().getPosition() < 0;
   }
 
   public void stop() {

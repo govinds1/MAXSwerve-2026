@@ -10,8 +10,8 @@ import frc.robot.Helpers;
 
 public class DriverController extends GenericHID {
 
-  SlewRateLimiter limiterX = new SlewRateLimiter(2.0);
-  SlewRateLimiter limiterY = new SlewRateLimiter(2.0);
+  SlewRateLimiter limiterX = new SlewRateLimiter(4.0);
+  SlewRateLimiter limiterY = new SlewRateLimiter(4.0);
   public Trigger turnAway;
   public Trigger turnTowards;
   public Trigger raiseHook;
