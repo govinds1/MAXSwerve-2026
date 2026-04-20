@@ -6,7 +6,6 @@ package frc.robot;
 
 import com.pathplanner.lib.commands.FollowPathCommand;
 
-//import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -22,9 +21,6 @@ public class Robot extends TimedRobot {
   private RobotContainer m_robotContainer;
   private Command m_autonomousCommand;
 
-  // For Simulation
-  //private final Field m_field = Field.getInstance();
-
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -33,12 +29,6 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     // Instantiate our RobotContainer.
     m_robotContainer = new RobotContainer();
-
-    //CameraServer.startAutomaticCapture();   //This image is upside down.  Using the Thread with rotated Image to adjust
-
-    // Set up the Field2d object for simulation
-    //SmartDashboard.putData("Field", m_field);
-
     m_robotContainer.init();
 
     LimelightHelpers.SetIMUMode("limelight", 0);
@@ -64,17 +54,12 @@ public class Robot extends TimedRobot {
       // block in order for anything in the Command-based framework to work.
       CommandScheduler.getInstance().run();
     }
-
     m_robotContainer.periodic();
-
-    // Update Robot Simulation
-    //updateSim();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
-    // TODO: Stop other subsystems?
     m_robotContainer.getDriveSubsystem().stop();
     m_robotContainer.getIntakeSubsystem().stop();
     m_robotContainer.getShooterSubsystem().stop();
@@ -82,21 +67,13 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void disabledPeriodic() {
-    // TODO:
-    // Seed Limelight with external gyro's heading.
-    //LimelightHelpers.SetRobotOrientation("limelight", m_robotContainer.getDriveSubsystem().getHeadingDegrees(), 0, 0, 0, 0, 0);
-  }
+  public void disabledPeriodic() {}
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    // Reset gyro for auto.
-    //m_robotContainer.getDriveSubsystem().zeroHeading();
     // Get selected autonomous command.
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-    // Reset pose with auto's starting pose.
-    //m_robotContainer.getDriveSubsystem().resetPose(Autos.getStartingPose());
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
@@ -117,25 +94,17 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-
-    // TODO:
-    // If we climbed in auto, drop the climber.
   }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    // TODO: Add toggle/hold button for robot relative driving?
-
-    if (m_robotContainer.getDriverController().getWantsGyroReset()) {
+if (m_robotContainer.getDriverController().getWantsGyroReset()) {
       m_robotContainer.getDriveSubsystem().zeroHeading();
     }
 
-    // TODO: Replace with Triggers in RobotContainer constructor.
-
     // Intake control.
     if (m_robotContainer.getOperatorController().getWantsRunIntakeRoller()) {
-      //m_robotContainer.getIntakeSubsystem().runRoller();
       m_robotContainer.getIntakeSubsystem().runRollerRPM();
     } else if (m_robotContainer.getOperatorController().getWantsReverseIntakeRoller()) {
       m_robotContainer.getIntakeSubsystem().reverseRoller();
@@ -172,11 +141,4 @@ public class Robot extends TimedRobot {
   @Override
   public void testPeriodic() {
   }
-
-  /* TODO:\
-  private void updateSim() {
-    // Update the odometry in the sim.
-    m_field.setRobotPose(m_robotContainer.getDriveSubsystem().getPose());
-  }
-  */
 }

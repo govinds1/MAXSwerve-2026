@@ -40,17 +40,13 @@ public class ShooterSubsystem extends SubsystemBase{
 
   // Distance (meters) - RPM mapping
   public static final InterpolatingDoubleTreeMap rpmMap = InterpolatingDoubleTreeMap.ofEntries(
-    Map.entry(1.0, 15000.0), // 14000
-    Map.entry(1.6, 18500.0), // 18000
-    Map.entry(1.7, 20100.0), // 19600
-    Map.entry(1.85, 22500.0), // 22000
-    Map.entry(2.0, 24500.0), // 24000
-    Map.entry(3.0, 25500.0), // 25000
-    Map.entry(5.0, 31000.0) // 31000
-    //Map.entry(1.0, 2000.0),
-    //Map.entry(2.0, 3100.0),
-    //Map.entry(3.0, 4500.0),
-    //Map.entry(5.0, 5800.0)
+    Map.entry(1.0, 15000.0),
+    Map.entry(1.6, 18500.0),
+    Map.entry(1.7, 20100.0),
+    Map.entry(1.85, 22500.0),
+    Map.entry(2.0, 24500.0),
+    Map.entry(3.0, 25500.0),
+    Map.entry(5.0, 31000.0)
   );
 
   /**
@@ -74,7 +70,7 @@ public class ShooterSubsystem extends SubsystemBase{
       PersistMode.kPersistParameters);
 
     SparkBaseConfig followerConfig = Configs.Shooter.shooterMotorConfig;
-    followerConfig.follow(m_shooterMotor, ShooterConstants.kInvertFollower); // Set to follow main motor, and invert.
+    followerConfig.follow(m_shooterMotor, true); // Set to follow main motor, and invert.
     m_shooterMotorFollower.configure(followerConfig, ResetMode.kResetSafeParameters,
       PersistMode.kPersistParameters);
 
@@ -147,7 +143,7 @@ public class ShooterSubsystem extends SubsystemBase{
     m_shooterMotor.stopMotor();
   }
 
-    /**
+  /**
    * Run feeder on open loop control.
    * 
    * @param desiredRPM RPM to set as motor velocity setpoint.
@@ -167,46 +163,6 @@ public class ShooterSubsystem extends SubsystemBase{
   public void stop() {
     stopShooter();
     stopFeeder();
-  }
-
-  /**
-   * Given a desired exit HORIZONTAL velocity of the ball (in meters/sec), calculate RPM to spin flywheel.
-   * 
-   * @param desiredExitVelMPS Desired exit horizontal velocity in meters/sec
-   * @returns calculated RPM of flywheel
-   */
-  public static double calcRPMForExitHorizontalVelocity(double desiredExitHorizVelMPS) {
-    // Calculate total exit velocity using horizontal component and launch angle.
-    double totalExitVelocity = desiredExitHorizVelMPS / Math.cos(ShooterConstants.kLaunchAngleRadians);
-    // Solve for RPM:
-    // exitVel = omega * wheelRadius
-    // omega = exitVel / wheelRadius
-    // Since desired omega is RPM, but exitVel is mps^2 and wheelRadius is m, we need to add some conversion to get RPM
-    // omega * (2pi rads / 1 rev) * (1 min / 60 seconds) = exitVel / wheelRadius
-    // omega = (60/2pi) * exitVel / wheelRadius
-    return (60 / (2 * Math.PI)) * totalExitVelocity / (ShooterConstants.kFlyWheelDiameterMeters / 2);
-  }
-
-  /**
-   * Given a distance to Hub in meters, calculate desired exit velocity of the ball (in meters/sec).
-   * 
-   * @param distanceMeters Distance to Hub in meters.
-   * @returns calculated exit velocity of ball
-   */
-  public static double calculateExitVelocityForDistanceToHub(double distanceMeters) {
-      // Starting formulas:
-    // horizDist = exitVel * cos(launchAngle) * t
-    // vertDist = exitVel * sin(launchAngle) * t - (1/2)*g*t^2
-    // Solve for t:
-    // t = horizDist /  (exitVel * cos(launchAngle))
-    // Substitute:
-    // vertDist = horizDist * tan(launchAngle) - (g * horizDist^2) / (2 * exitVel^2 * cos(launchAngle)^2)
-    // Solve for exitVel:
-    // exitVel = sqrt((g * horizDist^2) / ((2 * cos(launchAngle)^2) * (horizDist * tan(launchAngle) - vertDist)))
-    double g = 9.8; // meters per second^2
-    double numerator = g * distanceMeters * distanceMeters;
-    double denominator = 2.0 * Math.pow(Math.cos(ShooterConstants.kLaunchAngleRadians), 2) * (distanceMeters * Math.tan(ShooterConstants.kLaunchAngleRadians) - ShooterConstants.kShotVerticalDistance);
-    return Math.sqrt(numerator / denominator); // meters per second
   }
 
   /**

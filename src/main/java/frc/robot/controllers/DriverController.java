@@ -25,10 +25,6 @@ public class DriverController extends GenericHID {
     lowerHook = new Trigger(this::getClimberDown);
   }
 
-  // Axis
-  //private final double k_triggerActivationThreshold = 0.5;
-  //private double k_lastTriggerValue = 0.0;
-
   // Drive
   public double getLeftY() {
   return smoothDriveInput(getRawAxis(1), limiterY);
@@ -39,9 +35,6 @@ public class DriverController extends GenericHID {
   public double getRightX() {
   return smoothDriveInput(getRawAxis(4), null);
   }
-  /*public boolean getWantsHalfSpeedMode() {
-    return getRawAxis(OperatorConstants.kHalfSpeedAxis) >= 0.5;
-  }*/
   
   public boolean getWantsGyroReset() {
     return this.getRawButton(OperatorConstants.kResetGyroButton);
@@ -78,10 +71,5 @@ public class DriverController extends GenericHID {
 
   public boolean getClimberDownManual() {
     return this.getRawAxis(ClimberConstants.kClimberDownAxis) > 0.5;
-  }
-
-  public void outputTelemetry() {
-    //SmartDashboard.putNumber(m_smartDashboardKey + "Forward", getForwardAxis());
-    //SmartDashboard.putNumber(m_smartDashboardKey + "Turn", getTurnAxis());
   }
 }

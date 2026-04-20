@@ -5,11 +5,8 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.AimClosedLoopAdvanced;
-import frc.robot.commands.AutonSwerveTimeControlCommand;
+import frc.robot.commands.AimClosedLoop;
 import frc.robot.commands.Autos;
-import frc.robot.commands.ClimberCommand;
-import frc.robot.commands.StrafeCenterToTag;
 import frc.robot.controllers.DriverController;
 import frc.robot.controllers.OperatorController;
 import frc.robot.subsystems.ClimberSubsystem;
@@ -47,7 +44,7 @@ public class RobotContainer {
   // The operator's controller
   private final OperatorController m_operatorController = new OperatorController(OperatorConstants.kOperatorControllerPort);
 
-  AimClosedLoopAdvanced m_aimWhileMovingCommand = new AimClosedLoopAdvanced(
+  AimClosedLoop m_aimWhileMovingCommand = new AimClosedLoop(
     getDriveSubsystem(), 
     getShooterSubsystem(), 
     getVisionSubsystem(), 
@@ -57,44 +54,13 @@ public class RobotContainer {
     () -> getOperatorController().getWantsVisionOverride()
   );
 
-  /*Command m_alignForClimbDistanceCommand = Commands.sequence(
-    // NOTE: Assumes we are close to climb entrance point and facing the correct way (away from driver station)
-    // Drive back until we're confident we're at the back wall, then drive forward the correct distance.
-    Commands.parallel(
-      new ClimberCommand(m_climber, true),
-      Commands.sequence(
-        new AutonSwerveTimeControlCommand(m_robotDrive, -0.25, 0, 0, 2.0, true),
-        new AutonSwerveDistanceConstantControlCommand(m_robotDrive, new Translation2d(Units.inchesToMeters(25.06), 0), new Rotation2d(0), true)
-      )
-    ),
-    new AutonSwerveTimeControlCommand(m_robotDrive, 0, -0.1, 0, 1.0, true),
-    new ClimberCommand(m_climber, false)
-  );*/
-
   Command m_alignForClimbTimeCommand = Commands.sequence(
     // NOTE: Assumes we are close to climb entrance point and facing the correct way (away from driver station)
-    // Drive right to hit tower, back until we're confident we're at the back wall, then drive forward until hook hits the bar.
-    new AutonSwerveTimeControlCommand(m_robotDrive, 0, -0.06, 0, 1.4, true),
-    //new AutonSwerveTimeControlCommand(m_robotDrive, 0, 0.06, 0, 0.1, true),
-    new AutonSwerveTimeControlCommand(m_robotDrive, -0.06, 0, 0, 3.8, true),
-    new AutonSwerveTimeControlCommand(m_robotDrive, 0, -0.06, 0, 1, true),
-    new ClimberCommand(m_climber, false).withTimeout(4.5)
+    Autos.DriveForSeconds(m_robotDrive, 0, -0.06, 0, 1.4),
+    Autos.DriveForSeconds(m_robotDrive, -0.06, 0, 0, 3.8),
+    Autos.DriveForSeconds(m_robotDrive, 0, -0.06, 0, 1),
+    Autos.LowerClimber(m_climber)
   );
-
-  /*Command m_alignForClimbVisionCommand = Commands.sequence(
-    // NOTE: Assumes we are in front of tower. This will try to climb on the right (facing driver station)
-    // Aligns with AprilTag first, then uses distance control to strafe to climb bar.
-    Commands.parallel(
-      new ClimberCommand(m_climber, true),
-      Commands.sequence(
-        new TurnToAngle(m_robotDrive, new Rotation2d(Math.PI), () -> 0, () -> 0),
-        new StrafeCenterToTag(m_robotDrive, m_vision, 1.0) // Distance here may not actually be meters... check dashboard in teleop.
-      )
-    ),
-    new AutonSwerveDistanceConstantControlCommand(m_robotDrive, new Translation2d(0, 33.5), new Rotation2d(Math.PI), true),
-    new AutonSwerveTimeControlCommand(m_robotDrive, -0.1, 0, 0, 1.5, true),
-    new ClimberCommand(m_climber, false)
-  );*/
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -119,23 +85,9 @@ public class RobotContainer {
     NamedCommands.registerCommand("StopIntake", Commands.runOnce(() -> m_intake.stopRoller(), m_intake));
     NamedCommands.registerCommand("Intake", m_intake.extendAuto(true).finallyDo(() -> m_intake.stopRoller()));
 
-    NamedCommands.registerCommand("RaiseClimb", new ClimberCommand(m_climber, true).withTimeout(5));
-    NamedCommands.registerCommand("LowerClimb", new ClimberCommand(m_climber, false).withTimeout(5));
+    NamedCommands.registerCommand("RaiseClimb", Autos.RaiseClimber(m_climber));
+    NamedCommands.registerCommand("LowerClimb", Autos.LowerClimber(m_climber));
     NamedCommands.registerCommand("DoClimb", m_alignForClimbTimeCommand);
-
-    NamedCommands.registerCommand("AlignToTag", new StrafeCenterToTag(m_robotDrive, m_vision));
-
-    // Register Event Triggers
-    //new EventTrigger("Intake").onTrue(m_intake.extendAuto(true));
-    //new EventTrigger("Intake").onFalse(Commands.runOnce(() -> m_intake.stopRoller(), m_intake));
-    
-    /*
-    new EventTrigger("ShootStraight").whileTrue(
-      Commands.sequence(
-        Autos.ShootNoAimCommand(m_shooter, m_vision, m_intake)
-      )
-    );
-    */
 
     // Add PathPlannerAuto commands to storage container.
     List<String> ppAutoNames = AutoBuilder.getAllAutoNames();
@@ -147,11 +99,6 @@ public class RobotContainer {
     }
     // Push to dashboard drop-down.
     SmartDashboard.putStringArray("Auto List", Autos.autoNames.toArray(String[]::new));
-
-    // Build an auto chooser. This will use Commands.none() as the default option.
-    //autoChooser = AutoBuilder.buildAutoChooser();
-
-    //SmartDashboard.putData("Auto Chooser", autoChooser);
   }
 
   public void configureButtonBindings() {
@@ -159,8 +106,8 @@ public class RobotContainer {
     getOperatorController().runShooter.whileTrue(m_aimWhileMovingCommand);
 
     // Climber Triggers
-    getDriverController().raiseHook.onTrue(new ClimberCommand(m_climber, true).withTimeout(5.0));
-    getDriverController().lowerHook.onTrue(new ClimberCommand(m_climber, false).withTimeout(5.0));
+    getDriverController().raiseHook.onTrue(Autos.RaiseClimber(m_climber));
+    getDriverController().lowerHook.onTrue(Autos.LowerClimber(m_climber));
   }
 
   // GETTERS //
@@ -199,9 +146,7 @@ public class RobotContainer {
    */
   public void init() {}
 
-  public void periodic() {
-    //SmartDashboard.putBoolean("Subsystems/Vision/PDHSwitchableChannel", m_pdh.getSwitchableChannel());
-  }
+  public void periodic() {}
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -212,9 +157,5 @@ public class RobotContainer {
     // Grab selected auto from SmartDashboard drop down menu
     String selectedAutoName = SmartDashboard.getString("Auto Selector", Autos.autoNames.get(0));
     return Autos.getSelectedAuto(selectedAutoName, m_robotDrive, m_shooter, m_vision, m_intake);
-
-    // Grab selected auto from SmartDashboard chooser.
-    //return autoChooser.getSelected();
-    //return Commands.idle();
   }
 }

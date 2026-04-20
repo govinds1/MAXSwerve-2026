@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import java.util.List;
-
 import com.pathplanner.lib.config.RobotConfig;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -14,7 +12,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -37,7 +34,6 @@ public final class Constants {
     public static final double kMaxAngularSpeedRadiansPerSecond = 2 * Math.PI; // radians per second
     public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Units.degreesToRadians(2430);
 
-    // TODO: Modify chassis config lengths.
     // Chassis configuration
     public static final double kTrackWidth = Units.inchesToMeters(23.5); // Distance between centers of right and left wheels on robot
     public static final double kWheelBase = Units.inchesToMeters(23.5); // Distance between front and back wheels on robot
@@ -99,38 +95,20 @@ public final class Constants {
     public static final int kFeederMotorCanId = 23;
     public static final double kShooterPower = 0.5;
     public static final double kFeederPower = 0.6;
-    public static final boolean kInvertFollower = true;
     public static final double kShooterSpinUpTime = 0.25;
 
-    // TODO: Modify these buttons if necessary.
     public static final int kRunShooterButton = 1; // A button
     public static final int kStopShooterButton = 4; // Y button
-    public static final int kRunFeederButton = 5; // Left bumper - TODO: Remove manual feeder control
     public static final int kShootFromTowerOverrideButton = 5; // Left bumper
     public static final int kShootFromHubOverrideButton = 6; //right bumper
 
-    public static final double kShooterMaxRPM = 6000; // TODO:
-    public static final double kPController = 0.00007; // 0.0001
+    public static final double kPController = 0.00007;
     public static final double kRPMTolerance = 750;
-    
-    // Unused parameters -> prototype commands.
-    public static final double kBallRadiusMeters = 0.15;
-    public static final double kLaunchAngleDegrees = 60; // TODO:
-    public static final double kLaunchAngleRadians = Math.toRadians(kLaunchAngleDegrees);
-    public static final double kLaunchHeightMeters = Units.inchesToMeters(22) + kBallRadiusMeters;
-    public static final double kHubHeightMeters = Units.inchesToMeters(72);
-    public static final double kShotVerticalDistance = kHubHeightMeters - kLaunchHeightMeters;
-    public static final double kMaxShootTime = 4.0;
 
-    // Calculations required for driving motor conversion factors and feed forward
-    public static final double kMotorFreeSpeedRps = NeoMotorConstants.kFreeSpeedRpm / 60;
-    public static final double kFlyWheelDiameterMeters = 0.0762; // TODO:
-    public static final double kFlyWheelCircumferenceMeters = kFlyWheelDiameterMeters * Math.PI;
-    // TODO: Figure out shooting motor reduction.
-    public static final double kMotorReduction = (45.0 * 22) / (10 * 15);
-    public static final double kMotorEncoderToRevolutions = kMotorReduction; // TODO: is this the correct factor to get to Revolutions from encoder rotations?
-    public static final double kFlyWheelFreeSpeedRps = (kMotorFreeSpeedRps * kFlyWheelCircumferenceMeters)
-        / kMotorReduction;
+    public static final double kHubHeightMeters = Units.inchesToMeters(72);
+    public static final double kMaxShootTime = 4.5;
+
+    public static final double kMotorReduction = (45.0 * 22) / (10 * 15); // This is incorrect.
   }
 
   public static final class IntakeConstants {
@@ -143,25 +121,21 @@ public final class Constants {
     public static final double kIntakeRetractTime = 0.75;
     public static final double kIntakeAgitateTime = 0.35;
 
-    public static final double kIntakeExtenderForwardLimitEncoderUnits = 1000; // TODO: Tune.
-
-    // TODO: Modify these buttons.
     public static final int kRollerRunButton = 2; // B button
     public static final int kRollerReverseButton = 3; // X button
-    public static final int kExtenderOutAxis = 2; // Left trigger // TODO: Should extender control be a toggle?
+    public static final int kExtenderOutAxis = 2; // Left trigger
     public static final int kExtenderInAxis = 3; // Right trigger
   }
 
   public static final class ClimberConstants {
     public static final int kClimberMotorCanId = 41;
     public static final double kClimbSpeed = 0.7;
-    public static final double kClimberUpTime = 2.0; // TODO: Update.
-    public static final double kClimberDownTime = 2.0; // TODO: Update.
+    public static final double kClimberUpTime = 4.5;
+    public static final double kClimberDownTime = 4.5;
 
-    public static final double kClimberUpPosition = 185; // TODO: Update.
+    public static final double kClimberUpPosition = 185;
     public static final double kClimberDownPosition = 0;
 
-    // TODO: Modify these buttons.
     public static final int kClimberUpButton = 5; // Left bumper
     public static final int kClimberDownButton = 6; // Right bumper 
     public static final int kClimberUpAxis = 2; // Left trigger
@@ -174,16 +148,10 @@ public final class Constants {
     public static final double kDriveDeadband = 0.05;
 
     public static final int kResetGyroButton = 8; // Start button
-    public static final int kHalfSpeedAxis = 2; // Left trigger
   }
 
   public static final class DriveAutoConstants {
-    //public static final double kMaxSpeedMetersPerSecond = 3;
-    //public static final double kMaxAccelerationMetersPerSecondSquared = 11.8;
-    //public static final double kMaxAngularSpeedRadiansPerSecond = Units.degreesToRadians(540);
-    //public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Units.degreesToRadians(2430);
-
-    public static final double kPXYController = 4; // TODO: Tuned for meters. 0.03
+    public static final double kPXYController = 4; // Tuned for meters. 0.03
     public static final double kPThetaController = 0.9; // Tuned for radians. 0.9
     public static final double kPThetaRobotController = 10; // Tuned for holonomic robot controller.
     public static final Pose2d kRobotControllerTolerance = new Pose2d(0.025, 0.025, Rotation2d.fromDegrees(0.5));
@@ -212,127 +180,5 @@ public final class Constants {
     public static final double kPitchDegrees = 30.0;
     public static final double kYawDegrees = 0.0;
     public static final double kCameraLatencySeconds = 0.08; // Should adjust this empirically.
-  }
-
-  public static final class AprilTagConstants {
-    public static enum TagLocation {
-      kTrenchRightClose, kTrenchRightFar, kTrenchLeftClose, kTrenchLeftFar,
-      kOutpost, kTower, kHubRight, kHubFar, kHubLeft, kHubClose
-    }
-    public static class Tag {
-      private TagLocation m_location;
-      private Alliance m_alliance;
-      private int m_id;
-      Tag(TagLocation location, Alliance alliance, int id) {
-        m_location = location;
-        m_alliance = alliance;
-        m_id = id;
-      }
-      public TagLocation getLocation() {
-        return m_location;
-      }
-      public Alliance getAlliance() {
-        return m_alliance;
-      }
-      public int getID() {
-        return m_id;
-      }
-    }
-    // Keep this list sorted by Tag ID - ascending.
-    public static final List<Tag> tags = List.of(
-      new Tag(TagLocation.kTrenchRightFar, Alliance.Red, 1),
-      new Tag(TagLocation.kHubRight, Alliance.Red, 2),
-      new Tag(TagLocation.kHubFar, Alliance.Red, 3),
-      new Tag(TagLocation.kHubFar, Alliance.Red, 4),
-      new Tag(TagLocation.kHubLeft, Alliance.Red, 5),
-      new Tag(TagLocation.kTrenchLeftFar, Alliance.Red, 6),
-      new Tag(TagLocation.kTrenchLeftClose, Alliance.Red, 7),
-      new Tag(TagLocation.kHubLeft, Alliance.Red, 8),
-      new Tag(TagLocation.kHubClose, Alliance.Red, 9),
-      new Tag(TagLocation.kHubClose, Alliance.Red, 10),
-      new Tag(TagLocation.kHubRight, Alliance.Red, 11),
-      new Tag(TagLocation.kTrenchRightClose, Alliance.Red, 12),
-      new Tag(TagLocation.kOutpost, Alliance.Red, 13),
-      new Tag(TagLocation.kOutpost, Alliance.Red, 14),
-      new Tag(TagLocation.kTower, Alliance.Red, 15),
-      new Tag(TagLocation.kTower, Alliance.Blue, 16),
-      new Tag(TagLocation.kTrenchRightFar, Alliance.Blue, 17),
-      new Tag(TagLocation.kHubRight, Alliance.Blue, 18),
-      new Tag(TagLocation.kHubFar, Alliance.Blue, 19),
-      new Tag(TagLocation.kHubFar, Alliance.Blue, 20),
-      new Tag(TagLocation.kHubLeft, Alliance.Blue, 21),
-      new Tag(TagLocation.kTrenchLeftFar, Alliance.Blue, 22),
-      new Tag(TagLocation.kTrenchLeftClose, Alliance.Blue, 23),
-      new Tag(TagLocation.kHubLeft, Alliance.Blue, 24),
-      new Tag(TagLocation.kHubClose, Alliance.Blue, 25),
-      new Tag(TagLocation.kHubClose, Alliance.Blue, 26),
-      new Tag(TagLocation.kHubRight, Alliance.Blue, 27),
-      new Tag(TagLocation.kTrenchRightClose, Alliance.Blue, 28),
-      new Tag(TagLocation.kOutpost, Alliance.Blue, 29),
-      new Tag(TagLocation.kOutpost, Alliance.Blue, 30),
-      new Tag(TagLocation.kTower, Alliance.Blue, 31),
-      new Tag(TagLocation.kTower, Alliance.Blue, 32)
-    );
-
-    public static final double kTagToHubCenterMeters = Units.inchesToMeters(23.5);
-
-    public static final boolean isHubScoringTagLocation(TagLocation location) {
-      return (location == TagLocation.kHubClose) || (location == TagLocation.kHubLeft) || (location == TagLocation.kHubRight);
-    }
-  }
-
-  public static final class FieldConstants {
-    // Locations of field landmarks relative to origin (BOTTOM LEFT CORNER OF FIELD)
-    // Origin is marked by PathPlanner as the bottom of the blue alliance wall.
-    // https://www.chiefdelphi.com/t/pathplanner-2024-beta/442364/370
-    // X is forward axis, positive means FURTHER from the BLUE driver station (all landmarks will be positive)
-    // Y is left axis, positive means towards the left side of the field when looking from our driver station. (all landmarks will be positive)
-    // All units are in meters. Conversion factor from inches to meters is 0.0254.
-
-    // Important Field locations
-    private static final Translation2d kCenterOfField = new Translation2d(Units.inchesToMeters(325.61), Units.inchesToMeters(158.84));
-    private static final double kCenterXMeters = kCenterOfField.getX();
-    private static final double kCenterYMeters = kCenterOfField.getY();
-    public static final Translation2d kBlueHub = new Translation2d(Units.inchesToMeters(181.56), kCenterYMeters);
-    public static final Translation2d kBlueDepot = new Translation2d(Units.inchesToMeters(13.50), kCenterYMeters + (Units.inchesToMeters(75.93)));
-    public static final Translation2d kBlueOutpost = new Translation2d(0, Units.inchesToMeters(26.22));
-    public static final Translation2d kBlueTower = new Translation2d(Units.inchesToMeters(41.56), kCenterYMeters - (Units.inchesToMeters(11.38)));
-    public static final Translation2d kBlueLeftTrench = new Translation2d(kBlueHub.getX(), Units.inchesToMeters(316.62 - 25.62));
-    public static final Translation2d kBlueRightTrench = new Translation2d(kBlueHub.getX(), Units.inchesToMeters(25.62));
-    public static final Translation2d kRedHub = kBlueHub.rotateAround(kCenterOfField, new Rotation2d(Math.PI));
-    public static final Translation2d kRedDepot = kBlueDepot.rotateAround(kCenterOfField, new Rotation2d(Math.PI));
-    public static final Translation2d kRedOutpost = kBlueOutpost.rotateAround(kCenterOfField, new Rotation2d(Math.PI));
-    public static final Translation2d kRedTower = kBlueTower.rotateAround(kCenterOfField, new Rotation2d(Math.PI));
-    public static final Translation2d kRedLeftTrench = kBlueLeftTrench.rotateAround(kCenterOfField, new Rotation2d(Math.PI));
-    public static final Translation2d kRedRightTrench = kBlueRightTrench.rotateAround(kCenterOfField, new Rotation2d(Math.PI));
-    
-    public static final Translation2d kBlueLeftPassTarget = kBlueHub.plus(new Translation2d(Units.inchesToMeters(-61), Units.inchesToMeters(75))); // 'above' hub
-    public static final Translation2d kBlueRightPassTarget = kBlueHub.plus(new Translation2d(Units.inchesToMeters(-61), Units.inchesToMeters(-75)));      // 'below' hub
-    public static final Translation2d kRedLeftPassTarget = kBlueRightPassTarget.rotateAround(kCenterOfField, new Rotation2d(Math.PI));                    // 'above' hub
-    public static final Translation2d kRedRightPassTarget = kBlueLeftPassTarget.rotateAround(kCenterOfField, new Rotation2d(Math.PI));                    // 'below' hub
-
-    public static final double kHubHeightMeters = 1.83;
-
-    // Robot starting poses, marking the center of the robot.
-    private static final double kRobotPoseXAtBlueStartLine = Units.inchesToMeters(156.61 - (DriveConstants.kFullWidth / 2.0));
-    public static final Rotation2d kRobotRotAtBlueStartLine = new Rotation2d(0);
-    public static final Pose2d kBlueLeftStart = new Pose2d(kRobotPoseXAtBlueStartLine, kCenterYMeters + Units.inchesToMeters(158.84 - 26.22), kRobotRotAtBlueStartLine);
-    public static final Pose2d kBlueCenterStart = new Pose2d(kRobotPoseXAtBlueStartLine, kCenterYMeters, kRobotRotAtBlueStartLine);
-    public static final Pose2d kBlueRightStart = new Pose2d(kRobotPoseXAtBlueStartLine, Units.inchesToMeters(26.22), kRobotRotAtBlueStartLine);
-    public static final Pose2d kRedRightStart = kBlueRightStart.rotateAround(kCenterOfField, new Rotation2d(Math.PI));
-    public static final Pose2d kRedCenterStart = kBlueCenterStart.rotateAround(kCenterOfField, new Rotation2d(Math.PI));
-    public static final Pose2d kRedLeftStart = kBlueLeftStart.rotateAround(kCenterOfField, new Rotation2d(Math.PI));
-
-    // Useful distances and poses for Auto.
-    public static final Pose2d kBlueRightShootingPosition = new Pose2d(kBlueRightStart.getTranslation(), Rotation2d.fromDegrees(80));
-    public static final Pose2d kBlueCenterShootingPosition = new Pose2d(kBlueCenterStart.getTranslation().minus(new Translation2d(Units.inchesToMeters(60), 0)), Rotation2d.fromDegrees(0));
-    public static final Pose2d kBlueLeftShootingPosition = new Pose2d(kBlueLeftStart.getTranslation(), Rotation2d.fromDegrees(-80));
-    public static final Pose2d kRedRightShootingPosition = kBlueRightShootingPosition.rotateAround(kCenterOfField, new Rotation2d(Math.PI));
-    public static final Pose2d kRedCenterShootingPosition = kBlueCenterShootingPosition.rotateAround(kCenterOfField, new Rotation2d(Math.PI));
-    public static final Pose2d kRedLeftShootingPosition = kBlueLeftShootingPosition.rotateAround(kCenterOfField, new Rotation2d(Math.PI));
-    public static final double kOutpostToStartLineMeters = kBlueRightStart.getTranslation().getDistance(kBlueOutpost);
-    public static final double kStartLineToOverCenterLineMeters = kCenterXMeters - kRobotPoseXAtBlueStartLine;
-    public static final double kStartLineToCenterLineMeters = kStartLineToOverCenterLineMeters - (DriveConstants.kFullWidth / 2.0);
-    public static final double kEdgeToCenterFuelPickupMeters = kCenterYMeters * 0.5;
   }
 }

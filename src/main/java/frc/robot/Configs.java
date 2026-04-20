@@ -68,11 +68,6 @@ public final class Configs {
         public static final SparkFlexConfig feederMotorConfig = new SparkFlexConfig();
 
         static {
-                // Use module constants to calculate conversion factors and feed forward gain.
-                // double flywheelFactor = ShooterConstants.kFlyWheelDiameterMeters * Math.PI
-                //        / ShooterConstants.kMotorReduction; 
-                //double nominalVoltage = 12.0;
-                //double shootingVelocityFeedForward = nominalVoltage / ShooterConstants.kFlyWheelFreeSpeedRps;
                 shooterMotorConfig
                         .idleMode(IdleMode.kCoast)
                         .smartCurrentLimit(60);
@@ -82,9 +77,7 @@ public final class Configs {
                 shooterMotorConfig.closedLoop
                         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
                         .pid(ShooterConstants.kPController, 0, 0)
-                        //.pid(0, 0, 0)
                         .outputRange(0, 1);
-                        //.feedForward.kV(0.00007);
 
                 feederMotorConfig
                         .idleMode(IdleMode.kBrake)

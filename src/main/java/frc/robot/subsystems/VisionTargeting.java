@@ -4,31 +4,19 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Helpers;
 import frc.robot.LimelightHelpers;
-import frc.robot.Constants.AprilTagConstants;
 import frc.robot.Constants.DriveAutoConstants;
-import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.LimelightConstants;
-import frc.robot.Constants.AprilTagConstants.Tag;
-import frc.robot.LimelightHelpers.RawFiducial;
+import frc.robot.Constants.ShooterConstants;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 
 public class VisionTargeting extends SubsystemBase {
 
     //private TagLocation m_seekingLocation;
     private final String limelightName = "limelight";
-
-    private double lastHeartbeat = 0;
-    private boolean isAlive = true;
 
     public VisionTargeting() {
         // Set a custom crop window for improved performance (-1 to 1 for each value)
@@ -46,11 +34,7 @@ public class VisionTargeting extends SubsystemBase {
         );
 
         // Configure AprilTag detection
-        //LimelightHelpers.SetFiducialIDFiltersOverride("", new int[]{1, 2, 3, 4}); // Only track these tag IDs
         LimelightHelpers.SetFiducialDownscalingOverride(limelightName, 1.5f);
-
-        // Turn off Limelight LED.
-        //LimelightHelpers.setLEDMode_ForceOff(limelightName);
     }
 
     @Override
@@ -59,21 +43,7 @@ public class VisionTargeting extends SubsystemBase {
         SmartDashboard.putNumber("Subsystems/Vision/TX (Aiming)", getTx());
         SmartDashboard.putNumber("Subsystems/Vision/TY", getTy());
         SmartDashboard.putNumber("Subsystems/Vision/Calculated Distance (m)", getDistanceToTargetMeters());
-
-        double heartbeat = LimelightHelpers.getLimelightNTDouble(limelightName, "hb");
-        if (heartbeat == lastHeartbeat) {
-            isAlive = false;
-        } else {
-            isAlive = true;
-        }
-        lastHeartbeat = heartbeat;
-
-        SmartDashboard.putBoolean("Subsystems/Vision/IsAlive", isLimelightAlive());
-        SmartDashboard.putNumber("Subsystems/Vision/Heartbeat", heartbeat);
-    }
-
-    public boolean isLimelightAlive() {
-        return isAlive;
+        SmartDashboard.putNumber("Subsystems/Vision/Heartbeat", LimelightHelpers.getLimelightNTDouble(limelightName, "hb"));
     }
 
     public boolean hasTarget() {
@@ -112,26 +82,6 @@ public class VisionTargeting extends SubsystemBase {
         return 0.0;
     }
 
-    public boolean canSeeHub() {
-        if (!hasTarget()) return false;
-
-        // Get april tags in view.
-        LimelightHelpers.RawFiducial[] fiducials = LimelightHelpers.getRawFiducials(limelightName);
-        // Loop through each tag.
-        for (LimelightHelpers.RawFiducial fiducial : fiducials) {
-            Tag tagInView = AprilTagConstants.tags.get(fiducial.id);
-            // Check if tag is on our alliance side.
-            if (!((tagInView.getAlliance() == Alliance.Red && Helpers.onRedAlliance()) || (tagInView.getAlliance() == Alliance.Blue && !Helpers.onRedAlliance()))) {
-                continue;
-            }
-            // Check if tag is located on hub in a scoring spot.
-            if (AprilTagConstants.isHubScoringTagLocation(tagInView.getLocation())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public double getDistanceToTargetMeters() {
         if (!hasTarget()) {
             return 0.0; 
@@ -144,9 +94,8 @@ public class VisionTargeting extends SubsystemBase {
         double angleToGoalDegrees = LimelightConstants.kPitchDegrees + targetOffsetAngleDegrees;
         double angleToGoalRadians = Math.toRadians(angleToGoalDegrees);
 
-        return (FieldConstants.kHubHeightMeters - LimelightConstants.kHeightOffsetMeters) / Math.tan(angleToGoalRadians);
+        return (ShooterConstants.kHubHeightMeters - LimelightConstants.kHeightOffsetMeters) / Math.tan(angleToGoalRadians);
     }
-
     
     public double[] getTargetAimInfo(ChassisSpeeds currentRobotSpeeds, PIDController aimPID) {
         double[] aimInfo = new double[2];
@@ -174,178 +123,4 @@ public class VisionTargeting extends SubsystemBase {
         aimInfo[1] = targetRpm;
         return aimInfo;
     }
-
-    public double[] getTargetAimInfo_WithHubOffset(ChassisSpeeds currentRobotSpeeds, PIDController aimPID) {
-        double[] aimInfo = new double[2];
-        aimInfo[0] = 0;
-        aimInfo[1] = ShooterSubsystem.calculateRPMForDistanceToHUB(1.9);
-        // Return if we have no target
-        if (!hasTarget()) {
-            return aimInfo;
-        }
-
-        // Get the Limelight robot-relative pose of the tag
-        double[] pose = LimelightHelpers.getTargetPose_RobotSpace("limelight");     
-        // Check if we got a valid pose
-        if (pose == null || pose.length < 6) {
-            return aimInfo;
-        }
-        // Pose2d representing tag in robot coordinates
-        Pose2d robotToTag = new Pose2d(
-            pose[0],                  // X meters forward
-            pose[1],                  // Y meters left
-            new Rotation2d(pose[5])   // yaw (rotation around Z)
-        );
-        // Define the transform from the tag to the goal center
-        Transform2d tagToGoal = new Transform2d(
-            new Translation2d(-AprilTagConstants.kTagToHubCenterMeters, 0), // goal behind the tag in tag frame
-            new Rotation2d()                                                  // no additional rotation
-        );
-
-        // Compute the goal pose relative to the robot
-        Pose2d robotToGoal = robotToTag.transformBy(tagToGoal);
-
-        // Compute the angle from the robot to the goal center
-        Rotation2d aimAngle = robotToGoal.getTranslation().getAngle();
-        double     aimError = aimAngle.getRadians(); // radians to feed into PID controller
-
-        // Moving forward/backward, reduce/increase RPM respectively.
-        double rpmOffset = currentRobotSpeeds.vxMetersPerSecond * DriveAutoConstants.kVelocityXToRPMOffset;
-        // Moving left/right, aim right/left respectively.
-        double aimOffset = currentRobotSpeeds.vyMetersPerSecond * Math.toRadians(DriveAutoConstants.kVelocityYToAimTxOffset);
-
-        // Compute rotation command from PID controller
-        double rotationSpeed = aimPID.calculate(Math.toDegrees(aimError + aimOffset), 0);
-        
-        // Compute RPM from distance
-        double distanceToGoal = robotToGoal.getTranslation().getNorm(); // sqrt(X^2 + Y^2)
-        double targetRpm = ShooterSubsystem.calculateRPMForDistanceToHUB(distanceToGoal) + rpmOffset;
-        
-        // Return aimInfo.
-        aimInfo[0] = rotationSpeed;
-        aimInfo[1] = targetRpm;
-        return aimInfo;
-    }
-
-    public Tag getTagFromFiducial(RawFiducial fid) {
-        return AprilTagConstants.tags.get(fid.id);
-    }
-
-    // https://blog.eeshwark.com/robotblog/shooting-on-the-fly - uses a turret, we can use similar math to adjust our robot rotation.
-    public ShootingInfo getHubAimInfo(Pose2d currentRobotPose, ChassisSpeeds currentRobotSpeeds)
-    {
-        // This function will assume the currentRobotPose is accurate after AprilTag localization and calculate the proper adjustments 
-        // for current speeds to determine an angle and shooter RPM.
-
-        // Extract speeds to 2d vector.
-        Translation2d robotVelVec = new Translation2d(currentRobotSpeeds.vxMetersPerSecond, currentRobotSpeeds.vyMetersPerSecond);
-
-        // Update pose for camera latency! Calculate the pose where we actually will shoot.
-        double latency = LimelightConstants.kCameraLatencySeconds;
-        Translation2d futurePos = currentRobotPose.getTranslation().plus(
-            new Translation2d(robotVelVec.getX(), robotVelVec.getY()).times(latency)
-        );
-
-        // Determine alliance hub.
-        Translation2d goalLocation = (Helpers.onRedAlliance()) ? FieldConstants.kRedHub : FieldConstants.kBlueHub;
-        // TODO: Get visible Hub tag, if exists, and compare pose with goal location.
-        // Get target vector, from robot pose to goal pose.
-        Translation2d targetVec = goalLocation.minus(futurePos);
-        double dist = targetVec.getNorm();
-
-        // Calculate ideal shot, assuming stationary.
-        // TODO: Ensure the calculate function returns horizontal speed! Or calculate it here.
-        double idealHorizontalBallSpeed = ShooterSubsystem.calculateExitVelocityForDistanceToHub(dist); // meters/sec
-
-        // Calculate shot vector accounting for current robot speeds and desired ball speed.
-        Translation2d shotVec = targetVec.div(dist).times(idealHorizontalBallSpeed).minus(robotVelVec);
-
-        // Convert to controls.
-        double robotAngle = shotVec.getAngle().getRadians();
-        double newHorizontalSpeed = shotVec.getNorm();
-
-        ShootingInfo shot = new ShootingInfo();
-        shot.pose = new Pose2d(futurePos.getX(), futurePos.getY(), new Rotation2d(robotAngle));
-        shot.shootingRPM = ShooterSubsystem.calcRPMForExitHorizontalVelocity(newHorizontalSpeed);
-        return shot;
-    }
-
-    public static class ShootingInfo
-    {
-        public Pose2d pose;
-        public double shootingRPM;
-    }
-
-    /* 
-    public Set<Tag> getTagsForLocation(TagLocation location)
-    {
-        Set<Tag> tagsAtLocation = Collections.emptySet();
-        for (Tag tag : AprilTagConstants.tags)
-        {
-            if (tag.m_location == location && tag.m_alliance == m_currentAlliance)
-            {
-                tagsAtLocation.add(tag);
-            }
-        }
-        return tagsAtLocation;
-    }
-
-    public Set<Tag> getHubShootingTags()
-    {
-        Set<Tag> tags = getTagsForLocation(TagLocation.kHubClose);
-        tags.addAll(getTagsForLocation(TagLocation.kHubLeft));
-        tags.addAll(getTagsForLocation(TagLocation.kHubRight));
-        return tags;
-    }
-
-    public boolean canSee(TagLocation location)
-    {
-        // TODO: 
-        // Get Tags to look for - use getTagsForLocation
-        // Set limelight to filter for Tags.
-        // Return true if Tags visible, otherwise false.
-        return false;
-    }
-
-    public RawFiducial getTagInView() {
-        // Get fiducial tag in view.
-        var tagsInView = LimelightHelpers.getRawFiducials(limelightName);
-        if (tagsInView.length == 0) {
-            // TODO: Set some indicator in dashboard that we can't see the tag.
-            return null;
-        } else if (tagsInView.length >= 2) {
-            // TODO: Set some indicator in dashboard that we see too many tags.
-            // This means the pipeline is configured incorrectly!
-            DriverStation.reportWarning("Pipeline configured incorrectly! Ensure IDs are filtered and grouped.", null);
-            return null;
-        }
-        return tagsInView[0];
-    }
-
-    // THIS ASSUMES STATIONARY ROBOT!
-    public ChassisSpeeds getSpeedsToTag(TagLocation location)
-    {
-        if (!hasTarget()) {
-            // TODO: Set some indicator in dashboard that we can't see the tag.
-            return null;
-        }
-        // TODO: Set the proper pipeline to target this location
-        
-        // Get fiducial tag in view.
-        RawFiducial tag = getTagInView();
-
-        // Get proportional controls to tag.
-        double targetingForwardVelocity = tag.tync * DriveAutoConstants.kPXYController;
-        double targetingAngularVelocity = tag.txnc * DriveAutoConstants.kPThetaController;
-        // Convert to drivetrain speeds.
-        targetingForwardVelocity *= DriveConstants.kMaxSpeedMetersPerSecond;
-        targetingAngularVelocity *= DriveConstants.kMaxAngularSpeedRadiansPerSecond;
-        // Invert since tx is positive when the target is to the right of the crosshair (meaning you would have to turn right, negative drive value).
-        targetingAngularVelocity *= -1.0;
-        // Invert since ty is positive when the target is above the crosshair (meaning you would have to drive backwards, negative drive value).
-        targetingForwardVelocity *= -1.0;
-        
-        return new ChassisSpeeds(0, targetingForwardVelocity, targetingAngularVelocity);
-    }
-    */
 }

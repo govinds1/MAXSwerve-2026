@@ -23,11 +23,9 @@ public class OperatorController extends GenericHID {
     retractIntake = new Trigger(this::getWantsExtenderIn);
     runShooter = new Trigger(this::getWantsRunShooter);
     stopShooter = new Trigger(this::getWantsStopShooter);
-    runFeeder = new Trigger(this::getWantsRunFeeder);
   }
 
   // Intake
-  // TODO: Add Intake button getters.
   public boolean getWantsRunIntakeRoller() {
     return this.getRawButton(IntakeConstants.kRollerRunButton);
   }
@@ -71,10 +69,5 @@ public class OperatorController extends GenericHID {
     } else {
       return 0;
     }
-  }
-
-  // Feeder
-  public boolean getWantsRunFeeder() {
-    return this.getRawButton(ShooterConstants.kRunFeederButton);
   }
 }

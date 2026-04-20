@@ -10,10 +10,6 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.controller.HolonomicDriveController;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -21,7 +17,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
@@ -29,10 +24,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants.DriveAutoConstants;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.commands.TurnToAngle;
 import frc.robot.Helpers;
 import frc.robot.controllers.DriverController;
-import frc.robot.LimelightHelpers;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class DriveSubsystem extends SubsystemBase {
@@ -60,9 +53,6 @@ public class DriveSubsystem extends SubsystemBase {
   // The gyro sensor
   private final ADIS16470_IMU m_gyro = new ADIS16470_IMU();
 
-  private double m_lastRot = 0;
-  private Rotation2d m_angleToHold = null;
-
   // Odometry class for tracking robot pose
   SwerveDrivePoseEstimator m_poseEstimator = new SwerveDrivePoseEstimator(
       DriveConstants.kDriveKinematics,
@@ -75,21 +65,6 @@ public class DriveSubsystem extends SubsystemBase {
       },
       new Pose2d()
     );
-
-  // PID Controllers
-  public PIDController m_xController = new PIDController(DriveAutoConstants.kPXYController, 0, 0);
-  public PIDController m_yController = new PIDController(DriveAutoConstants.kPXYController, 0, 0);
-  public ProfiledPIDController m_thetaController = new ProfiledPIDController(
-    DriveAutoConstants.kPThetaController,
-    0, 0,
-    DriveAutoConstants.kThetaControllerConstraints
-  );
-  public ProfiledPIDController m_headingHoldController = new ProfiledPIDController(
-    0.1,
-    0, 0,
-    new TrapezoidProfile.Constraints(Math.PI, Math.PI)
-  );
-  public HolonomicDriveController m_robotDriveController;
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
@@ -126,26 +101,7 @@ public class DriveSubsystem extends SubsystemBase {
             },
             this // Reference to this subsystem to set requirements
     );
-
-    m_thetaController.enableContinuousInput(0, 2 * Math.PI);
-    var thetaRobotController = m_thetaController;
-    thetaRobotController.setP(DriveAutoConstants.kPThetaRobotController);
-
-    m_headingHoldController.enableContinuousInput(0, 2 * Math.PI);
-
-    m_robotDriveController = new HolonomicDriveController(
-        m_xController,
-        m_yController,
-        thetaRobotController
-    );
-    // Set controller tolerance.
-    m_xController.setTolerance(DriveAutoConstants.kRobotControllerTolerance.getX());
-    m_yController.setTolerance(DriveAutoConstants.kRobotControllerTolerance.getY());
-    m_thetaController.setTolerance(DriveAutoConstants.kRobotControllerTolerance.getRotation().getRadians());
-    m_robotDriveController.setTolerance(DriveAutoConstants.kRobotControllerTolerance);
   }
-
-  // TODO: Need init? Probably need to set gyro based off alliance start. If red, need to add 180 degrees to gryo at all times.
 
   @Override
   public void periodic() {
@@ -159,10 +115,6 @@ public class DriveSubsystem extends SubsystemBase {
             m_rearLeft.getPosition(),
             m_rearRight.getPosition()
         });
-    // Update Pose with Limelight if possible.
-    if (DriverStation.isTeleopEnabled()) {
-      //localizePose();
-    }
 
     SmartDashboard.putNumber("Subsystems/Drive/Odometry/EstimatedPose/X", m_poseEstimator.getEstimatedPosition().getX());
     SmartDashboard.putNumber("Subsystems/Drive/Odometry/EstimatedPose/Y", m_poseEstimator.getEstimatedPosition().getY());
@@ -196,37 +148,6 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   /**
-   * Localize pose with AprilTags and Limelight's MegaTag2 localizer. Call this function whenver an AprilTag is found.
-   *
-   * @returns true if we updated pose successfully.
-   */
-  public boolean localizePose() {
-    LimelightHelpers.SetRobotOrientation("limelight", m_poseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
-    LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
-    
-    // if our angular velocity is greater than 360 degrees per second, ignore vision updates
-    boolean doRejectUpdate = false;
-    if(Math.abs(getTurnRate()) > 360)
-    {
-      doRejectUpdate = true;
-    }
-    if(mt2.tagCount == 0)
-    {
-      doRejectUpdate = true;
-    }
-    if(!doRejectUpdate)
-    {
-      m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
-      // TODO: Ignore mt2.pose if it's too far from current pose? 
-      m_poseEstimator.addVisionMeasurement(
-          mt2.pose,
-          mt2.timestampSeconds);
-    }
-
-    return !doRejectUpdate;
-  }
-
-  /**
    * Method to drive the robot given joystick.
    *
    * @param controller    Controller object to grab teleop driver's desired inputs.
@@ -251,17 +172,6 @@ public class DriveSubsystem extends SubsystemBase {
     double forward = -controller.getLeftY(); // Pushing forward on stick Y axis is negative, so invert to get forward speed.
     double left = -controller.getLeftX();    // Pushing right on stick X axis is positive, so invert to get left speed.
     double rotCCW = -controller.getRightX();  // Pushing right on stick X axis is positive, so invert to get CCW speed.
-    
-    /* // Smoothing/deadband will happen in DriverController functions themselves!
-    // Apply deadbands.
-    forward = MathUtil.applyDeadband(forward, OperatorConstants.kDriveDeadband);
-    left = MathUtil.applyDeadband(left, OperatorConstants.kDriveDeadband);
-    rotCCW = MathUtil.applyDeadband(rotCCW, OperatorConstants.kDriveDeadband);
-    // Square inputs.
-    forward = Helpers.signedSquare(forward);
-    left = Helpers.signedSquare(left);
-    rotCCW = Helpers.signedSquare(rotCCW);
-    */
 
     // Return value.
     boolean aimed = false;
@@ -303,24 +213,10 @@ public class DriveSubsystem extends SubsystemBase {
    *                      field.
    */
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
-    double adjustedRot = rot;
-    if (rot == 0 && false) {
-      // Try to maintain current gyro angle - do not allow any drift.
-      if (m_lastRot != 0 || m_angleToHold == null) {
-        // Just stopped rotating, set angle to hold.
-        m_angleToHold = getHeadingRotation();
-      }
-      // Apply pid control to get new rot speed.
-      // TODO: Scale this correction slightly by translation speed? Scale the clamp?
-      adjustedRot = TurnToAngle.getRotSpeed(getHeadingRotation().getRadians(), m_angleToHold.getRadians(), m_headingHoldController);
-      adjustedRot = MathUtil.clamp(adjustedRot, -0.2, 0.2);
-    }
-    m_lastRot = rot;
-
     // Convert the commanded speeds into the correct units for the drivetrain
     double xSpeedDelivered = (xSpeed * DriveConstants.kMaxSpeedMetersPerSecond);
     double ySpeedDelivered = (ySpeed * DriveConstants.kMaxSpeedMetersPerSecond);
-    double rotDelivered = (adjustedRot * DriveConstants.kMaxAngularSpeedRadiansPerSecond);
+    double rotDelivered = (rot * DriveConstants.kMaxAngularSpeedRadiansPerSecond);
 
     // Calculate robot relative ChassisSpeeds
     ChassisSpeeds newSpeeds;
@@ -332,23 +228,6 @@ public class DriveSubsystem extends SubsystemBase {
 
     // Drive robot to new ChassisSpeeds
     driveRobotRelative(newSpeeds);
-  }
-
-  //TODO: 
-  public ChassisSpeeds getChassisSpeedsForDriveInput(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
-    // Convert the commanded speeds into the correct units for the drivetrain
-    double xSpeedDelivered = xSpeed * DriveConstants.kMaxSpeedMetersPerSecond;
-    double ySpeedDelivered = ySpeed * DriveConstants.kMaxSpeedMetersPerSecond;
-    double rotDelivered = rot * DriveConstants.kMaxAngularSpeedRadiansPerSecond;
-
-    // Calculate robot relative ChassisSpeeds
-    ChassisSpeeds newSpeeds;
-    if (fieldRelative) {
-      newSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered, getHeadingRotation());
-    } else {
-      newSpeeds = new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered);
-    }
-    return newSpeeds;
   }
 
   /**
@@ -413,14 +292,12 @@ public class DriveSubsystem extends SubsystemBase {
   /** Zeroes the heading of the robot. */
   public void zeroHeading() {
     m_gyro.reset();
-    m_headingHoldController.reset(0);
-    m_angleToHold = Rotation2d.kZero;
   }
 
   /**
    * Returns the heading of the robot.
    *
-   * @return the robot's heading in degrees. // TODO: Is this from -180 to 180 or 0 to 360?
+   * @return the robot's heading in degrees.
    */
   public double getHeadingDegrees() {
     return getHeadingRotation().getDegrees();
@@ -432,7 +309,6 @@ public class DriveSubsystem extends SubsystemBase {
    * @return the robot's heading as a Rotation2d
    */
   public Rotation2d getHeadingRotation() {
-    // TODO: Do we need to normalize this angle to 0 to 360 or -180 to 180?;
     return Rotation2d.fromDegrees(m_gyro.getAngle(IMUAxis.kZ));
   }
 
