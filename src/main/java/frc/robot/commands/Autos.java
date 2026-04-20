@@ -7,9 +7,15 @@ package frc.robot.commands;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.Helpers;
 import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.ClimberSubsystem;
@@ -81,9 +87,52 @@ public final class Autos {
 
     public static Command DriveForSeconds(DriveSubsystem robotDrive, double forward, double left, double omega, double time) {
         return Commands.runOnce(() -> robotDrive.drive(forward, left, omega, true), robotDrive)
-            .withTimeout(time)
-            .finallyDo(() -> robotDrive.stop()
-        );
+        .withTimeout(time)
+        .finallyDo(() -> robotDrive.stop());
+    }
+
+    public static Command DriveForDistance(DriveSubsystem robotDrive, Translation2d translationDelta, Rotation2d desiredRotation) {
+        // Drives the robot based off the given field relative translationDelta and desiredRotation.
+        // Uses a step function to determine speed along each translation axis and for rotation, starts at a higher speed and moves to lower speed when closer.
+        // Example: DriveForDistance(robotDrive, new Translation2d(1.5, -3), Rotation2d.fromDegrees(90));
+        //     - Drives the robot 1.5 meters FORWARD, 3 meters to the RIGHT, and rotates robot to be facing the left side wall (90 degrees CCW).
+
+        // Define end conditions for each dimension.
+        Pose2d startingPose = robotDrive.getPose();
+        Translation2d directionVector = new Translation2d(Math.signum(translationDelta.getX()), Math.signum(translationDelta.getY()));
+        BooleanSupplier isAtDistanceX = () -> (Math.abs(robotDrive.getPose().minus(startingPose).getX() - translationDelta.getX()) < 0.05);
+        BooleanSupplier isAtDistanceY = () -> (Math.abs(robotDrive.getPose().minus(startingPose).getY() - translationDelta.getY()) < 0.05);
+        BooleanSupplier isAtDistanceRot = () -> (Math.abs(robotDrive.getHeadingDegrees() - desiredRotation.getDegrees()) < 0.5);
+        BooleanSupplier isAtDistance = () -> isAtDistanceX.getAsBoolean() && isAtDistanceY.getAsBoolean()&& isAtDistanceRot.getAsBoolean();
+
+        // Define value suppliers for each dimension.
+        double slowSpeed = 0.2;
+        double highSpeed = 0.4;
+        DoubleSupplier xSupplier = () -> {
+            if (isAtDistanceX.getAsBoolean()) return 0;
+            return directionVector.getX() * ((robotDrive.getPose().minus(startingPose).getX() < 0.5) ? slowSpeed : highSpeed);
+        };
+        DoubleSupplier ySupplier = () -> {
+            if (isAtDistanceY.getAsBoolean()) return 0;
+            return directionVector.getY() * ((robotDrive.getPose().minus(startingPose).getY() < 0.5) ? slowSpeed : highSpeed);
+        };
+        double slowRot = 0.15;
+        double highRot = 0.3;
+        DoubleSupplier rotSupplier = () -> {
+            if (isAtDistanceRot.getAsBoolean()) return 0;
+            double degreesToTurn = Helpers.quickestRot(robotDrive.getHeadingRotation(), desiredRotation).getDegrees();
+            return Math.signum(degreesToTurn) * ((Math.abs(degreesToTurn) < 10) ?  slowRot : highRot);
+        };
+
+        // Create command to drive with suppliers and end conditions.
+        return Commands.run(() -> robotDrive.drive(xSupplier, ySupplier, rotSupplier), robotDrive)
+        .until(isAtDistance)
+        .withTimeout(Math.max(2.5, translationDelta.getNorm() + (desiredRotation.getRadians() / 2.0)))
+        .finallyDo(() -> robotDrive.stop());
+    }
+
+    public static Command DriveForDistance(DriveSubsystem robotDrive, Translation2d translationDelta) {
+        return DriveForDistance(robotDrive, translationDelta, robotDrive.getHeadingRotation());
     }
 
     public static Command RaiseClimber(ClimberSubsystem climber) {

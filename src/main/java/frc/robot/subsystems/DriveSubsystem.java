@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import java.util.function.DoubleSupplier;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
@@ -201,6 +203,17 @@ public class DriveSubsystem extends SubsystemBase {
     drive(forward, left, rotCCW, true);
 
     return aimed;
+  }
+
+  /**
+   * Method to drive the robot using suppliers.
+   *
+   * @param xSpeedSupplier        Speed of the robot in the x direction (forward +).
+   * @param ySpeedSupplier        Speed of the robot in the y direction (left +).
+   * @param rotSupplier           Angular rate of the robot (ccw +).
+   */
+  public void drive(DoubleSupplier xSpeedSupplier, DoubleSupplier ySpeedSupplier, DoubleSupplier rotSupplier) {
+    drive(xSpeedSupplier.getAsDouble(), ySpeedSupplier.getAsDouble(), rotSupplier.getAsDouble(), true);
   }
 
   /**

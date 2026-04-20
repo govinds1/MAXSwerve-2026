@@ -1,5 +1,7 @@
 package frc.robot;
 
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -23,6 +25,15 @@ public class Helpers {
 
   public static double modRadians(double input) {
     return Units.degreesToRadians(modDegrees(Units.radiansToDegrees(input)));
+  }
+
+  // Returns the smallest signed rotation angle to rotate to get to the desired angle.
+  // Wraps around at 0, ccw is positive.
+  public static Rotation2d quickestRot(Rotation2d current, Rotation2d desired) {
+    double currentRadians = modRadians(current.getRadians());
+    double desiredRadians = modRadians(desired.getRadians());
+    double error = desiredRadians - currentRadians;
+    return Rotation2d.fromRadians(MathUtil.angleModulus(error));
   }
 
   public static int clamp(int val, int min, int max) {
