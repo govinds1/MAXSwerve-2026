@@ -7,6 +7,10 @@ package frc.robot.subsystems;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
@@ -28,25 +32,38 @@ import frc.robot.Configs;
 import frc.robot.Constants.ShooterConstants;
 
 public class ShooterSubsystem extends SubsystemBase{
-  private final SparkFlex m_shooterMotor;
-  private final SparkFlex m_shooterMotorFollower;
+  private final TalonFX m_shooterMotor;
+  private final TalonFX m_shooterMotorFollower;
   private final SparkFlex m_feederMotor;
 
-  private final RelativeEncoder m_encoder;
+  //private final RelativeEncoder m_encoder;
 
-  private final SparkClosedLoopController m_closedLoopController;
+  //private final SparkClosedLoopController m_closedLoopController;
   private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.003, 0.000268, 0); // (0.003, 0.000283, 0);
-  private double m_desiredRPM = 0;
+  //private double m_desiredRPM = 0;
+  private double m_desiredVelocity = 0;
+  private VelocityVoltage velocityRequest = new VelocityVoltage(0);
 
-  // Distance (meters) - RPM mapping
-  public static final InterpolatingDoubleTreeMap rpmMap = InterpolatingDoubleTreeMap.ofEntries(
+  // Distance (meters) - velocity mapping
+  public static final InterpolatingDoubleTreeMap velocityMap = InterpolatingDoubleTreeMap.ofEntries(
+    // Tuned for Krakens (TODO!)
+    // Should be in rotations per second (max/min: -512 - 512)
+    Map.entry(1.0, 192.0),
+    Map.entry(1.6, 236.8),
+    Map.entry(1.7, 257.28),
+    Map.entry(1.85, 288.0),
+    Map.entry(2.0, 313.6),
+    Map.entry(3.0, 326.4),
+    Map.entry(5.0, 396.8)
+
+    /* //Tuned for NEOs
     Map.entry(1.0, 15000.0),
     Map.entry(1.6, 18500.0),
     Map.entry(1.7, 20100.0),
     Map.entry(1.85, 22500.0),
     Map.entry(2.0, 24500.0),
     Map.entry(3.0, 25500.0),
-    Map.entry(5.0, 31000.0)
+    Map.entry(5.0, 31000.0)*/
   );
 
   /**
@@ -56,12 +73,15 @@ public class ShooterSubsystem extends SubsystemBase{
    * Encoder.
    */
   public ShooterSubsystem() {
-    m_shooterMotor = new SparkFlex(ShooterConstants.kRightShooterMotorCanId, MotorType.kBrushless);
-    m_shooterMotorFollower = new SparkFlex(ShooterConstants.kLeftShooterMotorCanId, MotorType.kBrushless);
+    m_shooterMotor = new TalonFX(ShooterConstants.kRightShooterMotorCanId);
+    m_shooterMotorFollower = new TalonFX(ShooterConstants.kLeftShooterMotorCanId);
     m_feederMotor = new SparkFlex(ShooterConstants.kFeederMotorCanId, MotorType.kBrushless);
 
-    m_encoder = m_shooterMotor.getEncoder();
-    m_closedLoopController = m_shooterMotor.getClosedLoopController();
+    m_shooterMotorFollower.setControl(new Follower(ShooterConstants.kRightShooterMotorCanId, MotorAlignmentValue.Opposed));
+
+    /*
+    //m_encoder = m_shooterMotor.getEncoder();
+    //m_closedLoopController = m_shooterMotor.getClosedLoopController();
 
     // Apply the respective configurations to the SPARKS. Reset parameters before
     // applying the configuration to bring the SPARK to a known good state. Persist
@@ -73,6 +93,7 @@ public class ShooterSubsystem extends SubsystemBase{
     followerConfig.follow(m_shooterMotor, true); // Set to follow main motor, and invert.
     m_shooterMotorFollower.configure(followerConfig, ResetMode.kResetSafeParameters,
       PersistMode.kPersistParameters);
+    */
 
     m_feederMotor.configure(Configs.Shooter.feederMotorConfig, ResetMode.kResetSafeParameters,
       PersistMode.kPersistParameters);
@@ -80,35 +101,36 @@ public class ShooterSubsystem extends SubsystemBase{
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Subsytems/Shooter/Flywheel/RPMSetpoint", m_desiredRPM);
-    SmartDashboard.putNumber("Subsytems/Shooter/Flywheel/RPMCurrent", m_encoder.getVelocity());
+    SmartDashboard.putNumber("Subsytems/Shooter/Flywheel/RPSSetpoint", m_desiredVelocity);
+    SmartDashboard.putNumber("Subsytems/Shooter/Flywheel/RPSCurrent", m_shooterMotor.getVelocity().getValueAsDouble());
     SmartDashboard.putBoolean("Subsytems/Shooter/Flywheel/AtSpeed", isAtSpeed());
   }
 
   /**
    * Run flywheel to speed.
    * 
-   * @param desiredRPM RPM to set as motor velocity setpoint.
+   * @param desiredvelocity velocity to set as motor velocity setpoint.
    */
-  public void runShooterRPM(double desiredRPM) {
-    m_desiredRPM = desiredRPM;
-    if (desiredRPM <= 0) {
+  public void runShooterVelocity(double desiredVelocity) {
+    m_desiredVelocity = desiredVelocity;
+    if (desiredVelocity <= 0) {
         stopShooter();
     } else {
-        double ffVoltage = feedforward.calculate(desiredRPM);
+        double ffVoltage = feedforward.calculate(desiredVelocity);
+        m_shooterMotor.setControl(velocityRequest.withVelocity(m_desiredVelocity).withFeedForward(ffVoltage));
         
-        m_closedLoopController.setSetpoint(
+        /*m_closedLoopController.setSetpoint(
             desiredRPM, 
             ControlType.kVelocity,
             ClosedLoopSlot.kSlot0, 
             ffVoltage, 
             ArbFFUnits.kVoltage
-        );
+        );*/
     } 
   }
 
-  public void runShooterRPM(Supplier<Double> distanceToHubSupplier) {
-    runShooterRPM(ShooterSubsystem.calculateRPMForDistanceToHUB(distanceToHubSupplier.get()));
+  public void runShooterVelocity(Supplier<Double> distanceToHubSupplier) {
+    runShooterVelocity(ShooterSubsystem.calculateVelocityForDistanceToHUB(distanceToHubSupplier.get()));
   }
 
   public Command ShootStraightCommand(Supplier<Double> distanceToHubSupplier) {
@@ -119,7 +141,7 @@ public class ShooterSubsystem extends SubsystemBase{
   }
 
   public void runShooterAuto(Supplier<Double> distanceToHubSupplier) {
-    runShooterRPM(distanceToHubSupplier);
+    runShooterVelocity(distanceToHubSupplier);
     if (isAtSpeed()) {
       runFeeder(ShooterConstants.kFeederPower);
     } else {
@@ -146,7 +168,7 @@ public class ShooterSubsystem extends SubsystemBase{
   /**
    * Run feeder on open loop control.
    * 
-   * @param desiredRPM RPM to set as motor velocity setpoint.
+   * @param desiredVelocity velocity to set as motor velocity setpoint.
    */
   public void runFeeder(double power) {
     //m_desiredRPM = desiredRPM;
@@ -166,13 +188,13 @@ public class ShooterSubsystem extends SubsystemBase{
   }
 
   /**
-   * Given a distance to Hub in meters, calculate desired RPM of the flywheel - assuming stationary robot.
+   * Given a distance to Hub in meters, calculate desired velocity of the flywheel - assuming stationary robot.
    * 
    * @param distanceMeters Distance to Hub in meters.
-   * @returns calculated RPM based on interpolated distance mapping
+   * @returns calculated velocity based on interpolated distance mapping (motor rots per second)
    */
-  public static double calculateRPMForDistanceToHUB(double distanceMeters) {
-    return rpmMap.get(distanceMeters);
+  public static double calculateVelocityForDistanceToHUB(double distanceMeters) {
+    return velocityMap.get(distanceMeters);
   }
 
   /**
@@ -181,15 +203,16 @@ public class ShooterSubsystem extends SubsystemBase{
    * @returns true if motor has reached the velocity setpoint.
    */
   public boolean isAtSpeed() {
-    return Math.abs(m_encoder.getVelocity() - m_desiredRPM) < ShooterConstants.kRPMTolerance; // || (m_encoder.getVelocity() > m_desiredRPM);
+    return Math.abs(m_shooterMotor.getVelocity().getValueAsDouble() - m_desiredVelocity) < ShooterConstants.kRPSTolerance; // || (m_shooterMotor.getVelocity().getValueAsDouble() > m_desiredVelocity);
   }
 
   /**
    * Read flywheel speed.
    * 
-   * @returns actual flywheel motor RPM.
+   * @returns actual flywheel motor RPS (motor rotations per second).
    */
-  public double getActualSpeedRPM() {
-    return m_encoder.getVelocity();
+  public double getActualSpeedRPS() {
+    //return m_encoder.getVelocity();
+    return m_shooterMotor.getVelocity().getValueAsDouble();
   }
 }

@@ -104,6 +104,7 @@ public final class Constants {
 
     public static final double kPController = 0.00007;
     public static final double kRPMTolerance = 750;
+    public static final double kRPSTolerance = 10;
 
     public static final double kHubHeightMeters = Units.inchesToMeters(72);
     public static final double kMaxShootTime = 4.5;
@@ -164,6 +165,7 @@ public final class Constants {
     public static final double kAimAtHubMaxTime = 5.0;
 
     public static final double kVelocityXToRPMOffset = -1500;
+    public static final double kVelocityXToRPSOffset = -20;
     public static final double kVelocityYToAimTxOffset = 2.0;
   }
 

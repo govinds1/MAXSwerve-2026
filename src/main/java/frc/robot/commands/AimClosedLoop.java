@@ -29,7 +29,7 @@ public class AimClosedLoop extends Command {
   private DoubleSupplier m_visionOverrideSupplier;
 
   private final PIDController m_aimPID = new PIDController(0.03, 0.0, 0); // tuned for Limelight Tx values. (0.05, 0.0, 0.005)
-  private double m_targetRpm;
+  private double m_targetVelocity;
   private boolean m_isAimed; 
   private double m_overrideStartTime = 0;
   private boolean m_noTarget = false;
@@ -49,7 +49,7 @@ public class AimClosedLoop extends Command {
     m_rotSupplier = rotSupplier;
     m_visionOverrideSupplier = visionOverrideSupplier;
     m_isAimed = false;
-    m_targetRpm = ShooterSubsystem.calculateRPMForDistanceToHUB(1.75);
+    m_targetVelocity = ShooterSubsystem.calculateVelocityForDistanceToHUB(1.75);
 
     addRequirements(m_drive, m_shooter);
 
@@ -61,7 +61,7 @@ public class AimClosedLoop extends Command {
   @Override
   public void initialize() {
     m_isAimed = false;
-    m_targetRpm = ShooterSubsystem.calculateRPMForDistanceToHUB(1.75);
+    m_targetVelocity = ShooterSubsystem.calculateVelocityForDistanceToHUB(1.75);
     m_noTarget = false;
     m_overrideStartTime = 0;
   }
@@ -76,10 +76,10 @@ public class AimClosedLoop extends Command {
       if (visionOverride != 0) {
         if (visionOverride == 1) {
           // Shoot from Hub
-          m_targetRpm = ShooterSubsystem.calculateRPMForDistanceToHUB(1.5);
+          m_targetVelocity = ShooterSubsystem.calculateVelocityForDistanceToHUB(1.5);
         } else if (visionOverride == 2) {
           // Shoot from Tower
-          m_targetRpm = ShooterSubsystem.calculateRPMForDistanceToHUB(1.75);
+          m_targetVelocity = ShooterSubsystem.calculateVelocityForDistanceToHUB(1.75);
         }
         // We're overriding vision, so let driver drive.
         if (m_rotSupplier != null) {
@@ -91,7 +91,7 @@ public class AimClosedLoop extends Command {
         if (m_vision.hasTarget()) {
           double[] aimInfo = m_vision.getTargetAimInfo(m_drive.getRobotRelativeSpeeds(), m_aimPID);
           rotationSpeed = aimInfo[0];
-          m_targetRpm = aimInfo[1];
+          m_targetVelocity = aimInfo[1];
           if (Math.abs(rotationSpeed) < 0.05) {
             m_isAimed = true;
           } else {
@@ -115,7 +115,7 @@ public class AimClosedLoop extends Command {
       }
 
       SmartDashboard.putNumber("Subsystems/Vision/Auto/RotationSpeed", rotationSpeed);
-      SmartDashboard.putNumber("Subsystems/Vision/Auto/TargetRPM", m_targetRpm);
+      SmartDashboard.putNumber("Subsystems/Vision/Auto/TargetRPM", m_targetVelocity);
       SmartDashboard.putBoolean("Subsystems/Vision/Auto/IsAimed", m_isAimed);
       
       // Aim Robot
@@ -126,7 +126,7 @@ public class AimClosedLoop extends Command {
       }
 
       // Rev the shooter
-      m_shooter.runShooterRPM(m_targetRpm);
+      m_shooter.runShooterVelocity(m_targetVelocity);
 
       if ((m_isAimed || visionOverride != 0) && /* m_isAdjusted && */ m_shooter.isAtSpeed()) {
         m_shooter.runFeeder(ShooterConstants.kFeederPower);

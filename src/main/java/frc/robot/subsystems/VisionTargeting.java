@@ -100,27 +100,28 @@ public class VisionTargeting extends SubsystemBase {
     public double[] getTargetAimInfo(ChassisSpeeds currentRobotSpeeds, PIDController aimPID) {
         double[] aimInfo = new double[2];
         aimInfo[0] = 0;
-        aimInfo[1] = ShooterSubsystem.calculateRPMForDistanceToHUB(1.9);
+        aimInfo[1] = ShooterSubsystem.calculateVelocityForDistanceToHUB(1.9);
         // Return if we have no target
         if (!hasTarget()) {
             return aimInfo;
         }
 
-        // Moving forward/backward, reduce/increase RPM respectively.
-        double rpmOffset = currentRobotSpeeds.vxMetersPerSecond * DriveAutoConstants.kVelocityXToRPMOffset;
+        // Moving forward/backward, reduce/increase velocity respectively.
+        //double rpmOffset = currentRobotSpeeds.vxMetersPerSecond * DriveAutoConstants.kVelocityXToRPMOffset;
+        double shotVelocityOffset = currentRobotSpeeds.vxMetersPerSecond * DriveAutoConstants.kVelocityXToRPSOffset;
         // Moving left/right, aim right/left respectively.
         double aimOffset = currentRobotSpeeds.vyMetersPerSecond * DriveAutoConstants.kVelocityYToAimTxOffset;
 
         // Compute rotation command from PID controller
         double rotationSpeed = aimPID.calculate(getTx() + aimOffset, 0.0);
 
-        // Compute RPM from distance
+        // Compute shot velocity from distance
         double distanceToGoal = getDistanceToTargetMeters();
-        double targetRpm = ShooterSubsystem.calculateRPMForDistanceToHUB(distanceToGoal) + rpmOffset;
+        double targetVelocity = ShooterSubsystem.calculateVelocityForDistanceToHUB(distanceToGoal) + shotVelocityOffset;
 
         // Return aimInfo.
         aimInfo[0] = rotationSpeed;
-        aimInfo[1] = targetRpm;
+        aimInfo[1] = targetVelocity;
         return aimInfo;
     }
 }
